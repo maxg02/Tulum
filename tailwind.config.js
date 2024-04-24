@@ -14,6 +14,10 @@ export default {
                 },
             },
         },
+        fontFamily: {
+            title: ["Sofia Sans", "sans-serif"],
+            body: ["Karla", "sans-serif"],
+        },
     },
     plugins: [],
 };
