@@ -34,9 +34,19 @@ body {
     min-height: 100vh;
 }
 
-h1 {
-    font-size: 3.2em;
-    line-height: 1.1;
+@layer base {
+    h1 {
+        @apply font-title text-5xl;
+    }
+    h2 {
+        @apply font-bold font-title text-4xl;
+    }
+    h3 {
+        @apply font-normal font-body text-2xl;
+    }
+    h4 {
+        @apply font-body text-sm;
+    }
 }
 
 button {
