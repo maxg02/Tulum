@@ -1,38 +1,52 @@
 import React from "react";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { changeSection } from "../reducers/sectionReducer";
+import { Link } from "react-router-dom";
 
-export default function Sidebar() {
-    interface sectionRoute {
-        section: string;
-        route: string;
-    }
+export type SectionType = "Dashboard" | "Budget" | "Expenses" | "Savings";
 
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
-
-    const handleNavigation = (section: sectionRoute) => {
-        dispatch(changeSection(section.section));
-        navigate(section.route);
-    };
-
+export default function Sidebar({ currentSection }: { currentSection: SectionType }) {
     return (
         <div className="bg-custom-ly1 w-52">
             <h2>AppName</h2>
             <div className="flex flex-col">
-                <button onClick={() => handleNavigation({ section: "Dashboard", route: "/" })}>
-                    Dashboard
-                </button>
-                <button onClick={() => handleNavigation({ section: "Budget", route: "/budget" })}>
-                    Budget
-                </button>
-                <button onClick={() => handleNavigation({ section: "Expenses", route: "/expenses" })}>
-                    Expenses
-                </button>
-                <button onClick={() => handleNavigation({ section: "Savings", route: "/savings" })}>
-                    Savings
-                </button>
+                <Link to={"/"}>
+                    <button
+                        className={`${
+                            currentSection === "Dashboard" ? "bg-red-500 text-white" : "bg-green-500"
+                        }`}
+                    >
+                        Dashboard
+                    </button>
+                </Link>
+
+                <Link to={"/budget"}>
+                    <button
+                        className={`${
+                            currentSection === "Budget" ? "bg-red-500 text-white" : "bg-green-500"
+                        }`}
+                    >
+                        Budget
+                    </button>
+                </Link>
+
+                <Link to={"/expenses"}>
+                    <button
+                        className={`${
+                            currentSection === "Expenses" ? "bg-red-500 text-white" : "bg-green-500"
+                        }`}
+                    >
+                        Expenses
+                    </button>
+                </Link>
+
+                <Link to={"/savings"}>
+                    <button
+                        className={`${
+                            currentSection === "Savings" ? "bg-red-500 text-white" : "bg-green-500"
+                        }`}
+                    >
+                        Savings
+                    </button>
+                </Link>
             </div>
         </div>
     );
