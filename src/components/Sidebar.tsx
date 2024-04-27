@@ -1,51 +1,48 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHouse, faWallet, faReceipt, faPiggyBank } from "@fortawesome/free-solid-svg-icons";
+import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
+import type { ReactNode } from "react";
 
 export type SectionType = "Dashboard" | "Budget" | "Expenses" | "Savings";
 
+const sidebarButton = (active: boolean, section: string, icon: IconDefinition): ReactNode => (
+    <button
+        className={`${
+            active ? "bg-custom-secondary" : "opacity-50 bg-transparent hover:bg-custom-secondary"
+        } w-full flex items-center gap-3 border-0 px-3 py-1 rounded-none text-white`}
+    >
+        <div className="w-6 text-custom-accent text-xl flex items-center justify-center">
+            <FontAwesomeIcon icon={icon} />
+        </div>
+        <h3>{section}</h3>
+    </button>
+);
+
 export default function Sidebar({ currentSection }: { currentSection: SectionType }) {
     return (
-        <div className="bg-custom-ly1 w-52">
-            <h2>AppName</h2>
-            <div className="flex flex-col">
+        <div className="bg-custom-ly1 w-52 py-5">
+            <div className="flex flex-col items-center mb-9">
+                <img className="w-28" src="/appLogo.png" alt="App Logo" />
+                <h2>AppName</h2>
+            </div>
+
+            <div className="flex flex-col gap-2">
                 <Link to={"/"}>
-                    <button
-                        className={`${
-                            currentSection === "Dashboard" ? "bg-red-500 text-white" : "bg-green-500"
-                        }`}
-                    >
-                        Dashboard
-                    </button>
+                    {sidebarButton(currentSection === "Dashboard" ? true : false, "Dashboard", faHouse)}
                 </Link>
 
                 <Link to={"/budget"}>
-                    <button
-                        className={`${
-                            currentSection === "Budget" ? "bg-red-500 text-white" : "bg-green-500"
-                        }`}
-                    >
-                        Budget
-                    </button>
+                    {sidebarButton(currentSection === "Budget" ? true : false, "Budget", faWallet)}
                 </Link>
 
                 <Link to={"/expenses"}>
-                    <button
-                        className={`${
-                            currentSection === "Expenses" ? "bg-red-500 text-white" : "bg-green-500"
-                        }`}
-                    >
-                        Expenses
-                    </button>
+                    {sidebarButton(currentSection === "Expenses" ? true : false, "Expenses", faReceipt)}
                 </Link>
 
                 <Link to={"/savings"}>
-                    <button
-                        className={`${
-                            currentSection === "Savings" ? "bg-red-500 text-white" : "bg-green-500"
-                        }`}
-                    >
-                        Savings
-                    </button>
+                    {sidebarButton(currentSection === "Savings" ? true : false, "Savings", faPiggyBank)}
                 </Link>
             </div>
         </div>
