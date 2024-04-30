@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+    font-family: "Sofia Sans";
+    src: url("/fonts/Sofia_Sans/SofiaSans-VariableFont_wght.ttf");
+}
+
+@font-face {
+    font-family: "Karla";
+    src: url("/fonts/Karla/Karla-VariableFont_wght.ttf");
+}
+
 :root {
     font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
     line-height: 1.5;
