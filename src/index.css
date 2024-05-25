@@ -46,17 +46,27 @@ body {
 
 @layer base {
     h1 {
-        @apply font-title text-5xl;
+        @apply font-bold font-title text-5xl;
     }
     h2 {
-        @apply font-bold font-title text-4xl;
+        @apply font-semibold font-title text-4xl;
     }
     h3 {
         @apply font-normal font-body text-2xl;
     }
-    h4 {
+    p {
         @apply font-body text-sm;
     }
+    .infoContainer1 {
+        @apply rounded-xl bg-custom-ly1 px-6 py-5;
+    }
+    .infoContainer2 {
+        @apply rounded-xl bg-custom-ly2 px-6 py-5;
+    }
+}
+
+.infoContainer1 {
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.433);
 }
 
 button {
