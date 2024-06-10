@@ -12,6 +12,13 @@ export default {
                     primary: "#A0CFC0",
                     accent: "#DACEAF",
                 },
+                gradient: {
+                    1: "#D2EBE5",
+                    2: "#99CCBC",
+                    3: "#56A98F",
+                    4: "#336656",
+                    5: "#24433A",
+                },
             },
         },
         fontFamily: {

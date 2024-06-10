@@ -3,9 +3,23 @@ import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import SectionContent from "../components/SectionContent";
 import MoreDots from "../components/MoreDots";
-import { Line, LineChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+// import {
+//     Line,
+//     LineChart,
+//     CartesianGrid,
+//     ResponsiveContainer,
+//     Tooltip,
+//     XAxis,
+//     YAxis,
+//     PieChart,
+//     Pie,
+//     Cell,
+//     PolarAngleAxis,
+//     PolarGrid,
+// } from "recharts";
+import { LineChart, markElementClasses } from "@mui/x-charts/LineChart";
 
-const data = [
+const dataLineChart = [
     {
         name: "Jan",
         inc: 45000,
@@ -68,32 +82,57 @@ const data = [
     },
 ];
 
-const customXTick = ({ x, y, payload }: any) => (
-    <g transform={`translate(${x},${y})`}>
-        <text dy={12} textAnchor="middle" fill="#DACEAF" fontFamily="karla" fontSize={"0.9rem"}>
-            {payload.value}
-        </text>
-    </g>
-);
+// const dataPieChart = [
+//     {
+//         name: "Group A",
+//         value: 400,
+//     },
+//     {
+//         name: "Group B",
+//         value: 300,
+//     },
+//     {
+//         name: "Group C",
+//         value: 300,
+//     },
+//     {
+//         name: "Group D",
+//         value: 200,
+//     },
+//     {
+//         name: "Group E",
+//         value: 278,
+//     },
+// ];
 
-const customYTick = ({ x, y, payload }: any) => (
-    <g transform={`translate(${x},${y})`}>
-        <text dy={2} textAnchor="end" fill="#DACEAF" fontFamily="karla" fontSize={"0.8rem"}>
-            {payload.value}
-        </text>
-    </g>
-);
+// const pieChartColors = ["#D2EBE5", "#99CCBC", "#56A98F", "#336656", "#24433A"];
 
-const customTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-        return (
-            <div className="bg-white bg-opacity-20 p-2">
-                <p>Income: RD${payload[0].value}</p>
-                <p>Expense: RD${payload[1].value}</p>
-            </div>
-        );
-    }
-};
+// const customXTick = ({ x, y, payload }: any) => (
+//     <g transform={`translate(${x},${y})`}>
+//         <text dy={12} textAnchor="middle" fill="#DACEAF" fontFamily="karla" fontSize={"0.9rem"}>
+//             {payload.value}
+//         </text>
+//     </g>
+// );
+
+// const customYTick = ({ x, y, payload }: any) => (
+//     <g transform={`translate(${x},${y})`}>
+//         <text dy={2} textAnchor="end" fill="#DACEAF" fontFamily="karla" fontSize={"0.8rem"}>
+//             {payload.value}
+//         </text>
+//     </g>
+// );
+
+// const customTooltip = ({ active, payload }: any) => {
+//     if (active && payload && payload.length) {
+//         return (
+//             <div className="bg-white bg-opacity-20 p-2">
+//                 <p>Income: RD${payload[0].value}</p>
+//                 <p>Expense: RD${payload[1].value}</p>
+//             </div>
+//         );
+//     }
+// };
 
 export default function Dashboard() {
     return (
@@ -123,9 +162,9 @@ export default function Dashboard() {
                         <p>2024 Summary</p>
 
                         <div className="w-full flex-1 flex items-center">
-                            <ResponsiveContainer height={"80%"}>
+                            {/* <ResponsiveContainer height={"80%"}>
                                 <LineChart
-                                    data={data}
+                                    data={dataLineChart}
                                     margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
                                 >
                                     <XAxis dataKey="name" tick={customXTick} />
@@ -135,27 +174,87 @@ export default function Dashboard() {
                                     <Line type="linear" dataKey="inc" stroke="#78d2b5" strokeWidth={2} />
                                     <Line type="linear" dataKey="exp" stroke="#d96533" strokeWidth={2} />
                                 </LineChart>
-                            </ResponsiveContainer>
+                            </ResponsiveContainer> */}
+                            <LineChart
+                                xAxis={[{ dataKey: "name", scaleType: "point" }]}
+                                yAxis={[{ min: 10000 }]}
+                                series={[
+                                    {
+                                        dataKey: "inc",
+                                        label: "Income",
+                                        color: "#78d2b5",
+                                        curve: "linear",
+                                        stackOrder: "appearance",
+                                    },
+                                    {
+                                        dataKey: "exp",
+                                        label: "Expenses",
+                                        color: "#d96533",
+                                        curve: "linear",
+                                    },
+                                ]}
+                                dataset={dataLineChart}
+                                grid={{ vertical: true, horizontal: true }}
+                                slotProps={{ legend: { hidden: true } }}
+                                sx={{
+                                    [`& .${markElementClasses.root}`]: {
+                                        scale: "0.9",
+                                        fill: "#394942",
+                                        strokeWidth: 2,
+                                    },
+                                }}
+                            />
                         </div>
 
                         <div className="flex gap-6">
                             <div className="flex flex-col items-center gap-1">
-                                <div
-                                    className={`bg-white w-3 h-3 rounded-full border-[3.5px] border-[#78d2b5]`}
-                                ></div>
+                                <div className={` w-2 h-2 rounded-full border-2 border-[#78d2b5]`}></div>
                                 <p className="text-custom-accent">Income</p>
                             </div>
 
                             <div className="flex flex-col items-center gap-1">
-                                <div
-                                    className={`bg-white w-3 h-3 rounded-full border-[3.5px] border-[#d96533]`}
-                                ></div>
+                                <div className={` w-2 h-2 rounded-full border-2 border-[#d96533]`}></div>
                                 <p className="text-custom-accent">Expense</p>
                             </div>
                         </div>
                     </div>
-                    <div className="row-span-5 infoContainer2">
+                    <div className="row-span-5 infoContainer2 flex flex-col items-center justify-between">
                         <p>January Expenses</p>
+                        <div className="w-full flex-1 flex items-center">
+                            {/* <ResponsiveContainer>
+                                <PieChart>
+                                    <Pie
+                                        data={dataPieChart}
+                                        dataKey="value"
+                                        nameKey="name"
+                                        innerRadius={47}
+                                    >
+                                        {dataPieChart.map((entry, index) => (
+                                            <Cell
+                                                className="outline-0"
+                                                strokeWidth={0}
+                                                key={`cell-${index}`}
+                                                fill={pieChartColors[index]}
+                                            />
+                                        ))}
+                                    </Pie>
+                                </PieChart>
+                            </ResponsiveContainer> */}
+                            <span>pepe</span>
+                        </div>
+                        <div className="flex self-stretch justify-between border-t-2 py-3">
+                            <div>
+                                <p>(Wednesday 31) Biweekly payroll</p>
+                                <p>(Monday 15) Water Bill</p>
+                                <p>(Monday 1) Valentin’s Gift</p>
+                            </div>
+                            <div className="text-end">
+                                <p className="text-custom-accent">RD$15000</p>
+                                <p className="text-custom-accent">RD$3500</p>
+                                <p className="text-custom-accent">RD$5000</p>
+                            </div>
+                        </div>
+                        <MoreDots section="/budget" />
                     </div>
                     <div className="row-span-4 infoContainer1">
                         <p>Saving Goals</p>
