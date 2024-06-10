@@ -46,16 +46,16 @@ body {
 
 @layer base {
     h1 {
-        @apply font-bold font-title text-5xl;
+        @apply font-bold font-title text-5xl text-white;
     }
     h2 {
-        @apply font-semibold font-title text-4xl;
+        @apply font-semibold font-title text-4xl text-white;
     }
     h3 {
-        @apply font-normal font-body text-2xl;
+        @apply font-normal font-body text-2xl text-white;
     }
     p {
-        @apply font-body text-sm;
+        @apply font-body text-sm text-white;
     }
     .infoContainer1 {
         @apply rounded-xl bg-custom-ly1 px-6 py-5;
