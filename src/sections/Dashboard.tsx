@@ -3,21 +3,9 @@ import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import SectionContent from "../components/SectionContent";
 import MoreDots from "../components/MoreDots";
-// import {
-//     Line,
-//     LineChart,
-//     CartesianGrid,
-//     ResponsiveContainer,
-//     Tooltip,
-//     XAxis,
-//     YAxis,
-//     PieChart,
-//     Pie,
-//     Cell,
-//     PolarAngleAxis,
-//     PolarGrid,
-// } from "recharts";
 import { LineChart, markElementClasses } from "@mui/x-charts/LineChart";
+import { PieChart } from "@mui/x-charts/PieChart";
+import { gradientColors } from "../components/Colors";
 
 const dataLineChart = [
     {
@@ -82,57 +70,28 @@ const dataLineChart = [
     },
 ];
 
-// const dataPieChart = [
-//     {
-//         name: "Group A",
-//         value: 400,
-//     },
-//     {
-//         name: "Group B",
-//         value: 300,
-//     },
-//     {
-//         name: "Group C",
-//         value: 300,
-//     },
-//     {
-//         name: "Group D",
-//         value: 200,
-//     },
-//     {
-//         name: "Group E",
-//         value: 278,
-//     },
-// ];
-
-// const pieChartColors = ["#D2EBE5", "#99CCBC", "#56A98F", "#336656", "#24433A"];
-
-// const customXTick = ({ x, y, payload }: any) => (
-//     <g transform={`translate(${x},${y})`}>
-//         <text dy={12} textAnchor="middle" fill="#DACEAF" fontFamily="karla" fontSize={"0.9rem"}>
-//             {payload.value}
-//         </text>
-//     </g>
-// );
-
-// const customYTick = ({ x, y, payload }: any) => (
-//     <g transform={`translate(${x},${y})`}>
-//         <text dy={2} textAnchor="end" fill="#DACEAF" fontFamily="karla" fontSize={"0.8rem"}>
-//             {payload.value}
-//         </text>
-//     </g>
-// );
-
-// const customTooltip = ({ active, payload }: any) => {
-//     if (active && payload && payload.length) {
-//         return (
-//             <div className="bg-white bg-opacity-20 p-2">
-//                 <p>Income: RD${payload[0].value}</p>
-//                 <p>Expense: RD${payload[1].value}</p>
-//             </div>
-//         );
-//     }
-// };
+const dataPieChart = [
+    {
+        label: "Food",
+        value: 1000,
+    },
+    {
+        label: "Food",
+        value: 400,
+    },
+    {
+        label: "Food",
+        value: 200,
+    },
+    {
+        label: "Food",
+        value: 300,
+    },
+    {
+        label: "Food",
+        value: 500,
+    },
+];
 
 export default function Dashboard() {
     return (
@@ -141,7 +100,7 @@ export default function Dashboard() {
             <SectionContent>
                 <Header currentSection="Dashboard" />
                 <div className="flex-1 grid grid-cols-2 grid-rows-9 grid-flow-col gap-9">
-                    <div className="row-span-4 infoContainer1 flex flex-col items-center justify-between">
+                    <div className="row-span-4 infoContainer1">
                         <p>January Income</p>
                         <h1 className="font-light">RD$50000</h1>
                         <div className="flex self-stretch justify-between border-t-2 py-3">
@@ -158,25 +117,18 @@ export default function Dashboard() {
                         </div>
                         <MoreDots section="/budget" />
                     </div>
-                    <div className="row-start-5 row-span-5 infoContainer2 flex flex-col items-center justify-between">
+                    <div className="row-start-5 row-span-5 infoContainer2">
                         <p>2024 Summary</p>
 
                         <div className="w-full flex-1 flex items-center">
-                            {/* <ResponsiveContainer height={"80%"}>
-                                <LineChart
-                                    data={dataLineChart}
-                                    margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-                                >
-                                    <XAxis dataKey="name" tick={customXTick} />
-                                    <YAxis tick={customYTick} />
-                                    <CartesianGrid strokeDasharray="3 3" />
-                                    <Tooltip content={customTooltip} />
-                                    <Line type="linear" dataKey="inc" stroke="#78d2b5" strokeWidth={2} />
-                                    <Line type="linear" dataKey="exp" stroke="#d96533" strokeWidth={2} />
-                                </LineChart>
-                            </ResponsiveContainer> */}
                             <LineChart
-                                xAxis={[{ dataKey: "name", scaleType: "point" }]}
+                                margin={{ left: 50, right: 11, top: 25 }}
+                                xAxis={[
+                                    {
+                                        dataKey: "name",
+                                        scaleType: "point",
+                                    },
+                                ]}
                                 yAxis={[{ min: 10000 }]}
                                 series={[
                                     {
@@ -202,6 +154,11 @@ export default function Dashboard() {
                                         fill: "#394942",
                                         strokeWidth: 2,
                                     },
+                                    "& .MuiChartsAxisHighlight-root": {
+                                        stroke: "white",
+                                        strokeDasharray: 0,
+                                        strokeOpacity: 0.6,
+                                    },
                                 }}
                             />
                         </div>
@@ -209,38 +166,46 @@ export default function Dashboard() {
                         <div className="flex gap-6">
                             <div className="flex flex-col items-center gap-1">
                                 <div className={` w-2 h-2 rounded-full border-2 border-[#78d2b5]`}></div>
-                                <p className="text-custom-accent">Income</p>
+                                <p>Income</p>
                             </div>
 
                             <div className="flex flex-col items-center gap-1">
                                 <div className={` w-2 h-2 rounded-full border-2 border-[#d96533]`}></div>
-                                <p className="text-custom-accent">Expense</p>
+                                <p>Expense</p>
                             </div>
                         </div>
                     </div>
-                    <div className="row-span-5 infoContainer2 flex flex-col items-center justify-between">
+                    <div className="row-span-5 infoContainer2">
                         <p>January Expenses</p>
-                        <div className="w-full flex-1 flex items-center">
-                            {/* <ResponsiveContainer>
-                                <PieChart>
-                                    <Pie
-                                        data={dataPieChart}
-                                        dataKey="value"
-                                        nameKey="name"
-                                        innerRadius={47}
-                                    >
-                                        {dataPieChart.map((entry, index) => (
-                                            <Cell
-                                                className="outline-0"
-                                                strokeWidth={0}
-                                                key={`cell-${index}`}
-                                                fill={pieChartColors[index]}
-                                            />
-                                        ))}
-                                    </Pie>
-                                </PieChart>
-                            </ResponsiveContainer> */}
-                            <span>pepe</span>
+                        <div className="w-full flex-1 flex items-center justify-center">
+                            <div className="min-w-72 h-full relative">
+                                <PieChart
+                                    colors={[
+                                        gradientColors[0],
+                                        gradientColors[1],
+                                        gradientColors[2],
+                                        gradientColors[3],
+                                        gradientColors[4],
+                                    ]}
+                                    margin={{ left: 0, right: 0 }}
+                                    series={[
+                                        {
+                                            data: dataPieChart,
+                                            innerRadius: 80,
+                                            outerRadius: 130,
+                                            paddingAngle: 2,
+                                            cornerRadius: 3,
+                                        },
+                                    ]}
+                                    slotProps={{ legend: { hidden: true } }}
+                                    sx={{ "& .MuiPieArc-root": { strokeWidth: 0 } }}
+                                    tooltip={{ trigger: "none" }}
+                                ></PieChart>
+                                <p className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                                    PepeDentro
+                                </p>
+                            </div>
+                            <p className="">pepe</p>
                         </div>
                         <div className="flex self-stretch justify-between border-t-2 py-3">
                             <div>
@@ -254,7 +219,7 @@ export default function Dashboard() {
                                 <p className="text-custom-accent">RD$5000</p>
                             </div>
                         </div>
-                        <MoreDots section="/budget" />
+                        <MoreDots section="/expenses" />
                     </div>
                     <div className="row-span-4 infoContainer1">
                         <p>Saving Goals</p>
