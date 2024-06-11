@@ -17,8 +17,8 @@
     line-height: 1.5;
     font-weight: 400;
 
-    color-scheme: light dark;
-    color: rgb(255, 255, 255);
+    /* color-scheme: light dark; */
+    color: rgba(255, 255, 255, 0.836);
     background-color: #242424;
 
     font-synthesis: none;
@@ -55,14 +55,23 @@ body {
         @apply font-normal font-body text-2xl text-white;
     }
     p {
-        @apply font-body text-sm text-white;
+        @apply font-body text-sm;
     }
     .infoContainer1 {
-        @apply rounded-xl bg-custom-ly1 px-6 py-5;
+        @apply rounded-xl bg-custom-ly1 px-6 py-5 flex flex-col items-center justify-between;
     }
     .infoContainer2 {
-        @apply rounded-xl bg-custom-ly2 px-6 py-5;
+        @apply rounded-xl bg-custom-ly2 px-6 py-5 flex flex-col items-center justify-between;
     }
+}
+
+.MuiChartsTooltip-root {
+    opacity: 0.9;
+}
+
+.MuiChartsAxis-tickLabel {
+    fill: #daceaf !important;
+    font-family: "karla" !important;
 }
 
 .infoContainer1 {
@@ -86,17 +95,4 @@ button:hover {
 button:focus,
 button:focus-visible {
     outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-    :root {
-        color: #213547;
-        background-color: #ffffff;
-    }
-    a:hover {
-        color: #747bff;
-    }
-    button {
-        background-color: #f9f9f9;
-    }
 }
