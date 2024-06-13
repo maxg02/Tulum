@@ -63,6 +63,9 @@ body {
     .infoContainer2 {
         @apply rounded-xl bg-custom-ly2 px-6 py-5 flex flex-col items-center justify-between;
     }
+    .stroke-icon path {
+        @apply stroke-custom-primary stroke-[20px];
+    }
 }
 
 .MuiChartsTooltip-root {
