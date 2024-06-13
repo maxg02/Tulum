@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import SectionContent from "../components/SectionContent";
@@ -95,6 +95,8 @@ const dataPieChart = [
 ];
 
 export default function Dashboard() {
+    const [highlightedValue, setHighlightedValue] = useState();
+
     return (
         <div className="flex flex-1 gap-8">
             <Sidebar currentSection="Dashboard" />
@@ -192,9 +194,9 @@ export default function Dashboard() {
                                         {
                                             data: dataPieChart,
                                             innerRadius: 70,
-
                                             paddingAngle: 2,
                                             cornerRadius: 3,
+                                            highlightScope: { fade: "global", highlight: "item" },
                                         },
                                     ]}
                                     slotProps={{ legend: { hidden: true } }}
