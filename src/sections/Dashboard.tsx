@@ -6,6 +6,7 @@ import MoreDots from "../components/MoreDots";
 import { LineChart, markElementClasses } from "@mui/x-charts/LineChart";
 import { PieChart } from "@mui/x-charts/PieChart";
 import { gradientColors } from "../components/Colors";
+import DiamondList from "../components/DiamonList";
 
 const dataLineChart = [
     {
@@ -99,7 +100,7 @@ export default function Dashboard() {
             <Sidebar currentSection="Dashboard" />
             <SectionContent>
                 <Header currentSection="Dashboard" />
-                <div className="flex-1 grid grid-cols-2 grid-rows-9 grid-flow-col gap-9">
+                <div className="flex-1 grid grid-cols-2 grid-rows-12 grid-flow-col overflow-hidden gap-9">
                     <div className="row-span-4 infoContainer1">
                         <p>January Income</p>
                         <h1 className="font-light">RD$50000</h1>
@@ -117,10 +118,9 @@ export default function Dashboard() {
                         </div>
                         <MoreDots section="/budget" />
                     </div>
-                    <div className="row-start-5 row-span-5 infoContainer2">
+                    <div className="row-start-5 row-span-8 infoContainer2">
                         <p>2024 Summary</p>
-
-                        <div className="w-full flex-1 flex items-center">
+                        <div className="w-full flex-1 flex items-center py-4">
                             <LineChart
                                 margin={{ left: 50, right: 11, top: 25 }}
                                 xAxis={[
@@ -175,10 +175,10 @@ export default function Dashboard() {
                             </div>
                         </div>
                     </div>
-                    <div className="row-span-5 infoContainer2">
+                    <div className="row-span-6 infoContainer2">
                         <p>January Expenses</p>
-                        <div className="w-full flex-1 flex items-center justify-center">
-                            <div className="min-w-72 h-full relative">
+                        <div className="w-full flex-1 flex items-center justify-center gap-x-14">
+                            <div className="min-w-72 h-full relative py-3">
                                 <PieChart
                                     colors={[
                                         gradientColors[0],
@@ -191,8 +191,8 @@ export default function Dashboard() {
                                     series={[
                                         {
                                             data: dataPieChart,
-                                            innerRadius: 80,
-                                            outerRadius: 130,
+                                            innerRadius: 70,
+
                                             paddingAngle: 2,
                                             cornerRadius: 3,
                                         },
@@ -201,11 +201,19 @@ export default function Dashboard() {
                                     sx={{ "& .MuiPieArc-root": { strokeWidth: 0 } }}
                                     tooltip={{ trigger: "none" }}
                                 ></PieChart>
-                                <p className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                                    PepeDentro
-                                </p>
+                                <h2 className="font-light text-2xl absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                                    RD$16000
+                                </h2>
                             </div>
-                            <p className="">pepe</p>
+                            <DiamondList
+                                items={[
+                                    "Food",
+                                    "Transport",
+                                    "House/Utilities",
+                                    "Personal/Medical",
+                                    "Others",
+                                ]}
+                            />
                         </div>
                         <div className="flex self-stretch justify-between border-t-2 py-3">
                             <div>
@@ -221,7 +229,7 @@ export default function Dashboard() {
                         </div>
                         <MoreDots section="/expenses" />
                     </div>
-                    <div className="row-span-4 infoContainer1">
+                    <div className="row-span-6 infoContainer1">
                         <p>Saving Goals</p>
                     </div>
                 </div>
