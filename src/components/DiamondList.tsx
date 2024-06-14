@@ -19,7 +19,7 @@ function DiamondList({
 }) {
     const ListItems = () =>
         items.map((item, key) => (
-            <li className={`flex gap-x-3 items-center mb-1 last:mb-0 text-lg`}>
+            <li className={`flex gap-x-3 items-center mb-2 last:mb-0 text-lg`}>
                 <FontAwesomeIcon
                     className={`${
                         key === highlightedItem?.dataIndex ? "text-custom-accent" : textColorClasses[key]
