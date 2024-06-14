@@ -201,13 +201,23 @@ export default function Dashboard() {
                                             cornerRadius: 3,
                                             highlightScope: { fade: "global", highlight: "item" },
                                             faded: { color: "gray", additionalRadius: -5 },
+                                            valueFormatter: (value) => `RD$${value.value}`,
                                         },
                                     ]}
                                     highlightedItem={highlightedValue}
                                     onHighlightChange={setHighlightedValue}
                                     slotProps={{ legend: { hidden: true } }}
-                                    sx={{ "& .MuiPieArc-root": { strokeWidth: 0 } }}
-                                    tooltip={{}}
+                                    sx={{
+                                        "& .MuiPieArc-root": { strokeWidth: 0 },
+                                    }}
+                                    tooltip={{
+                                        trigger: "item",
+                                        classes: {
+                                            labelCell: "hidden",
+                                            valueCell: "ml-3 p-3",
+                                            markCell: "pl-3 pr-0",
+                                        },
+                                    }}
                                 ></PieChart>
                                 <h2 className="font-light text-lg absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                                     RD$16000
