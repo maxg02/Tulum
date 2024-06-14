@@ -79,23 +79,23 @@ interface pieChartSlice {
 const dataPieChart: pieChartSlice[] = [
     {
         label: "Food",
-        value: 1000,
+        value: 20000,
     },
     {
         label: "Transport",
-        value: 400,
+        value: 2000,
     },
     {
         label: "House/Utilities",
-        value: 200,
+        value: 14000,
     },
     {
         label: "Personal/Medical",
-        value: 500,
+        value: 12000,
     },
     {
         label: "Others",
-        value: 500,
+        value: 2500,
     },
 ];
 
