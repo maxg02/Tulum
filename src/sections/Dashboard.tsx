@@ -71,7 +71,12 @@ const dataLineChart = [
     },
 ];
 
-const dataPieChart = [
+interface pieChartSlice {
+    label: string;
+    value: number;
+}
+
+const dataPieChart: pieChartSlice[] = [
     {
         label: "Food",
         value: 1000,
@@ -86,7 +91,7 @@ const dataPieChart = [
     },
     {
         label: "Personal/Medical",
-        value: 300,
+        value: 500,
     },
     {
         label: "Others",
@@ -220,17 +225,16 @@ export default function Dashboard() {
                                     }}
                                 ></PieChart>
                                 <h2 className="font-light text-lg absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                                    RD$16000
+                                    {`RD$${
+                                        dataPieChart.reduce((acc, currentValue) => ({
+                                            ...currentValue,
+                                            value: acc.value + currentValue.value,
+                                        })).value
+                                    }`}
                                 </h2>
                             </div>
                             <DiamondList
-                                items={[
-                                    "Food",
-                                    "Transport",
-                                    "House/Utilities",
-                                    "Personal/Medical",
-                                    "Others",
-                                ]}
+                                items={dataPieChart.map((x) => x.label)}
                                 highlightedItem={highlightedValue}
                             />
                         </div>
