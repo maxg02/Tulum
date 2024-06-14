@@ -14,7 +14,7 @@ function DiamondList({
     items,
     highlightedItem,
 }: {
-    items: [string, string, string, string, string];
+    items: string[];
     highlightedItem: { dataIndex: number; seriesId: string } | undefined | null;
 }) {
     const ListItems = () =>
