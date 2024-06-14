@@ -7,6 +7,8 @@ import { LineChart, markElementClasses } from "@mui/x-charts/LineChart";
 import { PieChart } from "@mui/x-charts/PieChart";
 import { gradientColors } from "../components/Colors";
 import DiamondList from "../components/DiamondList";
+import { Gauge } from "@mui/x-charts/Gauge";
+import CustomGauge from "../components/CustomGauge";
 
 const dataLineChart = [
     {
@@ -209,7 +211,6 @@ export default function Dashboard() {
                                             valueFormatter: (value) => `RD$${value.value}`,
                                         },
                                     ]}
-                                    highlightedItem={highlightedValue}
                                     onHighlightChange={setHighlightedValue}
                                     slotProps={{ legend: { hidden: true } }}
                                     sx={{
@@ -254,6 +255,28 @@ export default function Dashboard() {
                     </div>
                     <div className="row-span-5 infoContainer1">
                         <p>Saving Goals</p>
+                        <div className="w-full flex-1 flex items-center justify-evenly py-9 gap-x-9">
+                            <div className=" h-full flex flex-col items-center w-44">
+                                <div className="flex-1 w-full mb-2">
+                                    <Gauge value={60} />
+                                </div>
+                                <p>House</p>
+                            </div>
+                            <div className=" h-full flex flex-col items-center w-44">
+                                <div className="flex-1 w-full mb-2">
+                                    <Gauge value={60} />
+                                </div>
+                                <p>House</p>
+                            </div>
+                            <div className=" h-full flex flex-col items-center w-44">
+                                <div className="flex-1 w-full mb-2">
+                                    <CustomGauge />
+                                </div>
+                                <p>House</p>
+                            </div>
+                        </div>
+
+                        <MoreDots section="/expenses" />
                     </div>
                 </div>
             </SectionContent>
