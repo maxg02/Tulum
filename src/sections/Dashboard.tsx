@@ -6,7 +6,7 @@ import MoreDots from "../components/MoreDots";
 import { LineChart, markElementClasses } from "@mui/x-charts/LineChart";
 import { PieChart } from "@mui/x-charts/PieChart";
 import { gradientColors } from "../components/Colors";
-import DiamondList from "../components/DiamonList";
+import DiamondList from "../components/DiamondList";
 
 const dataLineChart = [
     {
@@ -77,25 +77,27 @@ const dataPieChart = [
         value: 1000,
     },
     {
-        label: "Food",
+        label: "Transport",
         value: 400,
     },
     {
-        label: "Food",
+        label: "House/Utilities",
         value: 200,
     },
     {
-        label: "Food",
+        label: "Personal/Medical",
         value: 300,
     },
     {
-        label: "Food",
+        label: "Others",
         value: 500,
     },
 ];
 
 export default function Dashboard() {
-    const [highlightedValue, setHighlightedValue] = useState();
+    const [highlightedValue, setHighlightedValue] = useState(null);
+
+    console.log(highlightedValue);
 
     return (
         <div className="flex flex-1 gap-8">
@@ -193,15 +195,19 @@ export default function Dashboard() {
                                     series={[
                                         {
                                             data: dataPieChart,
+                                            id: "A",
                                             innerRadius: "65%",
                                             paddingAngle: 2,
                                             cornerRadius: 3,
                                             highlightScope: { fade: "global", highlight: "item" },
+                                            faded: { color: "gray", additionalRadius: -5 },
                                         },
                                     ]}
+                                    highlightedItem={highlightedValue}
+                                    onHighlightChange={setHighlightedValue}
                                     slotProps={{ legend: { hidden: true } }}
                                     sx={{ "& .MuiPieArc-root": { strokeWidth: 0 } }}
-                                    tooltip={{ trigger: "none" }}
+                                    tooltip={{}}
                                 ></PieChart>
                                 <h2 className="font-light text-lg absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                                     RD$16000
@@ -215,6 +221,7 @@ export default function Dashboard() {
                                     "Personal/Medical",
                                     "Others",
                                 ]}
+                                highlightedItem={highlightedValue}
                             />
                         </div>
                         <div className="flex self-stretch justify-between border-t-2 py-3">
