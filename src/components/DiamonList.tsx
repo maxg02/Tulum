@@ -13,12 +13,8 @@ const textColorClasses = [
 function DiamondList({ items }: { items: [string, string, string, string, string] }) {
     const ListItems = () =>
         items.map((item, key) => (
-            <li className={`flex gap-x-3 items-center mb-3 last:mb-0 text-xl`}>
-                <FontAwesomeIcon
-                    size="lg"
-                    className={`${textColorClasses[key]} stroke-icon`}
-                    icon={faDiamond}
-                />
+            <li className={`flex gap-x-3 items-center mb-1 last:mb-0 text-lg`}>
+                <FontAwesomeIcon className={`${textColorClasses[key]} stroke-icon`} icon={faDiamond} />
                 <p className="text-sm">{item}</p>
             </li>
         ));

@@ -46,22 +46,22 @@ body {
 
 @layer base {
     h1 {
-        @apply font-bold font-title text-5xl text-white;
+        @apply font-bold font-title text-white;
     }
     h2 {
-        @apply font-semibold font-title text-4xl text-white;
+        @apply font-semibold font-title text-white;
     }
     h3 {
-        @apply font-normal font-body text-2xl text-white;
+        @apply font-normal font-body text-white;
     }
     p {
         @apply font-body text-sm;
     }
     .infoContainer1 {
-        @apply rounded-xl bg-custom-ly1 px-6 py-5 flex flex-col items-center justify-between;
+        @apply rounded-xl bg-custom-ly1 px-6 py-5 flex flex-col items-center justify-between overflow-hidden;
     }
     .infoContainer2 {
-        @apply rounded-xl bg-custom-ly2 px-6 py-5 flex flex-col items-center justify-between;
+        @apply rounded-xl bg-custom-ly2 px-6 py-5 flex flex-col items-center justify-between overflow-hidden;
     }
     .stroke-icon path {
         @apply stroke-custom-primary stroke-[20px];
