@@ -20,11 +20,16 @@ function DiamondList({
     const ListItems = () =>
         items.map((item, key) => (
             <li className={`flex gap-x-3 items-center mb-1 last:mb-0 text-lg`}>
-                <FontAwesomeIcon className={`${textColorClasses[key]} stroke-icon`} icon={faDiamond} />
+                <FontAwesomeIcon
+                    className={`${
+                        key === highlightedItem?.dataIndex ? "text-custom-accent" : textColorClasses[key]
+                    } stroke-icon`}
+                    icon={faDiamond}
+                />
                 <p
-                    className={`text-sm ${
-                        key === highlightedItem?.dataIndex ? "text-custom-accent font-bold" : ""
-                    }`}
+                    className={`${
+                        key === highlightedItem?.dataIndex ? "text-custom-accent" : ""
+                    } text-sm`}
                 >
                     {item}
                 </p>
