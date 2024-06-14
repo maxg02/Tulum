@@ -10,12 +10,24 @@ const textColorClasses = [
     "text-gradient-5",
 ];
 
-function DiamondList({ items }: { items: [string, string, string, string, string] }) {
+function DiamondList({
+    items,
+    highlightedItem,
+}: {
+    items: [string, string, string, string, string];
+    highlightedItem: { dataIndex: number; seriesId: string } | undefined | null;
+}) {
     const ListItems = () =>
         items.map((item, key) => (
             <li className={`flex gap-x-3 items-center mb-1 last:mb-0 text-lg`}>
                 <FontAwesomeIcon className={`${textColorClasses[key]} stroke-icon`} icon={faDiamond} />
-                <p className="text-sm">{item}</p>
+                <p
+                    className={`text-sm ${
+                        key === highlightedItem?.dataIndex ? "text-custom-accent font-bold" : ""
+                    }`}
+                >
+                    {item}
+                </p>
             </li>
         ));
 
