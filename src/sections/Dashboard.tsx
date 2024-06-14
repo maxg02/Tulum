@@ -110,7 +110,7 @@ export default function Dashboard() {
             <SectionContent>
                 <Header currentSection="Dashboard" />
                 <div className="flex-1 grid grid-cols-2 grid-rows-12 grid-flow-col overflow-hidden gap-9">
-                    <div className="row-span-5 infoContainer1">
+                    <div className="row-span-4 infoContainer1">
                         <p>January Income</p>
                         <h1 className="font-light text-5xl">RD$50000</h1>
                         <div className="flex self-stretch justify-between border-t-2 py-3">
@@ -127,9 +127,9 @@ export default function Dashboard() {
                         </div>
                         <MoreDots section="/budget" />
                     </div>
-                    <div className="row-start-6 row-span-7 infoContainer2">
+                    <div className="row-start-5 row-span-8 infoContainer2">
                         <p>2024 Summary</p>
-                        <div className="w-full flex-1 flex items-center py-2">
+                        <div className="w-full flex-1 flex items-center py-7">
                             <LineChart
                                 margin={{ left: 50, right: 11, top: 25 }}
                                 xAxis={[
@@ -187,7 +187,7 @@ export default function Dashboard() {
                     <div className="row-span-7 infoContainer2">
                         <p>January Expenses</p>
                         <div className="w-full flex-1 flex items-center justify-center py-3 gap-x-9">
-                            <div className="w-44 h-full relative">
+                            <div className="w-80 h-full relative">
                                 <PieChart
                                     colors={[
                                         gradientColors[0],
