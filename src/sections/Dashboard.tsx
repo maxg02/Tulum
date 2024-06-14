@@ -224,7 +224,7 @@ export default function Dashboard() {
                                         },
                                     }}
                                 ></PieChart>
-                                <h2 className="font-light text-lg absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                                <h2 className="font-light text-3xl absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                                     {`RD$${
                                         dataPieChart.reduce((acc, currentValue) => ({
                                             ...currentValue,
