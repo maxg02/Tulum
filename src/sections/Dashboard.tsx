@@ -258,19 +258,19 @@ export default function Dashboard() {
                         <div className="w-full flex-1 flex items-center justify-evenly py-9 gap-x-9">
                             <div className=" h-full flex flex-col items-center w-44">
                                 <div className="flex-1 w-full mb-2">
-                                    <Gauge value={60} />
+                                    <CustomGauge value={30} />
                                 </div>
                                 <p>House</p>
                             </div>
                             <div className=" h-full flex flex-col items-center w-44">
                                 <div className="flex-1 w-full mb-2">
-                                    <Gauge value={60} />
+                                    <CustomGauge value={10} />
                                 </div>
                                 <p>House</p>
                             </div>
                             <div className=" h-full flex flex-col items-center w-44">
                                 <div className="flex-1 w-full mb-2">
-                                    <CustomGauge />
+                                    <CustomGauge value={40} />
                                 </div>
                                 <p>House</p>
                             </div>
