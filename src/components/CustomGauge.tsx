@@ -1,46 +1,34 @@
 import { Gauge, useGaugeState, gaugeClasses } from "@mui/x-charts/Gauge";
 import React from "react";
+import { v4 as id } from "uuid";
 import { basicColors } from "../components/Colors";
 
 function CustomGauge({ value }: { value: number }) {
     const GaugeGradient = () => {
-        const { cx, cy, outerRadius, innerRadius, valueAngle, maxRadius } = useGaugeState();
+        const { cx, cy, outerRadius, innerRadius, maxRadius } = useGaugeState();
+
+        const gradientValue = value! * 4 > 100 ? 100 : value! * 4;
+        const gradientHeight = maxRadius * (gradientValue / 100);
 
         return (
             <g>
                 <defs>
-                    <clipPath id="cut-bottom">
-                        <rect
-                            x={cx}
-                            y={cy - maxRadius}
-                            width={maxRadius}
-                            height={cy - outerRadius * Math.cos(valueAngle)}
-                            id={`${valueAngle}`}
-                        />
-                    </clipPath>
                     <mask id="inner-mask">
                         <rect
                             x={cx}
                             y={cy - maxRadius}
                             width={maxRadius}
-                            height={maxRadius * 2}
+                            height={gradientHeight}
                             fill="white"
                         />
                         <circle cx={cx} cy={cy} r={innerRadius} fill="black" />
                     </mask>
-                    <linearGradient id="gradient" x1="0" y1="0.90" x2="0" y2="-0.50">
+                    <linearGradient id="gradient" x1="0" y1="0.50" x2="0" y2="-0.20">
                         <stop stop-color={basicColors.secondary} offset="0%"></stop>
                         <stop stop-color={basicColors.accent} offset="50%"></stop>
                     </linearGradient>
                 </defs>
-                <circle
-                    cx={cx}
-                    cy={cy}
-                    r={outerRadius}
-                    fill="url(#gradient)"
-                    clipPath="url(#cut-bottom)"
-                    mask="url(#inner-mask)"
-                />
+                <circle cx={cx} cy={cy} r={outerRadius} fill={"red"} mask="url(#inner-mask)" />
             </g>
         );
     };
@@ -57,7 +45,7 @@ function CustomGauge({ value }: { value: number }) {
                     },
                 }}
             >
-                <GaugeGradient />
+                <GaugeGradient key={id()} />
             </Gauge>
         </div>
     );
