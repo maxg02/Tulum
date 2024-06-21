@@ -8,7 +8,7 @@ export type SectionUrl = "/" | "/budget" | "/expenses" | "/savings";
 function MoreDots({ section }: { section: SectionUrl }) {
     return (
         <Link to={section}>
-            <div className="text-xs flex gap-x-2 text-custom-accent">
+            <div className="text-xs flex gap-x-2 text-custom-accent p-1">
                 <FontAwesomeIcon icon={faDiamond} size="xs" />
                 <FontAwesomeIcon icon={faDiamond} size="xs" />
                 <FontAwesomeIcon icon={faDiamond} size="xs" />
