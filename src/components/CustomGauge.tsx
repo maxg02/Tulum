@@ -1,34 +1,73 @@
 import { Gauge, useGaugeState, gaugeClasses } from "@mui/x-charts/Gauge";
-import React from "react";
+import React, { useEffect } from "react";
 import { v4 as id } from "uuid";
 import { basicColors } from "../components/Colors";
 
 function CustomGauge({ value }: { value: number }) {
-    const GaugeGradient = () => {
-        const { cx, cy, outerRadius, innerRadius, maxRadius } = useGaugeState();
+    const gradientClipId = id();
+    const maskClipId = id();
 
-        const gradientValue = value! * 4 > 100 ? 100 : value! * 4;
-        const gradientHeight = maxRadius * (gradientValue / 100);
+    const GaugeGradient = () => {
+        const { cx, cy, outerRadius, innerRadius, maxRadius, valueAngle, startAngle } = useGaugeState();
+        const valueAngle50 = valueAngle! > Math.PI ? Math.PI : valueAngle!;
+
+        const target = {
+            xo: cx + outerRadius * Math.sin(valueAngle50),
+            yo: cy - outerRadius * Math.cos(valueAngle50),
+            xi: cx + innerRadius * Math.sin(valueAngle50),
+            yi: cy - innerRadius * Math.cos(valueAngle50),
+            xso: cx + outerRadius * Math.sin(startAngle!),
+            yso: cy - outerRadius * Math.cos(startAngle!),
+            xsi: cx + innerRadius * Math.sin(startAngle!),
+            ysi: cy - innerRadius * Math.cos(startAngle!),
+        };
+
+        return (
+            <g>
+                <clipPath id={gradientClipId}>
+                    <path
+                        d={`M ${target.xi} ${target.yi} L ${target.xo} ${target.yo} A ${outerRadius} ${outerRadius} 0 0 0 ${target.xso} ${target.yso} L ${target.xsi} ${target.ysi} A ${innerRadius} ${innerRadius} 0 0 1 ${target.xi} ${target.yi}`}
+                    />
+                </clipPath>
+
+                <foreignObject
+                    x={cx - maxRadius}
+                    y={cy - maxRadius}
+                    width={maxRadius * 2}
+                    height={maxRadius * 2}
+                    clip-path={`url(#${gradientClipId})`}
+                >
+                    <div
+                        className="h-full w-full bg-red-500 rounded-full"
+                        style={{
+                            backgroundImage: `conic-gradient(${basicColors.accent} 0%, ${basicColors.secondary} 50%)`,
+                        }}
+                    />
+                </foreignObject>
+            </g>
+        );
+    };
+
+    const GaugeInnerBorder = () => {
+        const { cx, cy, innerRadius } = useGaugeState();
 
         return (
             <g>
                 <defs>
-                    <mask id="inner-mask">
-                        <rect
-                            x={cx}
-                            y={cy - maxRadius}
-                            width={maxRadius}
-                            height={gradientHeight}
-                            fill="white"
-                        />
-                        <circle cx={cx} cy={cy} r={innerRadius} fill="black" />
+                    <mask id={maskClipId}>
+                        <circle cx={cx} cy={cy} r={innerRadius} fill="white" />
                     </mask>
-                    <linearGradient id="gradient" x1="0" y1="0.50" x2="0" y2="-0.20">
-                        <stop stop-color={basicColors.secondary} offset="0%"></stop>
-                        <stop stop-color={basicColors.accent} offset="50%"></stop>
-                    </linearGradient>
                 </defs>
-                <circle cx={cx} cy={cy} r={outerRadius} fill={"red"} mask="url(#inner-mask)" />
+
+                <circle
+                    cx={cx}
+                    cy={cy}
+                    r={innerRadius}
+                    stroke={basicColors.primary}
+                    strokeWidth={10}
+                    mask={`url(#${maskClipId})`}
+                    fill="transparent"
+                />
             </g>
         );
     };
@@ -38,15 +77,18 @@ function CustomGauge({ value }: { value: number }) {
             <Gauge
                 value={value}
                 innerRadius={"65%"}
-                classes={{ referenceArc: "fill-[#343F3A]", valueArc: "fill-[#69AA95]" }}
-                sx={{
-                    [`& ${gaugeClasses.valueArc} `]: {
-                        fill: "red",
-                    },
+                classes={{
+                    referenceArc: "fill-[#343F3A]",
+                    valueArc: "fill-[#69AA95]",
+                    valueText: "hidden",
                 }}
             >
-                <GaugeGradient key={id()} />
+                <GaugeGradient />
+                <GaugeInnerBorder />
             </Gauge>
+            <p className="text-custom-accent text-base absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                25%
+            </p>
         </div>
     );
 }
