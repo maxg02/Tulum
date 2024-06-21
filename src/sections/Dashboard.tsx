@@ -182,7 +182,7 @@ export default function Dashboard() {
 
                             <div className="flex flex-col items-center gap-1">
                                 <div className={` w-2 h-2 rounded-full border-2 border-[#d96533]`}></div>
-                                <p>Expense</p>
+                                <p>Expenses</p>
                             </div>
                         </div>
                     </div>
@@ -258,25 +258,25 @@ export default function Dashboard() {
                         <div className="w-full flex-1 flex items-center justify-evenly py-9 gap-x-9">
                             <div className=" h-full flex flex-col items-center w-44">
                                 <div className="flex-1 w-full mb-2">
-                                    <CustomGauge key={1} value={25} />
+                                    <CustomGauge value={86} />
                                 </div>
                                 <p>House</p>
                             </div>
                             <div className=" h-full flex flex-col items-center w-44">
                                 <div className="flex-1 w-full mb-2">
-                                    <CustomGauge key={2} value={40} />
+                                    <CustomGauge value={25} />
                                 </div>
-                                <p>House</p>
+                                <p>Car</p>
                             </div>
                             <div className=" h-full flex flex-col items-center w-44">
                                 <div className="flex-1 w-full mb-2">
-                                    <CustomGauge key={3} value={40} />
+                                    <CustomGauge value={40} />
                                 </div>
-                                <p>House</p>
+                                <p>University</p>
                             </div>
                         </div>
 
-                        <MoreDots section="/expenses" />
+                        <MoreDots section="/savings" />
                     </div>
                 </div>
             </SectionContent>
