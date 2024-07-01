@@ -1,5 +1,4 @@
-import { Gauge, useGaugeState, gaugeClasses } from "@mui/x-charts/Gauge";
-import React, { useEffect } from "react";
+import { Gauge, useGaugeState } from "@mui/x-charts/Gauge";
 import { v4 as id } from "uuid";
 import { basicColors } from "../components/Colors";
 
