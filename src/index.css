@@ -63,6 +63,15 @@ body {
     .infoContainer2 {
         @apply rounded-xl bg-custom-ly2 px-7 py-6 flex flex-col items-center justify-between overflow-hidden;
     }
+    .tableRow > * {
+        @apply text-start p-1;
+    }
+    .tableRow p {
+        @apply font-normal;
+    }
+    .tableButton {
+        @apply bg-transparent p-0 px-2 border-0 font-normal focus:outline-none outline-0 hover:text-custom-accent font-body text-sm;
+    }
     .stroke-icon path {
         @apply stroke-custom-primary stroke-[20px];
     }
