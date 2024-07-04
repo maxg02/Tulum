@@ -27,7 +27,9 @@ export default function Budget() {
                     </div>
                     <div className="row-span-6 infoContainer1">
                         <p>Budget Planning</p>
-                        <Table />
+                        <div className="flex items-center flex-1 w-full">
+                            <Table />
+                        </div>
                     </div>
                     <div className="row-span-7 infoContainer2"></div>
                     <div className="row-span-5 infoContainer2"></div>
