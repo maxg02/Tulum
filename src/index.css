@@ -64,7 +64,10 @@ body {
         @apply rounded-xl bg-custom-ly2 px-7 py-6 flex flex-col items-center justify-between overflow-hidden;
     }
     .tableRow > * {
-        @apply text-start p-1;
+        @apply text-start px-1 py-2;
+    }
+    .tableRow {
+        @apply border-b border-custom-ly2 border-opacity-35;
     }
     .tableRow p {
         @apply font-normal;
