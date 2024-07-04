@@ -1,34 +1,92 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSquareCaretDown } from "@fortawesome/free-regular-svg-icons";
 import {
     faAngleRight,
     faAngleLeft,
     faAngleDoubleRight,
     faAngleDoubleLeft,
     faEllipsis,
+    faPlus,
+    faXmark,
+    faSort,
+    faSortDown,
+    faSortUp,
 } from "@fortawesome/free-solid-svg-icons";
 
+type sortValues = "asc" | "desc" | null;
+
 function Table() {
-    const [FilterDropState, setFilterDropState] = useState(false);
+    // const [FilterDropState, setFilterDropState] = useState<boolean>(false);
+    const [DetailsSort, setDetailsSort] = useState<sortValues>(null);
+    const [AmountSort, setAmountSort] = useState<sortValues>(null);
+
+    const handleSortToggle = (
+        stateFunc: React.Dispatch<React.SetStateAction<sortValues>>,
+        stateVal: sortValues
+    ) => {
+        stateVal === null ? stateFunc("asc") : stateVal === "asc" ? stateFunc("desc") : stateFunc(null);
+    };
 
     return (
         <div className="flex flex-col w-full">
-            <button className="tableButton flex gap-x-5 mb-2 bg-custom-secondary self-start items-center py-1 px-2 rounded-md">
-                <p>Filters</p>
-                <FontAwesomeIcon icon={faSquareCaretDown} />
-            </button>
-
-            <div></div>
-
+            <div className="flex items-center mb-1 gap-x-3">
+                <button className="tableButton flex gap-x-2 p-0 items-center opacity-55 hover:opacity-100">
+                    <FontAwesomeIcon icon={faPlus} />
+                    <p>Add Filter</p>
+                </button>
+                <div className="bg-custom-ly2 px-3 py-1 rounded-md bg-opacity-70 flex items-center gap-x-2">
+                    <div className="flex gap-x-1">
+                        <p className="font-medium">Amount</p>
+                        <p> = </p>
+                        <p className="font-medium">RD$3500</p>
+                    </div>
+                    <button className="tableButton p-0">
+                        <FontAwesomeIcon icon={faXmark} className="text-custom-bg" />
+                    </button>
+                </div>
+            </div>
             <table>
-                <thead className="border-b border-custom-accent">
-                    <tr className="tableRow">
+                <thead>
+                    <tr className="tableRow border-b border-custom-accent">
                         <th>
-                            <p>Details</p>
+                            <div className="flex items-center gap-x-2">
+                                <p>Details</p>
+                                <button
+                                    className="tableButton p-0"
+                                    onClick={() => handleSortToggle(setDetailsSort, DetailsSort)}
+                                >
+                                    <FontAwesomeIcon
+                                        icon={
+                                            DetailsSort === null
+                                                ? faSort
+                                                : DetailsSort === "asc"
+                                                ? faSortUp
+                                                : faSortDown
+                                        }
+                                        className="text-xs"
+                                    />
+                                </button>
+                            </div>
                         </th>
                         <th>
-                            <p>Amount</p>
+                            <div className="flex items-center gap-x-2">
+                                <p>Amount</p>
+                                <button
+                                    className="tableButton p-0"
+                                    onClick={() => handleSortToggle(setAmountSort, AmountSort)}
+                                >
+                                    <FontAwesomeIcon
+                                        icon={
+                                            AmountSort === null
+                                                ? faSort
+                                                : AmountSort === "asc"
+                                                ? faSortUp
+                                                : faSortDown
+                                        }
+                                        className="text-xs"
+                                    />
+                                </button>
+                            </div>
                         </th>
                         <th>
                             <p>Periodicity</p>
@@ -93,14 +151,14 @@ function Table() {
                     </tr>
                 </tbody>
             </table>
-            <div className="flex justify-center py-1 border-t border-custom-accent">
+            <div className="flex justify-center py-2 border-t border-custom-accent">
                 <button className="tableButton">
                     <FontAwesomeIcon icon={faAngleDoubleLeft} />
                 </button>
                 <button className="tableButton">
                     <FontAwesomeIcon icon={faAngleLeft} />
                 </button>
-                <button className="tableButton">1</button>
+                <button className="tableButton text-custom-accent">1</button>
                 <button className="tableButton">2</button>
                 <button className="tableButton">3</button>
                 <button className="tableButton">4</button>
