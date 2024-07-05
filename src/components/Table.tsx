@@ -16,7 +16,7 @@ import {
 type sortValues = "asc" | "desc" | null;
 
 function Table() {
-    // const [FilterDropState, setFilterDropState] = useState<boolean>(false);
+    const [FilterDropState, setFilterDropState] = useState<boolean>(false);
     const [DetailsSort, setDetailsSort] = useState<sortValues>(null);
     const [AmountSort, setAmountSort] = useState<sortValues>(null);
 
@@ -27,18 +27,63 @@ function Table() {
         stateVal === null ? stateFunc("asc") : stateVal === "asc" ? stateFunc("desc") : stateFunc(null);
     };
 
+    const handleFilterDrop = () => {
+        FilterDropState ? setFilterDropState(false) : setFilterDropState(true);
+    };
+
     return (
         <div className="flex flex-col w-full">
             <div className="flex items-center mb-1 gap-x-3">
-                <button className="tableButton flex gap-x-2 p-0 items-center opacity-55 hover:opacity-100">
-                    <FontAwesomeIcon icon={faPlus} />
-                    <p>Add Filter</p>
-                </button>
+                <div>
+                    <button
+                        className="tableButton flex gap-x-2 p-0 items-center opacity-55 hover:opacity-100"
+                        onClick={handleFilterDrop}
+                    >
+                        <FontAwesomeIcon icon={faPlus} />
+                        <p>Add Filter</p>
+                    </button>
+
+                    <div
+                        className={`absolute border border-custom-ly2 border-opacity-80 bg-custom-ly1 shadow-[0_0_5px_0.2px_rgba(0,0,0,0.4)] mt-2 rounded-md p-3 ${
+                            FilterDropState ? "" : "hidden"
+                        }`}
+                    >
+                        <form className="filterForm">
+                            <div>
+                                <label>Details</label>
+                                <input className="flex-1" type="text" name="details" />
+                            </div>
+                            <div>
+                                <label>Amount</label>
+                                <input className="flex-1" type="range" name="amount" />
+                            </div>
+                            <div>
+                                <label>Periodicity</label>
+                                <select className="text-black flex-1" name="periodicity">
+                                    <option className="text-black" value="annual">
+                                        Annual
+                                    </option>
+                                    <option className="text-black" value="monthly">
+                                        Monthly
+                                    </option>
+                                    <option className="text-black" value="biweekly">
+                                        Biweekly
+                                    </option>
+                                    <option className="text-black" value="weekly">
+                                        Weekly
+                                    </option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                </div>
                 <div className="bg-custom-ly2 px-3 py-1 rounded-md bg-opacity-70 flex items-center gap-x-2">
                     <div className="flex gap-x-1">
                         <p className="font-medium">Amount</p>
-                        <p> = </p>
-                        <p className="font-medium">RD$3500</p>
+                        <p className="opacity-70"> Between </p>
+                        <p className="font-medium">RD$3000</p>
+                        <p className="opacity-70"> and </p>
+                        <p className="font-medium">RD$4000</p>
                     </div>
                     <button className="tableButton p-0">
                         <FontAwesomeIcon icon={faXmark} className="text-custom-bg" />
@@ -113,7 +158,7 @@ function Table() {
                             <p>RD$3500</p>
                         </td>
                         <td className="flex justify-between">
-                            <p>Anually</p>
+                            <p>Annual</p>
                         </td>
                     </tr>
                     <tr className="tableRow">
@@ -124,7 +169,7 @@ function Table() {
                             <p>RD$3500</p>
                         </td>
                         <td className="flex justify-between">
-                            <p>ByWeekly</p>
+                            <p>Biweekly</p>
                         </td>
                     </tr>
                     <tr className="tableRow">

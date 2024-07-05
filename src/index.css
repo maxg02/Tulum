@@ -78,6 +78,9 @@ body {
     .stroke-icon path {
         @apply stroke-custom-primary stroke-[20px];
     }
+    .filterForm > div {
+        @apply flex gap-x-4;
+    }
 }
 
 .MuiChartsTooltip-root {
