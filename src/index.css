@@ -13,7 +13,6 @@
 }
 
 :root {
-    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
     line-height: 1.5;
     font-weight: 400;
 
@@ -67,7 +66,7 @@ body {
         @apply text-start px-1 py-2;
     }
     .tableRow {
-        @apply border-b border-custom-ly2 border-opacity-35;
+        @apply border-b  border-opacity-35;
     }
     .tableRow p {
         @apply font-normal;
@@ -78,9 +77,34 @@ body {
     .stroke-icon path {
         @apply stroke-custom-primary stroke-[20px];
     }
+
     .filterForm > div {
         @apply flex gap-x-4;
     }
+
+    .filterForm label {
+        @apply mb-1 text-sm;
+    }
+
+    .formDivider {
+        @apply w-full mt-3 border-t border-custom-ly2 border-opacity-80 self-center;
+    }
+
+    .formInput {
+        @apply rounded-md border border-custom-ly2 border-opacity-80 bg-transparent outline-none py-1 px-2 font-body text-sm;
+    }
+
+    .formButton {
+        @apply py-1 bg-transparent border border-custom-ly2 hover:bg-custom-secondary focus:outline-none;
+    }
+
+    :root {
+        @apply font-body;
+    }
+}
+
+.formContainer {
+    scrollbar-color: #394942 transparent;
 }
 
 .MuiChartsTooltip-root {
