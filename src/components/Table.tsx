@@ -13,26 +13,137 @@ import {
     faSortUp,
 } from "@fortawesome/free-solid-svg-icons";
 
-type sortValues = "asc" | "desc" | null;
+type sortValues = ("asc" | "desc" | "null")[];
+export type dataObject = {
+    columns: {
+        name: string;
+        type: "string" | "amount" | "list";
+        values?: string[];
+    }[];
+    rows: (string | number)[][];
+};
 
-function Table() {
+function Table({ data, dark = false }: { data: dataObject; dark?: boolean }) {
     const [FilterDropState, setFilterDropState] = useState<boolean>(false);
-    const [DetailsSort, setDetailsSort] = useState<sortValues>(null);
-    const [AmountSort, setAmountSort] = useState<sortValues>(null);
+    const [ColumnsSort, setColumnsSort] = useState<sortValues>(data.columns.map(() => "null"));
 
-    const handleSortToggle = (
-        stateFunc: React.Dispatch<React.SetStateAction<sortValues>>,
-        stateVal: sortValues
-    ) => {
-        stateVal === null ? stateFunc("asc") : stateVal === "asc" ? stateFunc("desc") : stateFunc(null);
+    const handleSortToggle = (columnKey: number) => {
+        const sortState = ColumnsSort;
+
+        sortState[columnKey] =
+            sortState[columnKey] === "null" ? "asc" : sortState[columnKey] === "asc" ? "desc" : "null";
+
+        setColumnsSort([...sortState]);
     };
 
     const handleFilterDrop = () => {
         FilterDropState ? setFilterDropState(false) : setFilterDropState(true);
     };
 
+    const TableHeader = () =>
+        data.columns.map((item, key) => (
+            <th key={key}>
+                <div className="flex items-center gap-x-2">
+                    <p>{item.name}</p>
+                    {item.type !== "list" ? (
+                        <button className="tableButton p-0" onClick={() => handleSortToggle(key)}>
+                            <FontAwesomeIcon
+                                icon={
+                                    ColumnsSort[key] === "null"
+                                        ? faSort
+                                        : ColumnsSort[key] === "asc"
+                                        ? faSortUp
+                                        : faSortDown
+                                }
+                                className="text-xs"
+                            />
+                        </button>
+                    ) : (
+                        ""
+                    )}
+                </div>
+            </th>
+        ));
+
+    const TableRows = () =>
+        data.rows.map((item, key) => (
+            <tr className={`tableRow ${dark ? "border-custom-ly1" : "border-custom-ly2"}`} key={key}>
+                {item.map((content, key) => (
+                    <td key={key}>
+                        <p>
+                            {data.columns[key].type === "string"
+                                ? content
+                                : data.columns[key].type === "amount"
+                                ? `RD$${content}`
+                                : data.columns[key].values![content]}
+                        </p>
+                    </td>
+                ))}
+            </tr>
+        ));
+
+    const TableFilters = () =>
+        data.columns.map((item, key) => (
+            <div key={key} className="flex flex-col">
+                <label htmlFor={item.name}>{item.name}</label>
+                {item.type === "string" ? (
+                    <>
+                        <input
+                            className="w-full formInput"
+                            type="text"
+                            id={item.name}
+                            name={item.name.toLocaleLowerCase()}
+                            placeholder="Details"
+                        />
+                        <span className="formDivider"></span>
+                    </>
+                ) : item.type === "amount" ? (
+                    <>
+                        <div className="flex items-center">
+                            <p className="mr-2">RD$</p>
+                            <input
+                                className="w-full formInput"
+                                type="text"
+                                id="minAmount"
+                                name="minAmount"
+                                placeholder="Min"
+                            />
+                            <p className="mx-2">-</p>
+                            <p className="mr-2">RD$</p>
+                            <input
+                                className="w-full formInput"
+                                type="text"
+                                id="maxAmount"
+                                name="maxAmount"
+                                placeholder="Max"
+                            />
+                        </div>
+                        <span className="formDivider"></span>
+                    </>
+                ) : (
+                    <>
+                        <div className="flex flex-col">
+                            {item.values?.map((value, key) => (
+                                <div key={key}>
+                                    <input
+                                        className="mr-2"
+                                        type="checkbox"
+                                        id={value}
+                                        name={value.toLocaleLowerCase()}
+                                    />
+                                    <label htmlFor={value}>{value}</label>
+                                </div>
+                            ))}
+                        </div>
+                        <span className="formDivider"></span>
+                    </>
+                )}
+            </div>
+        ));
+
     return (
         <div className="flex flex-col w-full">
+            {/* Filter Section */}
             <div className="flex items-center mb-1 gap-x-3">
                 <div>
                     <button
@@ -42,42 +153,35 @@ function Table() {
                         <FontAwesomeIcon icon={faPlus} />
                         <p>Add Filter</p>
                     </button>
-
                     <div
-                        className={`absolute border border-custom-ly2 border-opacity-80 bg-custom-ly1 shadow-[0_0_5px_0.2px_rgba(0,0,0,0.4)] mt-2 rounded-md p-3 ${
+                        className={`absolute border border-custom-ly2 border-opacity-80 bg-custom-ly1 ${
+                            dark ? "" : "shadow-[0_0_5px_0.2px_rgba(0,0,0,0.4)]"
+                        } mt-2 rounded-md p-3 ${
                             FilterDropState ? "" : "hidden"
-                        }`}
+                        } max-h-64 overflow-y-auto formContainer`}
                     >
-                        <form className="filterForm">
-                            <div>
-                                <label>Details</label>
-                                <input className="flex-1" type="text" name="details" />
-                            </div>
-                            <div>
-                                <label>Amount</label>
-                                <input className="flex-1" type="range" name="amount" />
-                            </div>
-                            <div>
-                                <label>Periodicity</label>
-                                <select className="text-black flex-1" name="periodicity">
-                                    <option className="text-black" value="annual">
-                                        Annual
-                                    </option>
-                                    <option className="text-black" value="monthly">
-                                        Monthly
-                                    </option>
-                                    <option className="text-black" value="biweekly">
-                                        Biweekly
-                                    </option>
-                                    <option className="text-black" value="weekly">
-                                        Weekly
-                                    </option>
-                                </select>
+                        <form className="filterForm w-72 flex flex-col gap-y-2">
+                            <TableFilters />
+                            <div className="self-end">
+                                <button
+                                    type="reset"
+                                    onClick={() => setFilterDropState(false)}
+                                    className="formButton"
+                                >
+                                    <p>Cancel</p>
+                                </button>
+                                <button className="formButton">
+                                    <p>Apply</p>
+                                </button>
                             </div>
                         </form>
                     </div>
                 </div>
-                <div className="bg-custom-ly2 px-3 py-1 rounded-md bg-opacity-70 flex items-center gap-x-2">
+                <div
+                    className={`${
+                        dark ? "bg-custom-ly1" : "bg-custom-ly2"
+                    } px-3 py-1 rounded-md bg-opacity-70 flex items-center gap-x-2`}
+                >
                     <div className="flex gap-x-1">
                         <p className="font-medium">Amount</p>
                         <p className="opacity-70"> Between </p>
@@ -90,110 +194,15 @@ function Table() {
                     </button>
                 </div>
             </div>
+            {/* Table Section */}
             <table>
                 <thead>
                     <tr className="tableRow border-b border-custom-accent">
-                        <th>
-                            <div className="flex items-center gap-x-2">
-                                <p>Details</p>
-                                <button
-                                    className="tableButton p-0"
-                                    onClick={() => handleSortToggle(setDetailsSort, DetailsSort)}
-                                >
-                                    <FontAwesomeIcon
-                                        icon={
-                                            DetailsSort === null
-                                                ? faSort
-                                                : DetailsSort === "asc"
-                                                ? faSortUp
-                                                : faSortDown
-                                        }
-                                        className="text-xs"
-                                    />
-                                </button>
-                            </div>
-                        </th>
-                        <th>
-                            <div className="flex items-center gap-x-2">
-                                <p>Amount</p>
-                                <button
-                                    className="tableButton p-0"
-                                    onClick={() => handleSortToggle(setAmountSort, AmountSort)}
-                                >
-                                    <FontAwesomeIcon
-                                        icon={
-                                            AmountSort === null
-                                                ? faSort
-                                                : AmountSort === "asc"
-                                                ? faSortUp
-                                                : faSortDown
-                                        }
-                                        className="text-xs"
-                                    />
-                                </button>
-                            </div>
-                        </th>
-                        <th>
-                            <p>Periodicity</p>
-                        </th>
+                        <TableHeader />
                     </tr>
                 </thead>
                 <tbody>
-                    <tr className="tableRow">
-                        <td>
-                            <p>Food</p>
-                        </td>
-                        <td>
-                            <p>RD$3500</p>
-                        </td>
-                        <td className="flex justify-between">
-                            <p>Weekly</p>
-                        </td>
-                    </tr>
-                    <tr className="tableRow">
-                        <td>
-                            <p>Transport</p>
-                        </td>
-                        <td>
-                            <p>RD$3500</p>
-                        </td>
-                        <td className="flex justify-between">
-                            <p>Annual</p>
-                        </td>
-                    </tr>
-                    <tr className="tableRow">
-                        <td>
-                            <p>House/Utilities</p>
-                        </td>
-                        <td>
-                            <p>RD$3500</p>
-                        </td>
-                        <td className="flex justify-between">
-                            <p>Biweekly</p>
-                        </td>
-                    </tr>
-                    <tr className="tableRow">
-                        <td>
-                            <p>Personal/Medical</p>
-                        </td>
-                        <td>
-                            <p>RD$3500</p>
-                        </td>
-                        <td className="flex justify-between">
-                            <p>Monthly</p>
-                        </td>
-                    </tr>
-                    <tr className="tableRow">
-                        <td>
-                            <p>University</p>
-                        </td>
-                        <td>
-                            <p>RD$3500</p>
-                        </td>
-                        <td className="flex justify-between">
-                            <p>Monthly</p>
-                        </td>
-                    </tr>
+                    <TableRows />
                 </tbody>
             </table>
             <div className="flex justify-center py-2 border-t border-custom-accent">
