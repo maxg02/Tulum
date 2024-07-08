@@ -17,13 +17,21 @@ type sortValues = ("asc" | "desc" | "null")[];
 export type dataObject = {
     columns: {
         name: string;
-        type: "string" | "amount" | "list";
+        type: "string" | "amount" | "list" | "date";
         values?: string[];
     }[];
     rows: (string | number)[][];
 };
 
-function Table({ data, dark = false }: { data: dataObject; dark?: boolean }) {
+function Table({
+    data,
+    dark = false,
+    tablePrefix,
+}: {
+    data: dataObject;
+    dark?: boolean;
+    tablePrefix: string;
+}) {
     const [FilterDropState, setFilterDropState] = useState<boolean>(false);
     const [ColumnsSort, setColumnsSort] = useState<sortValues>(data.columns.map(() => "null"));
 
@@ -71,7 +79,7 @@ function Table({ data, dark = false }: { data: dataObject; dark?: boolean }) {
                 {item.map((content, key) => (
                     <td key={key}>
                         <p>
-                            {data.columns[key].type === "string"
+                            {data.columns[key].type === "string" || data.columns[key].type === "date"
                                 ? content
                                 : data.columns[key].type === "amount"
                                 ? `RD$${content}`
@@ -92,7 +100,7 @@ function Table({ data, dark = false }: { data: dataObject; dark?: boolean }) {
                             className="w-full formInput"
                             type="text"
                             id={item.name}
-                            name={item.name.toLocaleLowerCase()}
+                            name={tablePrefix + item.name.toLocaleLowerCase()}
                             placeholder="Details"
                         />
                         <span className="formDivider"></span>
@@ -105,7 +113,7 @@ function Table({ data, dark = false }: { data: dataObject; dark?: boolean }) {
                                 className="w-full formInput"
                                 type="text"
                                 id="minAmount"
-                                name="minAmount"
+                                name={`${tablePrefix}minAmount`}
                                 placeholder="Min"
                             />
                             <p className="mx-2">-</p>
@@ -114,7 +122,30 @@ function Table({ data, dark = false }: { data: dataObject; dark?: boolean }) {
                                 className="w-full formInput"
                                 type="text"
                                 id="maxAmount"
-                                name="maxAmount"
+                                name={`${tablePrefix}maxAmount`}
+                                placeholder="Max"
+                            />
+                        </div>
+                        <span className="formDivider"></span>
+                    </>
+                ) : item.type === "date" ? (
+                    <>
+                        <div className="flex items-center">
+                            <p className="mr-2">From:</p>
+                            <input
+                                className="w-full formInput"
+                                type="date"
+                                id="dateFrom"
+                                name={`${tablePrefix}dateFrom`}
+                                placeholder="Min"
+                            />
+                            <p className="mx-2">-</p>
+                            <p className="mr-2">To:</p>
+                            <input
+                                className="w-full formInput"
+                                type="date"
+                                id="dateTo"
+                                name={`${tablePrefix}dateTo`}
                                 placeholder="Max"
                             />
                         </div>
@@ -129,7 +160,7 @@ function Table({ data, dark = false }: { data: dataObject; dark?: boolean }) {
                                         className="mr-2"
                                         type="checkbox"
                                         id={value}
-                                        name={value.toLocaleLowerCase()}
+                                        name={tablePrefix + value.toLocaleLowerCase()}
                                     />
                                     <label htmlFor={value}>{value}</label>
                                 </div>
@@ -142,7 +173,7 @@ function Table({ data, dark = false }: { data: dataObject; dark?: boolean }) {
         ));
 
     return (
-        <div className="flex flex-col w-full">
+        <div className="flex flex-col flex-1 h-full">
             {/* Filter Section */}
             <div className="flex items-center mb-1 gap-x-3">
                 <div>
@@ -160,7 +191,7 @@ function Table({ data, dark = false }: { data: dataObject; dark?: boolean }) {
                             FilterDropState ? "" : "hidden"
                         } max-h-64 overflow-y-auto formContainer`}
                     >
-                        <form className="filterForm w-72 flex flex-col gap-y-2">
+                        <form className="filterForm w- flex flex-col gap-y-2">
                             <TableFilters />
                             <div className="self-end">
                                 <button
@@ -195,7 +226,7 @@ function Table({ data, dark = false }: { data: dataObject; dark?: boolean }) {
                 </div>
             </div>
             {/* Table Section */}
-            <table>
+            <table className="">
                 <thead>
                     <tr className="tableRow border-b border-custom-accent">
                         <TableHeader />
