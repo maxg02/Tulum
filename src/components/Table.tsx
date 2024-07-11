@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faAngleRight,
@@ -17,10 +17,10 @@ type sortValues = ("asc" | "desc" | "null")[];
 export type dataObject = {
     columns: {
         name: string;
-        type: "string" | "amount" | "list" | "date";
+        type: "string" | "amount" | "list" | "date" | "progress";
         values?: string[];
     }[];
-    rows: (string | number)[][];
+    rows: (string | number | { value: number; total: number })[][];
 };
 
 function Table({
@@ -53,7 +53,7 @@ function Table({
             <th key={key}>
                 <div className="flex items-center gap-x-2">
                     <p>{item.name}</p>
-                    {item.type !== "list" ? (
+                    {item.type !== "list" && item.type !== "progress" ? (
                         <button className="tableButton p-0" onClick={() => handleSortToggle(key)}>
                             <FontAwesomeIcon
                                 icon={
@@ -78,13 +78,30 @@ function Table({
             <tr className={`tableRow ${dark ? "border-custom-ly1" : "border-custom-ly2"}`} key={key}>
                 {item.map((content, key) => (
                     <td key={key}>
-                        <p>
-                            {data.columns[key].type === "string" || data.columns[key].type === "date"
-                                ? content
-                                : data.columns[key].type === "amount"
-                                ? `RD$${content}`
-                                : data.columns[key].values![content]}
-                        </p>
+                        {data.columns[key].type === "string" || data.columns[key].type === "date" ? (
+                            <p className="truncate">{content}</p>
+                        ) : data.columns[key].type === "amount" ? (
+                            <p>{`RD$${content}`}</p>
+                        ) : data.columns[key].type === "progress" ? (
+                            <div className="flex flex-col min-w-96">
+                                <div
+                                    className={`${
+                                        dark ? "bg-custom-ly1" : "bg-custom-ly2"
+                                    } h-3 w-full rounded-[0.30rem]`}
+                                >
+                                    <div
+                                        className="h-full bg-gradient-to-r from-custom-secondary to-custom-accent rounded-[0.30rem]"
+                                        style={{ width: `${(content.value * 100) / content.total}%` }}
+                                    ></div>
+                                </div>
+                                <div className="flex justify-between px-1">
+                                    <p className="text-xs">RD${content.value}</p>
+                                    <p className="text-xs">RD${content.total}</p>
+                                </div>
+                            </div>
+                        ) : (
+                            <p>{data.columns[key].values![content]}</p>
+                        )}
                     </td>
                 ))}
             </tr>
@@ -226,7 +243,7 @@ function Table({
                 </div>
             </div>
             {/* Table Section */}
-            <table className="">
+            <table className="table-fixed">
                 <thead>
                     <tr className="tableRow border-b border-custom-accent">
                         <TableHeader />

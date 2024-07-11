@@ -61,13 +61,13 @@ export default function Expenses() {
     const budgetExpensesData: dataObject = {
         columns: [
             { name: "Budget", type: "string" },
-            { name: "Expenses", type: "amount" },
+            { name: "Expenses", type: "progress" },
         ],
         rows: [
-            ["Food", 3500],
-            ["Transport", 3500],
-            ["House/Utilities", 3500],
-            ["Personal/Medical", 3500],
+            ["Food", { value: 2000, total: 3500 }],
+            ["Transport", { value: 1500, total: 5000 }],
+            ["House/Utilities", { value: 13000, total: 15000 }],
+            ["Personal/Medical", { value: 4000, total: 7500 }],
         ],
     };
 
@@ -155,18 +155,18 @@ export default function Expenses() {
                                 />
                             </div>
                         </div>
-                        <div className="infoContainer2 flex-1">
+                        <div className="infoContainer1 flex-1">
                             <p>Expenses</p>
                             <div className="flex items-center flex-1 w-full">
-                                <Table dark data={expensesData} tablePrefix="E" />
+                                <Table data={expensesData} tablePrefix="E" />
                             </div>
                         </div>
                     </div>
                     <div className="flex flex-1 gap-x-9">
-                        <div className="infoContainer1 w-5/12">
+                        <div className="infoContainer2 w-5/12">
                             <p>Budget Expenses</p>
                             <div className="flex items-center flex-1 w-full">
-                                <Table data={budgetExpensesData} tablePrefix="BE" />
+                                <Table dark data={budgetExpensesData} tablePrefix="BE" />
                             </div>
                         </div>
                         <div className="infoContainer2 flex-1">
