@@ -2,7 +2,7 @@ import { Gauge, useGaugeState } from "@mui/x-charts/Gauge";
 import { v4 as id } from "uuid";
 import { basicColors } from "../components/Colors";
 
-function CustomGauge({ value }: { value: number }) {
+function CustomGauge({ value, label, accent }: { value: number; label: string; accent?: boolean }) {
     const gradientClipId = id();
     const maskClipId = id();
 
@@ -85,8 +85,12 @@ function CustomGauge({ value }: { value: number }) {
                 <GaugeGradient />
                 <GaugeInnerBorder />
             </Gauge>
-            <p className="text-custom-accent text-base absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                25%
+            <p
+                className={`${
+                    accent ? "text-custom-accent" : ""
+                } text-sm absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2`}
+            >
+                {label}
             </p>
         </div>
     );
