@@ -190,7 +190,7 @@ function Table({
         ));
 
     return (
-        <div className="flex flex-col flex-1 h-full">
+        <div className="flex flex-col flex-1">
             {/* Filter Section */}
             <div className="flex items-center mb-1 gap-x-3">
                 <div>
@@ -253,6 +253,7 @@ function Table({
                     <TableRows />
                 </tbody>
             </table>
+            {/* Pagination Section */}
             <div className="flex justify-center py-2 border-t border-custom-accent">
                 <button className="tableButton">
                     <FontAwesomeIcon icon={faAngleDoubleLeft} />
