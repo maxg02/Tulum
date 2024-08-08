@@ -125,6 +125,12 @@ body {
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.433);
 }
 
+#goalsCarrousell {
+    top: 0;
+    transition: top 1s;
+    transition-timing-function: ease-in-out;
+}
+
 button {
     border-radius: 8px;
     border: 1px solid transparent;
