@@ -20,7 +20,7 @@ export type dataObject = {
         type: "string" | "amount" | "list" | "date" | "progress";
         values?: string[];
     }[];
-    rows: (string | number | { value: number; total: number })[][];
+    rows: (string | number | { value: number; total: number } | null)[][];
 };
 
 function Table({
@@ -81,7 +81,7 @@ function Table({
                         {data.columns[key].type === "string" || data.columns[key].type === "date" ? (
                             <p className="truncate">{content}</p>
                         ) : data.columns[key].type === "amount" ? (
-                            <p>{`RD$${content}`}</p>
+                            <p>{content === null ? "" : `RD$${content}`}</p>
                         ) : data.columns[key].type === "progress" ? (
                             <div className="flex flex-col min-w-96">
                                 <div
