@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import SectionContent from "../components/SectionContent";
@@ -7,7 +7,16 @@ import { faChevronUp, faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import CustomGauge from "../components/CustomGauge";
 import Table, { dataObject } from "../components/Table";
 
+export type goalsProgress = {
+    value: number;
+    label: string;
+    total: number;
+    progress: number;
+};
+
 export default function Savings() {
+    const [goalsProgressScroll, setGoalsProgressScroll] = useState<number>(0);
+
     const goalsContributionsData: dataObject = {
         columns: [
             { name: "Deposit", type: "amount" },
@@ -38,6 +47,33 @@ export default function Savings() {
         ],
     };
 
+    const goalsProgress: goalsProgress[] = [
+        { value: 86, label: "House", total: 3000000, progress: 2580000 },
+        { value: 25, label: "Car", total: 1500000, progress: 375000 },
+        { value: 40, label: "University", total: 50000, progress: 20000 },
+        { value: 60, label: "Weeding", total: 50000, progress: 30000 },
+        { value: 60, label: "Luhanny", total: 50000, progress: 30000 },
+    ];
+
+    const goalProgressGauges = () =>
+        goalsProgress.map((item, key) => (
+            <div
+                key={key}
+                className="w-full flex flex-col items-center py-4"
+                style={{ height: `${100 / goalsProgress.length}%` }}
+            >
+                <div className="flex-1 w-full mb-1">
+                    <CustomGauge value={item.value} label={item.label} />
+                </div>
+                <p>
+                    <span className="text-custom-accent">RD${item.total}</span>/RD${item.progress}
+                </p>
+            </div>
+        ));
+
+    const goalProgressScrollUp = () => setGoalsProgressScroll(goalsProgressScroll + 1);
+    const goalProgressScrollDown = () => setGoalsProgressScroll(goalsProgressScroll - 1);
+
     return (
         <div className="flex flex-1 gap-8">
             <Sidebar currentSection="Savings" />
@@ -46,33 +82,43 @@ export default function Savings() {
                 <div className="flex-1 flex overflow-hidden gap-x-8">
                     <div className="infoContainer1 w-64">
                         <p>Goals Progress</p>
-                        <div className="flex-1 w-full flex flex-col gap-y-4 justify-between">
-                            <FontAwesomeIcon icon={faChevronUp} className="flex-none" />
-                            <div className="flex-1 w-full flex flex-col items-center">
-                                <div className="flex-1 w-full mb-1">
-                                    <CustomGauge value={86} label="House" />
+                        <div className="flex-1 w-full flex flex-col gap-y-4 justify-between overflow-y-hidden">
+                            <button
+                                className={`bg-transparent border-0 p-0 outline-0 ${
+                                    goalsProgressScroll <= 0
+                                        ? "hover:text-gray-400 text-gray-400"
+                                        : "hover:text-custom-accent"
+                                }`}
+                                onClick={goalProgressScrollDown}
+                                disabled={goalsProgressScroll <= 0 ? true : false}
+                            >
+                                <FontAwesomeIcon icon={faChevronUp} className="flex-none py-1" />
+                            </button>
+                            <div className="flex-1 overflow-y-hidden relative">
+                                <div className="bg-gradient-to-b from-custom-ly1 to-transparent w-full h-4 absolute top-0 z-30"></div>
+                                <div
+                                    className="w-full overflow-y-hidden relative"
+                                    id="goalsCarrousell"
+                                    style={{
+                                        height: `${33.333333333 * goalsProgress.length}%`,
+                                        top: `${-33 * goalsProgressScroll}%`,
+                                    }}
+                                >
+                                    {goalProgressGauges()}
                                 </div>
-                                <p>
-                                    <span className="text-custom-accent">RD$3000000</span>/RD$2580000
-                                </p>
+                                <div className="bg-gradient-to-t from-custom-ly1 to-transparent w-full h-4 absolute bottom-0 z-30"></div>
                             </div>
-                            <div className="flex-1 w-full flex flex-col items-center">
-                                <div className="flex-1 w-full mb-1">
-                                    <CustomGauge value={25} label="Car" />
-                                </div>
-                                <p>
-                                    <span className="text-custom-accent">RD$1500000</span>/RD$375000
-                                </p>
-                            </div>
-                            <div className="flex-1 w-full flex flex-col items-center">
-                                <div className="flex-1 w-full mb-1">
-                                    <CustomGauge value={40} label="University" />
-                                </div>
-                                <p>
-                                    <span className="text-custom-accent">RD$50000</span>/RD$20000
-                                </p>
-                            </div>
-                            <FontAwesomeIcon icon={faChevronDown} className="flex-none" />
+                            <button
+                                className={`bg-transparent border-0 p-0 outline-0 ${
+                                    goalsProgressScroll >= goalsProgress.length - 3
+                                        ? "hover:text-gray-400 text-gray-400"
+                                        : "hover:text-custom-accent"
+                                }`}
+                                onClick={goalProgressScrollUp}
+                                disabled={goalsProgressScroll >= goalsProgress.length - 3 ? true : false}
+                            >
+                                <FontAwesomeIcon icon={faChevronDown} className="flex-none py-1" />
+                            </button>
                         </div>
                     </div>
                     <div className="flex flex-col flex-1 gap-y-8">
