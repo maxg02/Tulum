@@ -64,7 +64,7 @@ export default function Expenses() {
             { name: "Expenses", type: "progress" },
         ],
         rows: [
-            ["Food", { value: 2000, total: 3500 }],
+            ["Food", { value: 3500, total: 6000 }],
             ["Transport", { value: 1500, total: 5000 }],
             ["House/Utilities", { value: 13000, total: 15000 }],
             ["Personal/Medical", { value: 4000, total: 7500 }],

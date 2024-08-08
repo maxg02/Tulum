@@ -24,15 +24,17 @@ export default function Savings() {
 
     const savingGoalsData: dataObject = {
         columns: [
-            { name: "Deposit", type: "amount" },
-            { name: "Goal", type: "string" },
-            { name: "Date", type: "date" },
+            { name: "Detail", type: "string" },
+            { name: "Cost", type: "amount" },
+            { name: "FixedContribution", type: "amount" },
+            { name: "Periodicity", type: "list", values: ["Annual", "Monthly", "Biweekly", "Weekly"] },
         ],
         rows: [
-            [3500, "Car", "06/05/22"],
-            [5000, "Transport", "06/05/22"],
-            [150000, "House", "06/05/22"],
-            [15000, "University", "06/05/22"],
+            ["House", 3000000, 1000, 3],
+            ["Car", 1500000, null, null],
+            ["University", 50000, 15000, 2],
+            ["Weeding", 50000, 15000, 2],
+            ["Computer", 60000, 5000, 1],
         ],
     };
 
@@ -76,11 +78,11 @@ export default function Savings() {
                     <div className="flex flex-col flex-1 gap-y-8">
                         <div className="flex flex-1 gap-x-8">
                             <div className="flex-auto flex flex-col justify-between">
-                                <div className="infoContainer1 w-full bg-gradient-to-b from-custom-secondary to-custom-accent shadow-none h-[43%]">
+                                <div className="infoContainer1 w-full bg-gradient-to-b from-custom-secondary to-custom-accent shadow-none h-[45%]">
                                     <p>January Budget</p>
                                     <h1 className="font-light text-5xl my-auto">RD$75000</h1>
                                 </div>
-                                <div className="infoContainer1 w-full bg-gradient-to-b from-custom-secondary to-custom-accent shadow-none h-[43%]">
+                                <div className="infoContainer1 w-full bg-gradient-to-b from-custom-secondary to-custom-accent shadow-none h-[45%]">
                                     <p>2024 Budget</p>
                                     <h1 className="font-light text-5xl my-auto">RD$750K</h1>
                                 </div>
