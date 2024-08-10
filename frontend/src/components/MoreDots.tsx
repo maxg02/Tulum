@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDiamond } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 
-export type SectionUrl = "/" | "/budget" | "/expenses" | "/savings";
+export type SectionUrl = "/" | "/income" | "/expenses" | "/savings";
 
 function MoreDots({ section }: { section: SectionUrl }) {
     return (

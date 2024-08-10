@@ -35,7 +35,7 @@ export default function Savings() {
         columns: [
             { name: "Detail", type: "string" },
             { name: "Cost", type: "amount" },
-            { name: "FixedContribution", type: "amount" },
+            { name: "Fixed Contribution", type: "amount" },
             { name: "Periodicity", type: "list", values: ["Annual", "Monthly", "Biweekly", "Weekly"] },
         ],
         rows: [
@@ -125,11 +125,11 @@ export default function Savings() {
                         <div className="flex flex-1 gap-x-8">
                             <div className="flex-auto flex flex-col justify-between">
                                 <div className="infoContainer1 w-full bg-gradient-to-b from-custom-secondary to-custom-accent shadow-none h-[45%]">
-                                    <p>January Budget</p>
+                                    <p>January Savings</p>
                                     <h1 className="font-light text-5xl my-auto">RD$75000</h1>
                                 </div>
                                 <div className="infoContainer1 w-full bg-gradient-to-b from-custom-secondary to-custom-accent shadow-none h-[45%]">
-                                    <p>2024 Budget</p>
+                                    <p>2024 Savings</p>
                                     <h1 className="font-light text-5xl my-auto">RD$750K</h1>
                                 </div>
                             </div>
@@ -141,7 +141,7 @@ export default function Savings() {
                             </div>
                         </div>
                         <div className="infoContainer2 flex-1">
-                            <p>Goals Contributions</p>
+                            <p>Saving Goals</p>
                             <div className="flex flex-1 items-center w-full">
                                 <Table data={savingGoalsData} tablePrefix="SG" dark />
                             </div>

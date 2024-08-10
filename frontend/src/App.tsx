@@ -2,7 +2,7 @@ import "./App.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import RootLayout from "./sections/RootLayout";
 import Dashboard from "./sections/Dashboard";
-import Budget from "./sections/Budget";
+import Income from "./sections/Income";
 import Expenses from "./sections/Expenses";
 import Savings from "./sections/Savings";
 
@@ -17,8 +17,8 @@ function App() {
                     element: <Dashboard />,
                 },
                 {
-                    path: "/budget",
-                    element: <Budget />,
+                    path: "/income",
+                    element: <Income />,
                 },
                 {
                     path: "/expenses",

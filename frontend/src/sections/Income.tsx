@@ -67,16 +67,16 @@ export default function Budget() {
                 <div className="flex-1 flex overflow-hidden gap-x-9">
                     <div className="flex flex-col w-5/12 gap-y-9">
                         <div className="infoContainer1 h-[18%]">
-                            <p>Total Budget</p>
+                            <p>Total Income</p>
                             <h1 className="font-light text-5xl my-auto">RD$75000</h1>
                         </div>
                         <div className="flex gap-x-9 h-[18%]">
                             <div className="infoContainer1 flex-1 bg-gradient-to-b from-custom-secondary to-custom-accent shadow-none">
-                                <p>January Budget</p>
+                                <p>January Income</p>
                                 <h1 className="font-light text-5xl my-auto">RD$75000</h1>
                             </div>
                             <div className="infoContainer1 flex-1 bg-gradient-to-b from-custom-secondary to-custom-accent shadow-none">
-                                <p>2024 Budget</p>
+                                <p>2024 Income</p>
                                 <h1 className="font-light text-5xl my-auto">RD$750K</h1>
                             </div>
                         </div>

@@ -5,7 +5,7 @@ import { faHouse, faWallet, faReceipt, faPiggyBank } from "@fortawesome/free-sol
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import type { ReactNode } from "react";
 
-export type SectionType = "Dashboard" | "Budget" | "Expenses" | "Savings";
+export type SectionType = "Dashboard" | "Income" | "Expenses" | "Savings";
 
 const sidebarButton = (active: boolean, section: string, icon: IconDefinition): ReactNode => (
     <button
@@ -33,8 +33,8 @@ export default function Sidebar({ currentSection }: { currentSection: SectionTyp
                     {sidebarButton(currentSection === "Dashboard" ? true : false, "Dashboard", faHouse)}
                 </Link>
 
-                <Link to={"/budget"}>
-                    {sidebarButton(currentSection === "Budget" ? true : false, "Budget", faWallet)}
+                <Link to={"/income"}>
+                    {sidebarButton(currentSection === "Income" ? true : false, "Income", faWallet)}
                 </Link>
 
                 <Link to={"/expenses"}>

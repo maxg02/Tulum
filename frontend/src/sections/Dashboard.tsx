@@ -125,7 +125,7 @@ export default function Dashboard() {
                                     <p className="text-custom-accent">RD$5000</p>
                                 </div>
                             </div>
-                            <MoreDots section="/budget" />
+                            <MoreDots section="/income" />
                         </div>
                         <div className="infoContainer2 flex-1">
                             <p>2024 Summary</p>
