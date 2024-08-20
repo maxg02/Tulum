@@ -17,17 +17,17 @@ namespace backend.Controllers
         public IActionResult GetUserIncome([FromRoute] int userId)
         {
             var incomes = _context.Incomes
-                .Where(i => i.UserId==userId)
+                .Where(i => i.UserId == userId)
                 .ToList()
                 .Select(s => s.ToIncomeDto());
-                
+
             return Ok(incomes);
         }
 
         [HttpGet("{id}")]
         public IActionResult GetIncome([FromRoute] int id)
         {
-            var income = _context.Incomes.FirstOrDefault(i => i.Id==id);
+            var income = _context.Incomes.FirstOrDefault(i => i.Id == id);
 
             if (income == null) {
                 return NotFound();
@@ -62,6 +62,23 @@ namespace backend.Controllers
 
             return Ok(incomeModel.ToIncomeDto());
         }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteIncome([FromRoute] int id)
+        {
+            var incomeModel = _context.Incomes.FirstOrDefault(i => i.Id == id);
+
+            if (incomeModel == null )
+            {
+                return NotFound();
+            }
+
+            _context.Incomes.Remove(incomeModel);
+            _context.SaveChanges();
+
+            return NoContent();
+        }
+
 
     }
 }
