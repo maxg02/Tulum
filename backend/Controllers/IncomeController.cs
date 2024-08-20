@@ -35,6 +35,7 @@ namespace backend.Controllers
 
             return Ok(income.ToIncomeDto());
         }
+
         [HttpPost]
         public IActionResult CreateIncome([FromBody] CreateIncomeRequestDto incomeDto)
         {
@@ -42,6 +43,24 @@ namespace backend.Controllers
             _context.Incomes.Add(incomeModel);
             _context.SaveChanges();
             return CreatedAtAction(nameof(GetIncome), new { id = incomeModel.Id }, incomeModel.ToIncomeDto());
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult UpdateIncome([FromRoute] int id, [FromBody] UpdateIncomeRequestDto incomeDto)
+        {
+            var incomeModel = _context.Incomes.FirstOrDefault(i => i.Id == id);
+
+            if (incomeModel == null)
+            {
+                return NotFound();
+            }
+
+            incomeModel.Amount = incomeDto.Amount;
+            incomeModel.Details = incomeDto.Details;
+            incomeModel.Date = incomeDto.Date;
+            _context.SaveChanges();
+
+            return Ok(incomeModel.ToIncomeDto());
         }
 
     }
