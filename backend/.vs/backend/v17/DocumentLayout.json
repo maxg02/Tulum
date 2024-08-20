@@ -1,12 +1,120 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "D:\\Dev\\Webdev\\expense control\\backend\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{E3BBB6CB-C232-4EC9-91C0-63798E17A353}|backend.csproj|d:\\dev\\webdev\\expense control\\backend\\controllers\\incomecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3BBB6CB-C232-4EC9-91C0-63798E17A353}|backend.csproj|solutionrelative:controllers\\incomecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3BBB6CB-C232-4EC9-91C0-63798E17A353}|backend.csproj|d:\\dev\\webdev\\expense control\\backend\\mappers\\incomemappers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3BBB6CB-C232-4EC9-91C0-63798E17A353}|backend.csproj|solutionrelative:mappers\\incomemappers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3BBB6CB-C232-4EC9-91C0-63798E17A353}|backend.csproj|d:\\dev\\webdev\\expense control\\backend\\dtos\\income\\createincomerequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3BBB6CB-C232-4EC9-91C0-63798E17A353}|backend.csproj|solutionrelative:dtos\\income\\createincomerequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3BBB6CB-C232-4EC9-91C0-63798E17A353}|backend.csproj|d:\\dev\\webdev\\expense control\\backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3BBB6CB-C232-4EC9-91C0-63798E17A353}|backend.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3BBB6CB-C232-4EC9-91C0-63798E17A353}|backend.csproj|d:\\dev\\webdev\\expense control\\backend\\backend.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}",
+      "RelativeMoniker": "D:0:0:{E3BBB6CB-C232-4EC9-91C0-63798E17A353}|backend.csproj|solutionrelative:backend.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E3BBB6CB-C232-4EC9-91C0-63798E17A353}|backend.csproj|d:\\dev\\webdev\\expense control\\backend\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E3BBB6CB-C232-4EC9-91C0-63798E17A353}|backend.csproj|solutionrelative:models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
       "VerticalTabListWidth": 256,
-      "DocumentGroups": []
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 3,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "IncomeMappers.cs",
+              "DocumentMoniker": "D:\\Dev\\Webdev\\expense control\\backend\\Mappers\\IncomeMappers.cs",
+              "RelativeDocumentMoniker": "Mappers\\IncomeMappers.cs",
+              "ToolTip": "D:\\Dev\\Webdev\\expense control\\backend\\Mappers\\IncomeMappers.cs",
+              "RelativeToolTip": "Mappers\\IncomeMappers.cs",
+              "ViewState": "AQIAAAoAAAAAAAAAAAAowBkAAAAOAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-20T03:25:09.507Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "CreateIncomeRequestDto.cs",
+              "DocumentMoniker": "D:\\Dev\\Webdev\\expense control\\backend\\Dtos\\Income\\CreateIncomeRequestDto.cs",
+              "RelativeDocumentMoniker": "Dtos\\Income\\CreateIncomeRequestDto.cs",
+              "ToolTip": "D:\\Dev\\Webdev\\expense control\\backend\\Dtos\\Income\\CreateIncomeRequestDto.cs",
+              "RelativeToolTip": "Dtos\\Income\\CreateIncomeRequestDto.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAkAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-20T03:24:21.013Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "backend.http",
+              "DocumentMoniker": "D:\\Dev\\Webdev\\expense control\\backend\\backend.http",
+              "RelativeDocumentMoniker": "backend.http",
+              "ToolTip": "D:\\Dev\\Webdev\\expense control\\backend\\backend.http",
+              "RelativeToolTip": "backend.http",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAsAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003502|",
+              "WhenOpened": "2024-08-13T15:55:35.21Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "IncomeController.cs",
+              "DocumentMoniker": "D:\\Dev\\Webdev\\expense control\\backend\\Controllers\\IncomeController.cs",
+              "RelativeDocumentMoniker": "Controllers\\IncomeController.cs",
+              "ToolTip": "D:\\Dev\\Webdev\\expense control\\backend\\Controllers\\IncomeController.cs",
+              "RelativeToolTip": "Controllers\\IncomeController.cs",
+              "ViewState": "AQIAABkAAAAAAAAAAAAowCsAAABuAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-13T15:19:43.103Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\Dev\\Webdev\\expense control\\backend\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "D:\\Dev\\Webdev\\expense control\\backend\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AQIAAAwAAAAAAAAAAAAIwCAAAAAVAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-13T13:45:48.131Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "User.cs",
+              "DocumentMoniker": "D:\\Dev\\Webdev\\expense control\\backend\\Models\\User.cs",
+              "RelativeDocumentMoniker": "Models\\User.cs",
+              "ToolTip": "D:\\Dev\\Webdev\\expense control\\backend\\Models\\User.cs",
+              "RelativeToolTip": "Models\\User.cs",
+              "ViewState": "AQIAAAMAAAAAAAAAAAAAAA4AAAA6AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-12T03:49:58.611Z"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
