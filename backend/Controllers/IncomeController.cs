@@ -2,6 +2,7 @@
 using backend.Dtos.Income;
 using backend.Mappers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace backend.Controllers
@@ -14,20 +15,21 @@ namespace backend.Controllers
         public IncomeController(ApplicationDBContext dBContext) => _context = dBContext;
 
         [HttpGet("user/{userId}")]
-        public IActionResult GetUserIncome([FromRoute] int userId)
+        public async Task<IActionResult> GetUserIncome([FromRoute] int userId)
         {
-            var incomes = _context.Incomes
+            var incomes = await _context.Incomes
                 .Where(i => i.UserId == userId)
-                .ToList()
-                .Select(s => s.ToIncomeDto());
+                .ToListAsync();
 
-            return Ok(incomes);
+            var incomeDto = incomes.Select(s => s.ToIncomeDto());
+
+            return Ok(incomeDto);
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetIncome([FromRoute] int id)
+        public async Task<IActionResult> GetIncome([FromRoute] int id)
         {
-            var income = _context.Incomes.FirstOrDefault(i => i.Id == id);
+            var income = await _context.Incomes.FirstOrDefaultAsync(i => i.Id == id);
 
             if (income == null) {
                 return NotFound();
@@ -37,18 +39,18 @@ namespace backend.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateIncome([FromBody] CreateIncomeRequestDto incomeDto)
+        public async Task<IActionResult> CreateIncome([FromBody] CreateIncomeRequestDto incomeDto)
         {
             var incomeModel = incomeDto.ToIncomeFromCreateDto();
-            _context.Incomes.Add(incomeModel);
-            _context.SaveChanges();
+            await _context.Incomes.AddAsync(incomeModel);
+            await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetIncome), new { id = incomeModel.Id }, incomeModel.ToIncomeDto());
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateIncome([FromRoute] int id, [FromBody] UpdateIncomeRequestDto incomeDto)
+        public async Task<IActionResult> UpdateIncome([FromRoute] int id, [FromBody] UpdateIncomeRequestDto incomeDto)
         {
-            var incomeModel = _context.Incomes.FirstOrDefault(i => i.Id == id);
+            var incomeModel = await _context.Incomes.FirstOrDefaultAsync(i => i.Id == id);
 
             if (incomeModel == null)
             {
@@ -58,15 +60,15 @@ namespace backend.Controllers
             incomeModel.Amount = incomeDto.Amount;
             incomeModel.Details = incomeDto.Details;
             incomeModel.Date = incomeDto.Date;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return Ok(incomeModel.ToIncomeDto());
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteIncome([FromRoute] int id)
+        public async Task<IActionResult> DeleteIncome([FromRoute] int id)
         {
-            var incomeModel = _context.Incomes.FirstOrDefault(i => i.Id == id);
+            var incomeModel = await _context.Incomes.FirstOrDefaultAsync(i => i.Id == id);
 
             if (incomeModel == null )
             {
@@ -74,7 +76,7 @@ namespace backend.Controllers
             }
 
             _context.Incomes.Remove(incomeModel);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return NoContent();
         }
