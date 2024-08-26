@@ -1,7 +1,7 @@
 ﻿using backend.Data;
 using backend.Dtos.Income;
 using backend.Mappers;
-using backend.Repositories;
+using backend.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,12 +12,10 @@ namespace backend.Controllers
     [ApiController]
     public class IncomeController : ControllerBase
     {
-        private readonly ApplicationDBContext _context;
         private readonly IIncomeRepo _incomeRepo;
 
         public IncomeController(ApplicationDBContext context, IIncomeRepo incomeRepo) 
         {
-            _context = context;
             _incomeRepo = incomeRepo;
         } 
 
