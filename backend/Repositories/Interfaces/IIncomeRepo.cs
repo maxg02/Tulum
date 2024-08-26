@@ -1,8 +1,7 @@
 ﻿using backend.Dtos.Income;
 using backend.Models;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 
-namespace backend.Repositories
+namespace backend.Repositories.Interfaces
 {
     public interface IIncomeRepo
     {

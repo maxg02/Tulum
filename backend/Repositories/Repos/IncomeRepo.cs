@@ -1,15 +1,16 @@
 ﻿using backend.Data;
 using backend.Dtos.Income;
 using backend.Models;
+using backend.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace backend.Repositories
+namespace backend.Repositories.Repos
 {
     public class IncomeRepo : IIncomeRepo
     {
         private readonly ApplicationDBContext _context;
 
-        public IncomeRepo (ApplicationDBContext context)
+        public IncomeRepo(ApplicationDBContext context)
         {
             _context = context;
 
