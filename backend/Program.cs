@@ -1,5 +1,6 @@
 using backend.Data;
-using backend.Repositories;
+using backend.Repositories.Interfaces;
+using backend.Repositories.Repos;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
@@ -19,6 +20,7 @@ builder.Services.AddDbContext<ApplicationDBContext>(options =>
 });
 
 builder.Services.AddScoped<IIncomeRepo, IncomeRepo>();
+builder.Services.AddScoped<IFixedIncomeRepo, FixedIncomeRepo>();
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
