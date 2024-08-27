@@ -5,10 +5,13 @@ export const apiSlice = createApi({
         baseUrl: "http://localhost:5085/api/",
     }),
     endpoints: (builder) => ({
-        getUserIncome: builder.query({
+        getIncomesByUserId: builder.query({
             query: (userId) => `income/user/${userId}`,
+        }),
+        getFixedIncomesByUserId: builder.query({
+            query: (userId) => `fixedincome/user/${userId}`,
         }),
     }),
 });
 
-export const { useGetUserIncomeQuery } = apiSlice;
+export const { useGetIncomesByUserIdQuery, useGetFixedIncomesByUserIdQuery } = apiSlice;
