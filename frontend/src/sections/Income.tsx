@@ -4,17 +4,27 @@ import Header from "../components/Header";
 import SectionContent from "../components/SectionContent";
 import Table from "../components/Table";
 import { dataObject } from "../components/Table";
-import { useGetUserIncomeQuery } from "../../api/apiSlice";
+import { useGetIncomesByUserIdQuery, useGetFixedIncomesByUserIdQuery } from "../../api/apiSlice";
 
 export default function Budget() {
-    const { data, error, isLoading } = useGetUserIncomeQuery(1);
+    const { data: iData, error: iError, isLoading: iIsLoading } = useGetIncomesByUserIdQuery(1);
+    const { data: fiData, error: fiError, isLoading: fiIsLoading } = useGetFixedIncomesByUserIdQuery(1);
 
-    let incomesRow: [][] = [];
+    let incomesRow: [][] = [],
+        fixedIncomesRow: [][] = [];
 
-    if (!isLoading && data != undefined) {
-        incomesRow = data.map((income) => [
+    if (!iIsLoading && iData != undefined) {
+        incomesRow = iData.map((income: { amount: number; details: string; date: Date }) => [
             income.amount,
             income.details,
+            new Date(income.date).toLocaleDateString("en-US"),
+        ]);
+    }
+    if (!fiIsLoading && fiData != undefined) {
+        console.log(fiData);
+        fixedIncomesRow = fiData.map((fIncome: { amount: number; details: string; date: Date }) => [
+            fIncome.amount,
+            fIncome.details,
             new Date(income.date).toLocaleDateString("en-US"),
         ]);
     }
@@ -56,12 +66,7 @@ export default function Budget() {
                 values: ["Annual", "Monthly", "Biweekly", "Weekly"],
             },
         ],
-        rows: [
-            [3500, "Lorem ipsum dolor sit amet consectetur. Mauris fusce.", 0],
-            [3500, "Lorem ipsum dolor sit amet consectetur. Mauris fusce.", 1],
-            [3500, "Lorem ipsum dolor sit amet consectetur. Mauris fusce.", 2],
-            [3500, "Lorem ipsum dolor sit amet consectetur. Mauris fusce.", 3],
-        ],
+        rows: fixedIncomesRow,
     };
 
     return (
