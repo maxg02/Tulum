@@ -5,13 +5,16 @@ import SectionContent from "../components/SectionContent";
 import Table from "../components/Table";
 import { dataObject } from "../components/Table";
 import { useGetIncomesByUserIdQuery, useGetFixedIncomesByUserIdQuery } from "../../api/apiSlice";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import Modal from "../components/Modal";
 
 export default function Budget() {
     const { data: iData, error: iError, isLoading: iIsLoading } = useGetIncomesByUserIdQuery(1);
     const { data: fiData, error: fiError, isLoading: fiIsLoading } = useGetFixedIncomesByUserIdQuery(1);
 
-    let incomesRow: [][] = [],
-        fixedIncomesRow: [][] = [];
+    let incomesRow: [][] | null = null,
+        fixedIncomesRow: [][] | null = null;
 
     if (!iIsLoading && iData != undefined) {
         incomesRow = iData.map((income: { amount: number; details: string; date: Date }) => [
@@ -21,11 +24,10 @@ export default function Budget() {
         ]);
     }
     if (!fiIsLoading && fiData != undefined) {
-        console.log(fiData);
         fixedIncomesRow = fiData.map((fIncome: { amount: number; details: string; date: Date }) => [
             fIncome.amount,
             fIncome.details,
-            new Date(income.date).toLocaleDateString("en-US"),
+            new Date(fIncome.date).toLocaleDateString("en-US"),
         ]);
     }
 
@@ -53,7 +55,14 @@ export default function Budget() {
             { name: "Details", type: "string" },
             { name: "Date", type: "date" },
         ],
-        rows: incomesRow,
+        rows: incomesRow ?? [
+            [2500, "Lorem Ipsum Dolor ksy", "23/12/2024"],
+            [2500, "Lorem Ipsum Dolor ksy", "23/12/2024"],
+            [2500, "Lorem Ipsum Dolor ksy", "23/12/2024"],
+            [2500, "Lorem Ipsum Dolor ksy", "23/12/2024"],
+            [2500, "Lorem Ipsum Dolor ksy", "23/12/2024"],
+            [2500, "Lorem Ipsum Dolor ksy", "23/12/2024"],
+        ],
     };
 
     const fixedIncomeData: dataObject = {
@@ -66,7 +75,13 @@ export default function Budget() {
                 values: ["Annual", "Monthly", "Biweekly", "Weekly"],
             },
         ],
-        rows: fixedIncomesRow,
+        rows: fixedIncomesRow ?? [
+            [2500, "Lorem Ipsum Dolor ksy", 2],
+            [2500, "Lorem Ipsum Dolor ksy", 2],
+            [2500, "Lorem Ipsum Dolor ksy", 2],
+            [2500, "Lorem Ipsum Dolor ksy", 2],
+            [2500, "Lorem Ipsum Dolor ksy", 2],
+        ],
     };
 
     return (
@@ -100,8 +115,8 @@ export default function Budget() {
                     <div className="flex flex-col flex-1 gap-y-9">
                         <div className="infoContainer2 h-[50%]">
                             <div className="grid grid-cols-3 w-full">
-                            <p className="col-start-2 mx-auto">Income</p>
-<button className="ml-auto tableButton flex gap-x-2 p-0 items-center opacity-55 hover:opacity-100">
+                                <p className="col-start-2 mx-auto">Income</p>
+                                <button className="ml-auto tableButton flex gap-x-2 p-0 items-center opacity-55 hover:opacity-100">
                                     <p>New</p>
                                     <FontAwesomeIcon icon={faPlus} />
                                 </button>
@@ -125,6 +140,7 @@ export default function Budget() {
                     </div>
                 </div>
             </SectionContent>
+            <Modal />
         </div>
     );
 }
