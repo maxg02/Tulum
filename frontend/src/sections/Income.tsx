@@ -98,8 +98,14 @@ export default function Budget() {
                         </div>
                     </div>
                     <div className="flex flex-col flex-1 gap-y-9">
-                        <div className="flex-1 infoContainer2">
-                            <p>Income</p>
+                        <div className="infoContainer2 h-[50%]">
+                            <div className="grid grid-cols-3 w-full">
+                            <p className="col-start-2 mx-auto">Income</p>
+<button className="ml-auto tableButton flex gap-x-2 p-0 items-center opacity-55 hover:opacity-100">
+                                    <p>New</p>
+                                    <FontAwesomeIcon icon={faPlus} />
+                                </button>
+                            </div>
                             <div className="flex items-center flex-1 w-full">
                                 <Table dark data={incomeData} tablePrefix="I" />
                             </div>
