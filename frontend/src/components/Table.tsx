@@ -208,7 +208,7 @@ function Table({
                             FilterDropState ? "" : "hidden"
                         } max-h-64 overflow-y-auto formContainer`}
                     >
-                        <form className="filterForm w- flex flex-col gap-y-2">
+                        <form className="filterForm flex flex-col gap-y-2">
                             <TableFilters />
                             <div className="self-end">
                                 <button
