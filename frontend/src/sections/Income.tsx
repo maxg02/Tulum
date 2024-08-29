@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import SectionContent from "../components/SectionContent";
@@ -12,6 +12,7 @@ import Modal from "../components/Modal";
 export default function Budget() {
     const { data: iData, error: iError, isLoading: iIsLoading } = useGetIncomesByUserIdQuery(1);
     const { data: fiData, error: fiError, isLoading: fiIsLoading } = useGetFixedIncomesByUserIdQuery(1);
+    const [modalOpen, setModalOpen] = useState<boolean>(false);
 
     let incomesRow: [][] | null = null,
         fixedIncomesRow: [][] | null = null;
@@ -116,7 +117,10 @@ export default function Budget() {
                         <div className="infoContainer2 h-[50%]">
                             <div className="grid grid-cols-3 w-full">
                                 <p className="col-start-2 mx-auto">Income</p>
-                                <button className="ml-auto tableButton flex gap-x-2 p-0 items-center opacity-55 hover:opacity-100">
+                                <button
+                                    className="ml-auto tableButton flex gap-x-2 p-0 items-center opacity-55 hover:opacity-100"
+                                    onClick={() => setModalOpen(true)}
+                                >
                                     <p>New</p>
                                     <FontAwesomeIcon icon={faPlus} />
                                 </button>
@@ -140,7 +144,7 @@ export default function Budget() {
                     </div>
                 </div>
             </SectionContent>
-            <Modal />
+            {modalOpen && <Modal openFunc={setModalOpen} />}
         </div>
     );
 }
