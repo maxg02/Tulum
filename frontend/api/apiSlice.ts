@@ -8,10 +8,18 @@ export const apiSlice = createApi({
         getIncomesByUserId: builder.query({
             query: (userId) => `income/user/${userId}`,
         }),
+        createIncome: builder.mutation({
+            query: (incomeData: { amount: number; details: string; date: string }) => ({
+                url: "income",
+                method: "POST",
+                body: incomeData,
+            }),
+        }),
         getFixedIncomesByUserId: builder.query({
             query: (userId) => `fixedincome/user/${userId}`,
         }),
     }),
 });
 
-export const { useGetIncomesByUserIdQuery, useGetFixedIncomesByUserIdQuery } = apiSlice;
+export const { useGetIncomesByUserIdQuery, useGetFixedIncomesByUserIdQuery, useCreateIncomeMutation } =
+    apiSlice;
