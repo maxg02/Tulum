@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { useCreateIncomeMutation } from "../../api/apiSlice";
+import { createIncomeDto, useCreateIncomeMutation } from "../../api/apiSlice";
 
 type modalProps = {
     openFunc: React.Dispatch<React.SetStateAction<boolean>>;
@@ -11,19 +11,21 @@ function Modal({ openFunc }: modalProps) {
     const [createIncome, result] = useCreateIncomeMutation();
     const [amount, setAmount] = useState<number>(0);
     const [detail, setDetail] = useState<string>("");
-    const [date, setDate] = useState();
+    const [date, setDate] = useState<Date>(new Date());
 
     const handleCreateIncome = (e) => {
         e.preventDefault();
-        console.log("pepe");
-        const incomeData = {
-            amount: "",
+        const incomeData: createIncomeDto = {
+            amount: amount,
+            details: detail,
+            date: date,
         };
+        createIncome(incomeData);
+        openFunc(false);
     };
 
     return (
         <div className="absolute left-0 h-[100vh] w-[100vw] bg-black bg-opacity-40 flex">
-            <p>{detail}</p>
             <div className="bg-custom-ly1 m-auto w-[30%] infoContainer1 shadow-[0_0_5px_1px_rgba(0,0,0,0.35)]">
                 <div className="grid grid-cols-3 w-full">
                     <p className="col-start-2 m-auto">Create Income</p>
@@ -67,6 +69,7 @@ function Modal({ openFunc }: modalProps) {
                             name="date"
                             className="formInput w-full"
                             placeholder="Date"
+                            onChange={(e) => setDate(e.target.value)}
                         ></input>
                     </div>
                     <span className="formDivider"></span>
@@ -74,7 +77,7 @@ function Modal({ openFunc }: modalProps) {
                         <button type="reset" className="formButton" onClick={() => openFunc(false)}>
                             <p>Cancel</p>
                         </button>
-                        <button className="formButton" onClick={() => handleCreateIncome(event)}>
+                        <button className="formButton" onClick={(event) => handleCreateIncome(event)}>
                             <p>Create</p>
                         </button>
                     </div>
