@@ -75,7 +75,15 @@ function Table({
 
     const TableRows = () =>
         data.rows.map((item, key) => (
-            <tr className={`tableRow ${dark ? "border-custom-ly1" : "border-custom-ly2"}`} key={key}>
+            <tr
+                className={`tableRow ${
+                    dark
+                        ? "border-custom-ly1 hover:bg-custom-ly1"
+                        : "border-custom-ly2 hover:bg-custom-ly2"
+                } cursor-pointer`}
+                key={key}
+                onClick={() => console.log(item)}
+            >
                 {item.map((content, key) => (
                     <td key={key}>
                         {data.columns[key].type === "string" || data.columns[key].type === "date" ? (
