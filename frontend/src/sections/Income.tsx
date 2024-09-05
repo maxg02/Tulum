@@ -7,7 +7,7 @@ import { dataObject } from "../components/Table";
 import { useGetIncomesByUserIdQuery, useGetFixedIncomesByUserIdQuery } from "../../api/apiSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import Modal from "../components/Modal";
+import CreateModal from "../components/CreateModal";
 
 export default function Budget() {
     const { data: iData, error: iError, isLoading: iIsLoading } = useGetIncomesByUserIdQuery(1);
@@ -144,7 +144,7 @@ export default function Budget() {
                     </div>
                 </div>
             </SectionContent>
-            {modalOpen && <Modal openFunc={setModalOpen} />}
+            {modalOpen && <CreateModal openFunc={setModalOpen} />}
         </div>
     );
 }
