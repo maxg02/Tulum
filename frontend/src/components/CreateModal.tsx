@@ -7,7 +7,7 @@ type modalProps = {
     openFunc: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-function Modal({ openFunc }: modalProps) {
+function CreateModal({ openFunc }: modalProps) {
     const [createIncome, result] = useCreateIncomeMutation();
     const [amount, setAmount] = useState<number>(0);
     const [detail, setDetail] = useState<string>("");
@@ -87,4 +87,4 @@ function Modal({ openFunc }: modalProps) {
     );
 }
 
-export default Modal;
+export default CreateModal;
