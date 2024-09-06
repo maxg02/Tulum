@@ -12,6 +12,7 @@ import {
     faSortDown,
     faSortUp,
 } from "@fortawesome/free-solid-svg-icons";
+import { incomeModel } from "../sections/Income";
 
 type sortValues = ("asc" | "desc" | "null")[];
 export type dataObject = {
@@ -27,10 +28,12 @@ function Table({
     data,
     dark = false,
     tablePrefix,
+    detailsOpenFunc,
 }: {
     data: dataObject;
     dark?: boolean;
     tablePrefix: string;
+    detailsOpenFunc: React.Dispatch<React.SetStateAction<{ open: boolean; item: incomeModel | null }>>;
 }) {
     const [FilterDropState, setFilterDropState] = useState<boolean>(false);
     const [ColumnsSort, setColumnsSort] = useState<sortValues>(data.columns.map(() => "null"));

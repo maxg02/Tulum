@@ -8,11 +8,22 @@ import { useGetIncomesByUserIdQuery, useGetFixedIncomesByUserIdQuery } from "../
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import CreateModal from "../components/CreateModal";
+import DetailsModal from "../components/DetailsModal";
+
+export type incomeModel = {
+    id: number;
+    amount: number;
+    details: string;
+    date: Date;
+};
 
 export default function Budget() {
     const { data: iData, error: iError, isLoading: iIsLoading } = useGetIncomesByUserIdQuery(1);
     const { data: fiData, error: fiError, isLoading: fiIsLoading } = useGetFixedIncomesByUserIdQuery(1);
-    const [modalOpen, setModalOpen] = useState<boolean>(false);
+    const [createModalOpen, setCreateModalOpen] = useState<boolean>(false);
+    const [detailsModalOpen, setDetailsModalOpen] = useState<{ open: boolean; item: incomeModel | null }>(
+        { open: false, item: null }
+    );
 
     let incomesRow: [][] | null = null,
         fixedIncomesRow: [][] | null = null;
@@ -119,14 +130,19 @@ export default function Budget() {
                                 <p className="col-start-2 mx-auto">Income</p>
                                 <button
                                     className="ml-auto tableButton flex gap-x-2 p-0 items-center opacity-55 hover:opacity-100"
-                                    onClick={() => setModalOpen(true)}
+                                    onClick={() => setCreateModalOpen(true)}
                                 >
                                     <p>New</p>
                                     <FontAwesomeIcon icon={faPlus} />
                                 </button>
                             </div>
                             <div className="flex items-center flex-1 w-full">
-                                <Table dark data={incomeData} tablePrefix="I" />
+                                <Table
+                                    dark
+                                    data={incomeData}
+                                    tablePrefix="I"
+                                    detailsOpenFunc={setDetailsModalOpen}
+                                />
                             </div>
                         </div>
                         <div className="flex-1 infoContainer2">
@@ -144,7 +160,8 @@ export default function Budget() {
                     </div>
                 </div>
             </SectionContent>
-            {modalOpen && <CreateModal openFunc={setModalOpen} />}
+            {createModalOpen && <CreateModal openFunc={setCreateModalOpen} />}
+            {detailsModalOpen && <DetailsModal openFunc={setDetailsModalOpen} />}
         </div>
     );
 }

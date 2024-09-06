@@ -26,7 +26,7 @@ function DetailsModal({ openFunc }: modalProps) {
         <div className="absolute left-0 h-[100vh] w-[100vw] bg-black bg-opacity-40 flex">
             <div className="bg-custom-ly1 m-auto w-[30%] infoContainer1 shadow-[0_0_5px_1px_rgba(0,0,0,0.35)]">
                 <div className="grid grid-cols-3 w-full">
-                    <p className="col-start-2 m-auto">Create Income</p>
+                    <p className="col-start-2 m-auto">Income Details</p>
                     <button
                         className="ml-auto tableButton flex gap-x-2 p-0 items-center opacity-55 hover:opacity-100"
                         onClick={() => openFunc(false)}
