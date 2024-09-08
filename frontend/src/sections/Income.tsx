@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import SectionContent from "../components/SectionContent";
-import Table from "../components/Table";
+import Table, { tableRow } from "../components/Table";
 import { dataObject } from "../components/Table";
 import { useGetIncomesByUserIdQuery, useGetFixedIncomesByUserIdQuery } from "../../api/apiSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -10,30 +10,22 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import CreateModal from "../components/CreateModal";
 import DetailsModal from "../components/DetailsModal";
 
-export type incomeModel = {
-    id: number;
-    amount: number;
-    details: string;
-    date: Date;
-};
-
 export default function Budget() {
     const { data: iData, error: iError, isLoading: iIsLoading } = useGetIncomesByUserIdQuery(1);
     const { data: fiData, error: fiError, isLoading: fiIsLoading } = useGetFixedIncomesByUserIdQuery(1);
     const [createModalOpen, setCreateModalOpen] = useState<boolean>(false);
-    const [detailsModalOpen, setDetailsModalOpen] = useState<{ open: boolean; item: incomeModel | null }>(
-        { open: false, item: null }
-    );
+    const [detailsModalOpen, setDetailsModalOpen] = useState<{ open: boolean; itemId: number | null }>({
+        open: false,
+        itemId: null,
+    });
 
-    let incomesRow: [][] | null = null,
-        fixedIncomesRow: [][] | null = null;
+    let incomesRow: tableRow, fixedIncomesRow: tableRow;
 
     if (!iIsLoading && iData != undefined) {
-        incomesRow = iData.map((income: { amount: number; details: string; date: Date }) => [
-            income.amount,
-            income.details,
-            new Date(income.date).toLocaleDateString("en-US"),
-        ]);
+        incomesRow = iData.map((income: { id: number; amount: number; details: string; date: Date }) => ({
+            id: income.id,
+            data: [income.amount, income.details, new Date(income.date).toLocaleDateString("en-US")],
+        }));
     }
     if (!fiIsLoading && fiData != undefined) {
         fixedIncomesRow = fiData.map((fIncome: { amount: number; details: string; date: Date }) => [
@@ -43,23 +35,23 @@ export default function Budget() {
         ]);
     }
 
-    const budgetPlanningData: dataObject = {
-        columns: [
-            { name: "Details", type: "string" },
-            { name: "Amount", type: "amount" },
-            {
-                name: "Periodicity",
-                type: "list",
-                values: ["Annual", "Monthly", "Biweekly", "Weekly"],
-            },
-        ],
-        rows: [
-            ["Food", 3500, 3],
-            ["Transport", 4000, 0],
-            ["House/Utilities", 3000, 2],
-            ["Personal/Medical", 3250, 1],
-        ],
-    };
+    // const budgetPlanningData: dataObject = {
+    //     columns: [
+    //         { name: "Details", type: "string" },
+    //         { name: "Amount", type: "amount" },
+    //         {
+    //             name: "Periodicity",
+    //             type: "list",
+    //             values: ["Annual", "Monthly", "Biweekly", "Weekly"],
+    //         },
+    //     ],
+    //     rows: [
+    //         {
+    //             id: 1500,
+    //             data: ["pepe", 2500, 2],
+    //         },
+    //     ],
+    // };
 
     const incomeData: dataObject = {
         columns: [
@@ -68,33 +60,30 @@ export default function Budget() {
             { name: "Date", type: "date" },
         ],
         rows: incomesRow ?? [
-            [2500, "Lorem Ipsum Dolor ksy", "23/12/2024"],
-            [2500, "Lorem Ipsum Dolor ksy", "23/12/2024"],
-            [2500, "Lorem Ipsum Dolor ksy", "23/12/2024"],
-            [2500, "Lorem Ipsum Dolor ksy", "23/12/2024"],
-            [2500, "Lorem Ipsum Dolor ksy", "23/12/2024"],
-            [2500, "Lorem Ipsum Dolor ksy", "23/12/2024"],
+            {
+                id: 1500,
+                data: [2500, "pepe", "23/25/2024"],
+            },
         ],
     };
 
-    const fixedIncomeData: dataObject = {
-        columns: [
-            { name: "Income", type: "amount" },
-            { name: "Details", type: "string" },
-            {
-                name: "Periodicity",
-                type: "list",
-                values: ["Annual", "Monthly", "Biweekly", "Weekly"],
-            },
-        ],
-        rows: fixedIncomesRow ?? [
-            [2500, "Lorem Ipsum Dolor ksy", 2],
-            [2500, "Lorem Ipsum Dolor ksy", 2],
-            [2500, "Lorem Ipsum Dolor ksy", 2],
-            [2500, "Lorem Ipsum Dolor ksy", 2],
-            [2500, "Lorem Ipsum Dolor ksy", 2],
-        ],
-    };
+    // const fixedIncomeData: dataObject = {
+    //     columns: [
+    //         { name: "Income", type: "amount" },
+    //         { name: "Details", type: "string" },
+    //         {
+    //             name: "Periodicity",
+    //             type: "list",
+    //             values: ["Annual", "Monthly", "Biweekly", "Weekly"],
+    //         },
+    //     ],
+    //     rows: fixedIncomesRow ?? [
+    //         {
+    //             id: 1500,
+    //             data: [2500, "pepe", 1],
+    //         },
+    //     ],
+    // };
 
     return (
         <div className="flex flex-1 gap-8">
@@ -119,9 +108,9 @@ export default function Budget() {
                         </div>
                         <div className="infoContainer1 flex-1">
                             <p>Budget Planning</p>
-                            <div className="flex flex-1 items-center w-full">
+                            {/* <div className="flex flex-1 items-center w-full">
                                 <Table data={budgetPlanningData} tablePrefix="BP" />
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                     <div className="flex flex-col flex-1 gap-y-9">
@@ -154,14 +143,16 @@ export default function Budget() {
                                 </button>
                             </div>
                             <div className="flex flex-1 items-center w-full">
-                                <Table data={fixedIncomeData} tablePrefix="FI" dark />
+                                {/* <Table data={fixedIncomeData} tablePrefix="FI" dark /> */}
                             </div>
                         </div>
                     </div>
                 </div>
             </SectionContent>
             {createModalOpen && <CreateModal openFunc={setCreateModalOpen} />}
-            {detailsModalOpen && <DetailsModal openFunc={setDetailsModalOpen} />}
+            {detailsModalOpen.open && (
+                <DetailsModal openFunc={setDetailsModalOpen} itemId={detailsModalOpen.itemId} />
+            )}
         </div>
     );
 }

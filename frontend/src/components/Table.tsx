@@ -12,16 +12,19 @@ import {
     faSortDown,
     faSortUp,
 } from "@fortawesome/free-solid-svg-icons";
-import { incomeModel } from "../sections/Income";
 
 type sortValues = ("asc" | "desc" | "null")[];
+export type tableRow = {
+    id: number;
+    data: (string | number | { value: number; total: number } | null)[];
+};
 export type dataObject = {
     columns: {
         name: string;
         type: "string" | "amount" | "list" | "date" | "progress";
         values?: string[];
     }[];
-    rows: (string | number | { value: number; total: number } | null)[][];
+    rows: tableRow[];
 };
 
 function Table({
@@ -33,7 +36,7 @@ function Table({
     data: dataObject;
     dark?: boolean;
     tablePrefix: string;
-    detailsOpenFunc: React.Dispatch<React.SetStateAction<{ open: boolean; item: incomeModel | null }>>;
+    detailsOpenFunc: React.Dispatch<React.SetStateAction<{ open: boolean; itemId: number | null }>>;
 }) {
     const [FilterDropState, setFilterDropState] = useState<boolean>(false);
     const [ColumnsSort, setColumnsSort] = useState<sortValues>(data.columns.map(() => "null"));
@@ -85,9 +88,9 @@ function Table({
                         : "border-custom-ly2 hover:bg-custom-ly2"
                 } cursor-pointer`}
                 key={key}
-                onClick={() => console.log(item)}
+                onClick={() => detailsOpenFunc({ open: true, itemId: item.id })}
             >
-                {item.map((content, key) => (
+                {item.data.map((content, key) => (
                     <td key={key}>
                         {data.columns[key].type === "string" || data.columns[key].type === "date" ? (
                             <p className="truncate">{content}</p>
