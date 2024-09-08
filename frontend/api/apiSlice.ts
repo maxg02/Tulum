@@ -9,6 +9,9 @@ export const apiSlice = createApi({
     endpoints: (builder) => ({
         getIncomesByUserId: builder.query({
             query: (userId) => `income/user/${userId}`,
+}),
+        getIncomesById: builder.query({
+            query: (Id: number) => `income/${Id}`,
         }),
         createIncome: builder.mutation({
             query: (incomeData: createIncomeDto) => ({
