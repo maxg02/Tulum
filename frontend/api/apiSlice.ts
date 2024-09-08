@@ -20,6 +20,12 @@ export const apiSlice = createApi({
                 body: incomeData,
             }),
         }),
+deleteIncome: builder.mutation({
+            query: (Id: number) => ({
+                url: `income/${Id}`,
+                method: "DELETE",
+            }),
+        }),
         getFixedIncomesByUserId: builder.query({
             query: (userId) => `fixedincome/user/${userId}`,
         }),
