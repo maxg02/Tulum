@@ -9,7 +9,7 @@ export const apiSlice = createApi({
     endpoints: (builder) => ({
         getIncomesByUserId: builder.query({
             query: (userId: number) => `income/user/${userId}`,
-}),
+        }),
         getIncomesById: builder.query({
             query: (Id: number) => `income/${Id}`,
         }),
@@ -20,7 +20,7 @@ export const apiSlice = createApi({
                 body: incomeData,
             }),
         }),
-deleteIncome: builder.mutation({
+        deleteIncome: builder.mutation({
             query: (Id: number) => ({
                 url: `income/${Id}`,
                 method: "DELETE",
@@ -33,9 +33,9 @@ deleteIncome: builder.mutation({
 });
 
 export const {
-useGetIncomesByUserIdQuery,
+    useGetIncomesByUserIdQuery,
     useGetIncomesByIdQuery,
     useCreateIncomeMutation,
     useDeleteIncomeMutation,
-useGetFixedIncomesByUserIdQuery,
+    useGetFixedIncomesByUserIdQuery,
 } = apiSlice;
