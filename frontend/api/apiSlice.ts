@@ -32,5 +32,10 @@ deleteIncome: builder.mutation({
     }),
 });
 
-export const { useGetIncomesByUserIdQuery, useGetFixedIncomesByUserIdQuery, useCreateIncomeMutation } =
-    apiSlice;
+export const {
+useGetIncomesByUserIdQuery,
+    useGetIncomesByIdQuery,
+    useCreateIncomeMutation,
+    useDeleteIncomeMutation,
+useGetFixedIncomesByUserIdQuery,
+} =     apiSlice;
