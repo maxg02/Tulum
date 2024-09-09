@@ -31,12 +31,12 @@ function Table({
     data,
     dark = false,
     tablePrefix,
-    detailsOpenFunc,
+    showDetailModal,
 }: {
     data: dataObject;
     dark?: boolean;
     tablePrefix: string;
-    detailsOpenFunc: React.Dispatch<React.SetStateAction<{ open: boolean; itemId: number | null }>>;
+    showDetailModal: () => void;
 }) {
     const [FilterDropState, setFilterDropState] = useState<boolean>(false);
     const [ColumnsSort, setColumnsSort] = useState<sortValues>(data.columns.map(() => "null"));
@@ -88,7 +88,7 @@ function Table({
                         : "border-custom-ly2 hover:bg-custom-ly2"
                 } cursor-pointer`}
                 key={key}
-                onClick={() => detailsOpenFunc({ open: true, itemId: item.id })}
+                onClick={showDetailModal}
             >
                 {item.data.map((content, key) => (
                     <td key={key}>

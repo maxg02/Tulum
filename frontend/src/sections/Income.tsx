@@ -9,15 +9,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import CreateModal from "../components/CreateModal";
 import DetailsModal from "../components/DetailsModal";
+import useModal from "../hooks/useModal";
 
 export default function Budget() {
     const { data: iData, error: iError, isLoading: iIsLoading } = useGetIncomesByUserIdQuery(1);
     const { data: fiData, error: fiError, isLoading: fiIsLoading } = useGetFixedIncomesByUserIdQuery(1);
-    const [createModalOpen, setCreateModalOpen] = useState<boolean>(false);
-    const [detailsModalOpen, setDetailsModalOpen] = useState<{ open: boolean; itemId: number | null }>({
-        open: false,
-        itemId: null,
-    });
+
+    const [isShowingCreate, toggleCreate] = useModal();
+    const [isShowingDetail, toggleDetail] = useModal();
 
     let incomesRow: tableRow, fixedIncomesRow: tableRow;
 
@@ -119,7 +118,7 @@ export default function Budget() {
                                 <p className="col-start-2 mx-auto">Income</p>
                                 <button
                                     className="ml-auto tableButton flex gap-x-2 p-0 items-center opacity-55 hover:opacity-100"
-                                    onClick={() => setCreateModalOpen(true)}
+                                    onClick={() => toggleCreate()}
                                 >
                                     <p>New</p>
                                     <FontAwesomeIcon icon={faPlus} />
@@ -130,7 +129,7 @@ export default function Budget() {
                                     dark
                                     data={incomeData}
                                     tablePrefix="I"
-                                    detailsOpenFunc={setDetailsModalOpen}
+                                    showDetailModal={toggleDetail}
                                 />
                             </div>
                         </div>
@@ -149,10 +148,8 @@ export default function Budget() {
                     </div>
                 </div>
             </SectionContent>
-            {createModalOpen && <CreateModal openFunc={setCreateModalOpen} />}
-            {detailsModalOpen.open && (
-                <DetailsModal openFunc={setDetailsModalOpen} itemId={detailsModalOpen.itemId} />
-            )}
+            {<CreateModal show={isShowingCreate} handleClosing={toggleCreate} />}
+            {<DetailsModal show={isShowingDetail} handleClosing={toggleDetail} />}
         </div>
     );
 }

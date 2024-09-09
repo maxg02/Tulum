@@ -3,11 +3,12 @@ import React, { useState } from "react";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { createIncomeDto, useCreateIncomeMutation } from "../../api/apiSlice";
 
-type modalProps = {
-    openFunc: React.Dispatch<React.SetStateAction<boolean>>;
+export type modalProps = {
+    show: boolean;
+    handleClosing: () => void;
 };
 
-function CreateModal({ openFunc }: modalProps) {
+function CreateModal({ show, handleClosing }: modalProps) {
     const [createIncome, result] = useCreateIncomeMutation();
     const [amount, setAmount] = useState<number>(0);
     const [detail, setDetail] = useState<string>("");
@@ -21,8 +22,11 @@ function CreateModal({ openFunc }: modalProps) {
             date: date,
         };
         createIncome(incomeData);
-        openFunc(false);
     };
+
+    if (!show) {
+        return null;
+    }
 
     return (
         <div className="absolute left-0 h-[100vh] w-[100vw] bg-black bg-opacity-40 flex">
@@ -31,7 +35,7 @@ function CreateModal({ openFunc }: modalProps) {
                     <p className="col-start-2 m-auto">Create Income</p>
                     <button
                         className="ml-auto tableButton flex gap-x-2 p-0 items-center opacity-55 hover:opacity-100"
-                        onClick={() => openFunc(false)}
+                        onClick={handleClosing}
                     >
                         <FontAwesomeIcon icon={faXmark} />
                     </button>
@@ -74,7 +78,7 @@ function CreateModal({ openFunc }: modalProps) {
                     </div>
                     <span className="formDivider"></span>
                     <div className="self-end flex gap-x-2">
-                        <button type="reset" className="formButton" onClick={() => openFunc(false)}>
+                        <button type="reset" className="formButton" onClick={handleClosing}>
                             <p>Cancel</p>
                         </button>
                         <button className="formButton" onClick={(event) => handleCreateIncome(event)}>

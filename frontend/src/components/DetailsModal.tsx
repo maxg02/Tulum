@@ -8,19 +8,15 @@ import {
     useUpdateIncomeMutation,
 } from "../../api/apiSlice";
 import Loader from "./Loader";
+import { modalProps } from "./CreateModal";
 
-type modalProps = {
-    openFunc: React.Dispatch<React.SetStateAction<{ open: boolean; itemId: number | null }>>;
-    itemId: number;
-};
-
-function DetailsModal({ openFunc, itemId }: modalProps) {
+function DetailsModal({ show, handleClosing }: modalProps) {
     const [amount, setAmount] = useState<number>(0);
     const [details, setDetail] = useState<string>("");
     const [date, setDate] = useState<Date>(new Date());
     const [id, setId] = useState<number>(0);
 
-    const { data, error, isLoading } = useGetIncomesByIdQuery(itemId);
+    const { data, error, isLoading } = useGetIncomesByIdQuery(1);
     const [deleteIncome, deleteResult] = useDeleteIncomeMutation();
     const [updateIncome, updateResult] = useUpdateIncomeMutation();
 
@@ -30,9 +26,9 @@ function DetailsModal({ openFunc, itemId }: modalProps) {
         }
     }, [isLoading, data]);
 
-    const handleClosing = () => {
-        openFunc({ open: false, itemId: null });
-    };
+    if (!show) {
+        return null;
+    }
 
     const handleDeleteIncome = (e) => {
         e.preventDefault;
@@ -63,7 +59,7 @@ function DetailsModal({ openFunc, itemId }: modalProps) {
                             <p className="col-start-2 m-auto">Income Details</p>
                             <button
                                 className="ml-auto tableButton flex gap-x-2 p-0 items-center opacity-55 hover:opacity-100"
-                                onClick={() => openFunc(false)}
+                                onClick={handleClosing}
                             >
                                 <FontAwesomeIcon icon={faXmark} />
                             </button>
@@ -109,11 +105,7 @@ function DetailsModal({ openFunc, itemId }: modalProps) {
                             </div>
                             <span className="formDivider"></span>
                             <div className="self-end flex gap-x-2">
-                                <button
-                                    type="reset"
-                                    className="formButton"
-                                    onClick={() => handleClosing()}
-                                >
+                                <button type="reset" className="formButton" onClick={handleClosing}>
                                     <p>Cancel</p>
                                 </button>
                                 <button
