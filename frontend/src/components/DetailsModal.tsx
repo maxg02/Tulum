@@ -1,7 +1,12 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { useDeleteIncomeMutation, useGetIncomesByIdQuery } from "../../api/apiSlice";
+import {
+    updateIncomeDto,
+    useDeleteIncomeMutation,
+    useGetIncomesByIdQuery,
+    useUpdateIncomeMutation,
+} from "../../api/apiSlice";
 import Loader from "./Loader";
 
 type modalProps = {
@@ -11,12 +16,13 @@ type modalProps = {
 
 function DetailsModal({ openFunc, itemId }: modalProps) {
     const [amount, setAmount] = useState<number>(0);
-    const [detail, setDetail] = useState<string>("");
+    const [details, setDetail] = useState<string>("");
     const [date, setDate] = useState<Date>(new Date());
     const [id, setId] = useState<number>(0);
 
     const { data, error, isLoading } = useGetIncomesByIdQuery(itemId);
-    const [deleteIncome, result] = useDeleteIncomeMutation();
+    const [deleteIncome, deleteResult] = useDeleteIncomeMutation();
+    const [updateIncome, updateResult] = useUpdateIncomeMutation();
 
     useEffect(() => {
         if (!isLoading && data != undefined) {
@@ -31,7 +37,18 @@ function DetailsModal({ openFunc, itemId }: modalProps) {
     const handleDeleteIncome = (e) => {
         e.preventDefault;
         deleteIncome(id);
-        console.log(result);
+        handleClosing();
+    };
+
+    const handleUpdateIncome = (e) => {
+        e.preventDefault;
+
+        const incomeData: updateIncomeDto = {
+            id: itemId,
+            data: { amount: amount, details: details, date: date },
+        };
+        updateIncome(incomeData);
+        console.log(updateResult);
         handleClosing();
     };
 
@@ -74,7 +91,7 @@ function DetailsModal({ openFunc, itemId }: modalProps) {
                                     className="formInput w-full"
                                     placeholder="Details"
                                     onChange={(e) => setDetail(e.target.value)}
-                                    value={detail}
+                                    value={details}
                                 ></input>
                             </div>
 
@@ -107,7 +124,7 @@ function DetailsModal({ openFunc, itemId }: modalProps) {
                                 </button>
                                 <button
                                     className="formButton"
-                                    onClick={(event) => handleCreateIncome(event)}
+                                    onClick={(event) => handleUpdateIncome(event)}
                                 >
                                     <p>Save</p>
                                 </button>
