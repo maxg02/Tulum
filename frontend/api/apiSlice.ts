@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export type createIncomeDto = { amount: number; details: string; date: Date };
+export type updateIncomeDto = { id: number; data: { amount: number; details: string; date: Date } };
 
 export const apiSlice = createApi({
     baseQuery: fetchBaseQuery({
@@ -20,6 +21,13 @@ export const apiSlice = createApi({
                 body: incomeData,
             }),
         }),
+        updateIncome: builder.mutation({
+            query: (incomeData: updateIncomeDto) => ({
+                url: `income/${incomeData.id}`,
+                method: "PUT",
+                body: incomeData.data,
+            }),
+        }),
         deleteIncome: builder.mutation({
             query: (Id: number) => ({
                 url: `income/${Id}`,
@@ -36,6 +44,7 @@ export const {
     useGetIncomesByUserIdQuery,
     useGetIncomesByIdQuery,
     useCreateIncomeMutation,
+    useUpdateIncomeMutation,
     useDeleteIncomeMutation,
     useGetFixedIncomesByUserIdQuery,
 } = apiSlice;
