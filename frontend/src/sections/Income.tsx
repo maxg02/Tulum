@@ -4,19 +4,73 @@ import Header from "../components/Header";
 import SectionContent from "../components/SectionContent";
 import Table, { tableRow } from "../components/Table";
 import { dataObject } from "../components/Table";
-import { useGetIncomesByUserIdQuery, useGetFixedIncomesByUserIdQuery } from "../../api/apiSlice";
+import {
+    useGetIncomesByUserIdQuery,
+    useGetFixedIncomesByUserIdQuery,
+    createIncomeDto,
+    useCreateIncomeMutation,
+    useGetIncomesByIdQuery,
+    useDeleteIncomeMutation,
+    useUpdateIncomeMutation,
+    useCreateFixedIncomeMutation,
+} from "../../api/apiSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import CreateModal from "../components/CreateModal";
 import DetailsModal from "../components/DetailsModal";
-import useModal from "../hooks/useModal";
+import { useAppDispatch, useAppSelector } from "../hooks";
+import { showModal } from "../reducers/createModalReducers";
+import { AmountField, DateField, DetailsField } from "../components/ModalsFields";
 
 export default function Budget() {
-    const { data: iData, error: iError, isLoading: iIsLoading } = useGetIncomesByUserIdQuery(1);
-    const { data: fiData, error: fiError, isLoading: fiIsLoading } = useGetFixedIncomesByUserIdQuery(1);
+    const [amount, setAmount] = useState<number>(0);
+    const [details, setDetails] = useState<string>("");
+    const [date, setDate] = useState<Date>(new Date());
 
-    const [isShowingCreate, toggleCreate] = useModal();
-    const [isShowingDetail, toggleDetail] = useModal();
+    const clearFieldValues = () => {
+        setAmount(0), setDetails(""), setDate(new Date());
+    };
+
+    const { data: iData, error: iError, isLoading: iIsLoading } = useGetIncomesByUserIdQuery(1);
+    const [createIncome, iResult] = useCreateIncomeMutation();
+
+    const { data: fiData, error: fiError, isLoading: fiIsLoading } = useGetFixedIncomesByUserIdQuery(1);
+    const [createFixedIncome, fiResult] = useCreateFixedIncomeMutation();
+
+    const dispatch = useAppDispatch();
+    const createModalState = useAppSelector((state) => state.createModal.show);
+
+    const showCreateIncomeModal = () => {
+        clearFieldValues();
+        const newState = { ...createModalState };
+        newState.income = true;
+
+        dispatch(showModal(newState));
+    };
+    const createIncomeHandler = () => {
+        const incomeData: createIncomeDto = {
+            amount: amount,
+            details: details,
+            date: date,
+        };
+        createIncome(incomeData);
+    };
+
+    const showCreateFixedIncomeModal = () => {
+        clearFieldValues();
+        const newState = { ...createModalState };
+        newState.fixedIncome = true;
+
+        dispatch(showModal(newState));
+    };
+    const createFixedIncomeHandler = () => {
+        const incomeData: createIncomeDto = {
+            amount: amount,
+            details: details,
+            date: date,
+        };
+        // createIncome(incomeData);
+    };
 
     let incomesRow: tableRow, fixedIncomesRow: tableRow;
 
@@ -25,32 +79,19 @@ export default function Budget() {
             id: income.id,
             data: [income.amount, income.details, new Date(income.date).toLocaleDateString("en-US")],
         }));
-    }
-    if (!fiIsLoading && fiData != undefined) {
-        fixedIncomesRow = fiData.map((fIncome: { amount: number; details: string; date: Date }) => [
-            fIncome.amount,
-            fIncome.details,
-            new Date(fIncome.date).toLocaleDateString("en-US"),
-        ]);
+        console.log(iData);
     }
 
-    // const budgetPlanningData: dataObject = {
-    //     columns: [
-    //         { name: "Details", type: "string" },
-    //         { name: "Amount", type: "amount" },
-    //         {
-    //             name: "Periodicity",
-    //             type: "list",
-    //             values: ["Annual", "Monthly", "Biweekly", "Weekly"],
-    //         },
-    //     ],
-    //     rows: [
-    //         {
-    //             id: 1500,
-    //             data: ["pepe", 2500, 2],
-    //         },
-    //     ],
-    // };
+    if (!fiIsLoading && fiData != undefined) {
+        fixedIncomesRow = fiData.map(
+            (fIncome: { id: number; amount: number; details: string; periodicity: string }) => ({
+                id: fIncome.id,
+                data: [fIncome.amount, fIncome.details, fIncome.periodicity],
+            })
+        );
+
+        console.log(fiData);
+    }
 
     const incomeData: dataObject = {
         columns: [
@@ -66,20 +107,38 @@ export default function Budget() {
         ],
     };
 
-    // const fixedIncomeData: dataObject = {
+    const fixedIncomeData: dataObject = {
+        columns: [
+            { name: "Income", type: "amount" },
+            { name: "Details", type: "string" },
+            {
+                name: "Periodicity",
+                type: "list",
+                values: ["Daily", "Weekly", "Biweekly", "Monthly", "Quarterly", "Annual"],
+            },
+        ],
+        rows: fixedIncomesRow ?? [
+            {
+                id: 1500,
+                data: [2500, "pepe", 1],
+            },
+        ],
+    };
+
+    // const budgetPlanningData: dataObject = {
     //     columns: [
-    //         { name: "Income", type: "amount" },
     //         { name: "Details", type: "string" },
+    //         { name: "Amount", type: "amount" },
     //         {
     //             name: "Periodicity",
     //             type: "list",
-    //             values: ["Annual", "Monthly", "Biweekly", "Weekly"],
+    //             values: ["Daily", "Weekly", "Biweekly", "Monthly", "Quarterly", "Annual"],
     //         },
     //     ],
-    //     rows: fixedIncomesRow ?? [
+    //     rows: [
     //         {
     //             id: 1500,
-    //             data: [2500, "pepe", 1],
+    //             data: ["pepe", 2500, 2],
     //         },
     //     ],
     // };
@@ -118,38 +177,49 @@ export default function Budget() {
                                 <p className="col-start-2 mx-auto">Income</p>
                                 <button
                                     className="ml-auto tableButton flex gap-x-2 p-0 items-center opacity-55 hover:opacity-100"
-                                    onClick={() => toggleCreate()}
+                                    onClick={showCreateIncomeModal}
                                 >
                                     <p>New</p>
                                     <FontAwesomeIcon icon={faPlus} />
                                 </button>
                             </div>
                             <div className="flex items-center flex-1 w-full">
-                                <Table
-                                    dark
-                                    data={incomeData}
-                                    tablePrefix="I"
-                                    showDetailModal={toggleDetail}
-                                />
+                                <Table dark data={incomeData} tablePrefix="I" />
                             </div>
                         </div>
                         <div className="flex-1 infoContainer2">
                             <div className="grid grid-cols-3 w-full">
                                 <p className="col-start-2 mx-auto">Fixed Income</p>
-                                <button className="ml-auto tableButton flex gap-x-2 p-0 items-center opacity-55 hover:opacity-100">
+                                <button
+                                    className="ml-auto tableButton flex gap-x-2 p-0 items-center opacity-55 hover:opacity-100"
+                                    onClick={showCreateFixedIncomeModal}
+                                >
                                     <p>New</p>
                                     <FontAwesomeIcon icon={faPlus} />
                                 </button>
                             </div>
                             <div className="flex flex-1 items-center w-full">
-                                {/* <Table data={fixedIncomeData} tablePrefix="FI" dark /> */}
+                                <Table data={fixedIncomeData} tablePrefix="FI" dark />
                             </div>
                         </div>
                     </div>
                 </div>
             </SectionContent>
-            {<CreateModal show={isShowingCreate} handleClosing={toggleCreate} />}
-            {<DetailsModal show={isShowingDetail} handleClosing={toggleDetail} />}
+            <CreateModal show={createModalState.income} createFunction={createIncomeHandler}>
+                <AmountField fieldStateHandler={setAmount} />
+                <DetailsField fieldStateHandler={setDetails} />
+                <DateField fieldStateHandler={setDate} />
+            </CreateModal>
+            <CreateModal show={createModalState.fixedIncome} createFunction={createFixedIncomeHandler}>
+                <AmountField fieldStateHandler={setAmount} />
+                <DetailsField fieldStateHandler={setDetails} />
+                <DateField fieldStateHandler={setDate} />
+            </CreateModal>
+            {/* <DetailsModal title="Income Details">
+                <AmountField fieldStateHandler={setAmount} />
+                <DetailsField fieldStateHandler={setDetails} />
+                <DateField fieldStateHandler={setDate} />
+            </DetailsModal> */}
         </div>
     );
 }
