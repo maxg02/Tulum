@@ -12,6 +12,8 @@ import {
     faSortDown,
     faSortUp,
 } from "@fortawesome/free-solid-svg-icons";
+import { useAppDispatch } from "../hooks";
+import { showModal } from "../reducers/detailsModalReducers";
 
 type sortValues = ("asc" | "desc" | "null")[];
 export type tableRow = {
@@ -31,15 +33,15 @@ function Table({
     data,
     dark = false,
     tablePrefix,
-    showDetailModal,
 }: {
     data: dataObject;
     dark?: boolean;
     tablePrefix: string;
-    showDetailModal: () => void;
 }) {
     const [FilterDropState, setFilterDropState] = useState<boolean>(false);
     const [ColumnsSort, setColumnsSort] = useState<sortValues>(data.columns.map(() => "null"));
+
+    const dispatch = useAppDispatch();
 
     const handleSortToggle = (columnKey: number) => {
         const sortState = ColumnsSort;
@@ -88,7 +90,7 @@ function Table({
                         : "border-custom-ly2 hover:bg-custom-ly2"
                 } cursor-pointer`}
                 key={key}
-                onClick={showDetailModal}
+                onClick={() => dispatch(showModal(item.id))}
             >
                 {item.data.map((content, key) => (
                     <td key={key}>
@@ -115,8 +117,6 @@ function Table({
                                     <p className="text-xs">RD${content.total}</p>
                                 </div>
                             </div>
-                        ) : (
-                            <p>{data.columns[key].values![content]}</p>
                         )}
                     </td>
                 ))}
