@@ -11,7 +11,7 @@ const initialState: modalState = {
 };
 
 export const detailsModalSlice = createSlice({
-    name: "modal",
+    name: "detailsModal",
     initialState,
     reducers: {
         showModal: (state, action: PayloadAction<number>) => {
