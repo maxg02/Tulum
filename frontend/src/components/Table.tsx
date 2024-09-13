@@ -92,11 +92,13 @@ function Table({
             >
                 {item.data.map((content, key) => (
                     <td key={key}>
-                        {data.columns[key].type === "string" || data.columns[key].type === "date" ? (
+                        {data.columns[key].type === "string" ||
+                        data.columns[key].type === "date" ||
+                        data.columns[key].type === "list" ? (
                             <p className="truncate">{content}</p>
                         ) : data.columns[key].type === "amount" ? (
                             <p>{content === null ? "" : `RD$${content}`}</p>
-                        ) : data.columns[key].type === "progress" ? (
+                        ) : (
                             <div className="flex flex-col min-w-96">
                                 <div
                                     className={`${
