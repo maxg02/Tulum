@@ -50,7 +50,7 @@ namespace backend.Repositories.Repos
             }
 
             fixedIncome.Amount = fixedIncomeDto.Amount;
-            fixedIncome.Detail = fixedIncomeDto.Detail;
+            fixedIncome.Details = fixedIncomeDto.Details;
             fixedIncome.Periodicity = fixedIncomeDto.Periodicity;
             await _context.SaveChangesAsync();
 

@@ -14,7 +14,7 @@ namespace backend.Mappers
             {
                 Id = FixedIncomeModel.Id,
                 Amount = FixedIncomeModel.Amount,
-                Detail = FixedIncomeModel.Detail,
+                Details = FixedIncomeModel.Details,
                 Periodicity = periodicityValue.ToString()
             };
         }
@@ -24,7 +24,7 @@ namespace backend.Mappers
             return new FixedIncome
             {
                 Amount = FixedIncomeDto.Amount,
-                Detail = FixedIncomeDto.Detail,
+                Details = FixedIncomeDto.Details,
                 Periodicity = FixedIncomeDto.Periodicity,
                 UserId = 1
             };
