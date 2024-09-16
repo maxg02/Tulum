@@ -13,6 +13,7 @@ import {
     useDeleteIncomeMutation,
     useUpdateIncomeMutation,
     useCreateFixedIncomeMutation,
+    createFixedIncomeDto,
 } from "../../api/apiSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
@@ -20,12 +21,13 @@ import CreateModal from "../components/CreateModal";
 import DetailsModal from "../components/DetailsModal";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { showModal } from "../reducers/createModalReducers";
-import { AmountField, DateField, DetailsField } from "../components/ModalsFields";
+import { AmountField, DateField, DetailsField, ListField } from "../components/ModalsFields";
 
 export default function Budget() {
     const [amount, setAmount] = useState<number>(0);
     const [details, setDetails] = useState<string>("");
     const [date, setDate] = useState<Date>(new Date());
+    const [periodicity, setPeriodicity] = useState<number>(0);
 
     const clearFieldValues = () => {
         setAmount(0), setDetails(""), setDate(new Date());
@@ -64,12 +66,12 @@ export default function Budget() {
         dispatch(showModal(newState));
     };
     const createFixedIncomeHandler = () => {
-        const incomeData: createIncomeDto = {
+        const fixedIncomeData: createFixedIncomeDto = {
             amount: amount,
             details: details,
-            date: date,
+            periodicity: periodicity,
         };
-        // createIncome(incomeData);
+        createFixedIncome(fixedIncomeData);
     };
 
     let incomesRow: tableRow, fixedIncomesRow: tableRow;
@@ -79,7 +81,6 @@ export default function Budget() {
             id: income.id,
             data: [income.amount, income.details, new Date(income.date).toLocaleDateString("en-US")],
         }));
-        console.log(iData);
     }
 
     if (!fiIsLoading && fiData != undefined) {
@@ -89,8 +90,6 @@ export default function Budget() {
                 data: [fIncome.amount, fIncome.details, fIncome.periodicity],
             })
         );
-
-        console.log(fiData);
     }
 
     const incomeData: dataObject = {
@@ -213,7 +212,11 @@ export default function Budget() {
             <CreateModal show={createModalState.fixedIncome} createFunction={createFixedIncomeHandler}>
                 <AmountField fieldStateHandler={setAmount} />
                 <DetailsField fieldStateHandler={setDetails} />
-                <DateField fieldStateHandler={setDate} />
+                <ListField
+                    fieldStateHandler={setPeriodicity}
+                    label="Periodicity"
+                    values={fixedIncomeData.columns[2].values}
+                />
             </CreateModal>
             {/* <DetailsModal title="Income Details">
                 <AmountField fieldStateHandler={setAmount} />
