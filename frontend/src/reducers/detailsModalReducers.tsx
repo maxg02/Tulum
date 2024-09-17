@@ -1,12 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { modalState as defaultModalState } from "./createModalReducers";
+import { initialState as defaultInitialState } from "./createModalReducers";
 
-type modalState = {
-    show: boolean;
+type modalState = defaultModalState & {
     id: number | null;
 };
 
 const initialState: modalState = {
-    show: false,
+    ...defaultInitialState,
     id: null,
 };
 
@@ -14,13 +15,13 @@ export const detailsModalSlice = createSlice({
     name: "detailsModal",
     initialState,
     reducers: {
-        showModal: (state, action: PayloadAction<number>) => {
-            state.show = true;
-            state.id = action.payload;
+        showModal: (state, action) => {
+            state.show = action.payload.show;
+            state.id = action.payload.id;
         },
         hideModal: (state) => {
-            state.show = false;
-            state.id = null;
+            state.show = { ...initialState.show };
+            state.id = initialState.id;
         },
     },
 });
