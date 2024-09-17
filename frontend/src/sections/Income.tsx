@@ -9,7 +9,7 @@ import {
     useGetFixedIncomesByUserIdQuery,
     createIncomeDto,
     useCreateIncomeMutation,
-    useGetIncomesByIdQuery,
+    useLazyGetIncomesByIdQuery,
     useDeleteIncomeMutation,
     useUpdateIncomeMutation,
     useCreateFixedIncomeMutation,
@@ -20,7 +20,8 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import CreateModal from "../components/CreateModal";
 import DetailsModal from "../components/DetailsModal";
 import { useAppDispatch, useAppSelector } from "../hooks";
-import { showModal } from "../reducers/createModalReducers";
+import { showModal as showCreateModal } from "../reducers/createModalReducers";
+import { showModal as showDetailsModal } from "../reducers/detailsModalReducers";
 import { AmountField, DateField, DetailsField, ListField } from "../components/ModalsFields";
 
 export default function Budget() {
@@ -33,21 +34,29 @@ export default function Budget() {
         setAmount(0), setDetails(""), setDate(new Date());
     };
 
-    const { data: iData, error: iError, isLoading: iIsLoading } = useGetIncomesByUserIdQuery(1);
-    const [createIncome, iResult] = useCreateIncomeMutation();
-
-    const { data: fiData, error: fiError, isLoading: fiIsLoading } = useGetFixedIncomesByUserIdQuery(1);
-    const [createFixedIncome, fiResult] = useCreateFixedIncomeMutation();
-
     const dispatch = useAppDispatch();
     const createModalState = useAppSelector((state) => state.createModal.show);
+    const detailsModalState = useAppSelector((state) => state.detailsModal);
+
+    //Income Handling
+    const { data: iData, error: iError, isLoading: iIsLoading } = useGetIncomesByUserIdQuery(1);
+    const [getIncomeById, incomeByIdResult, lastPromiseInfo] = useLazyGetIncomesByIdQuery();
+    const [createIncome, incomeCreateResult] = useCreateIncomeMutation();
 
     const showCreateIncomeModal = () => {
         clearFieldValues();
         const newState = { ...createModalState };
         newState.income = true;
 
-        dispatch(showModal(newState));
+        dispatch(showCreateModal(newState));
+    };
+    const showDetailsIncomeModal = (incomeId) => {
+        clearFieldValues();
+        const newState = { ...detailsModalState };
+        newState.id = incomeId;
+        newState.show = { ...detailsModalState.show, income: true };
+
+        dispatch(showDetailsModal(newState));
     };
     const createIncomeHandler = () => {
         const incomeData: createIncomeDto = {
@@ -57,6 +66,10 @@ export default function Budget() {
         };
         createIncome(incomeData);
     };
+
+    //Fixed Income Handling
+    const { data: fiData, error: fiError, isLoading: fiIsLoading } = useGetFixedIncomesByUserIdQuery(1);
+    const [createFixedIncome, fiResult] = useCreateFixedIncomeMutation();
 
     const showCreateFixedIncomeModal = () => {
         clearFieldValues();
@@ -183,7 +196,14 @@ export default function Budget() {
                                 </button>
                             </div>
                             <div className="flex items-center flex-1 w-full">
-                                <Table dark data={incomeData} tablePrefix="I" />
+                                <Table
+                                    dark
+                                    data={incomeData}
+                                    tablePrefix="I"
+                                    detailsFunction={(incomeId: number) =>
+                                        showDetailsIncomeModal(incomeId)
+                                    }
+                                />
                             </div>
                         </div>
                         <div className="flex-1 infoContainer2">
@@ -218,11 +238,11 @@ export default function Budget() {
                     values={fixedIncomeData.columns[2].values}
                 />
             </CreateModal>
-            {/* <DetailsModal title="Income Details">
+            <DetailsModal show={detailsModalState.show.income}>
                 <AmountField fieldStateHandler={setAmount} />
                 <DetailsField fieldStateHandler={setDetails} />
                 <DateField fieldStateHandler={setDate} />
-            </DetailsModal> */}
+            </DetailsModal>
         </div>
     );
 }
