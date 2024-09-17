@@ -4,13 +4,13 @@ import { useAppDispatch, useAppSelector } from "../hooks";
 import { hideModal } from "../reducers/detailsModalReducers";
 
 type detailsModal = {
-    // deleteFunction: () => void;
-    // updateFunction: () => void;
+    deleteFunction: () => void;
+    updateFunction: () => void;
     show: boolean;
     children: React.ReactNode;
 };
 
-function DetailsModal({ children, show }: detailsModal) {
+function DetailsModal({ children, show, deleteFunction, updateFunction }: detailsModal) {
     const dispatch = useAppDispatch();
     const detailsModalState = useAppSelector((state) => state.detailsModal.show);
 
@@ -20,8 +20,15 @@ function DetailsModal({ children, show }: detailsModal) {
 
     const handleClosing = () => dispatch(hideModal());
 
-    const handleDelete = (a) => "";
-    const handleUpdate = (a) => "";
+    const handleDelete = (e) => {
+        e.preventDefault;
+        deleteFunction();
+    };
+
+    const handleUpdate = (e) => {
+        e.preventDefault;
+        updateFunction();
+    };
 
     const currentModal = Object.keys(detailsModalState).filter((k) => detailsModalState[k]);
 
