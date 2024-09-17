@@ -56,6 +56,11 @@ export default function Budget() {
         newState.id = incomeId;
         newState.show = { ...detailsModalState.show, income: true };
 
+        const incomeData = iData.filter((i) => i.id === incomeId)[0];
+
+        setAmount(incomeData.amount);
+        setDetails(incomeData.details);
+        setDate(incomeData.date);
         dispatch(showDetailsModal(newState));
     };
     const createIncomeHandler = () => {
