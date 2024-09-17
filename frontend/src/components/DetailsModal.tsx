@@ -1,77 +1,53 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import {
-    updateIncomeDto,
-    useDeleteIncomeMutation,
-    useGetIncomesByIdQuery,
-    useUpdateIncomeMutation,
-} from "../../api/apiSlice";
-import Loader from "./Loader";
 import ModalContainer from "./ModalContainer";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { hideModal } from "../reducers/detailsModalReducers";
 
 type detailsModal = {
-    deleteFunction: () => void;
-    updateFunction: () => void;
-    itemId: number;
+    // deleteFunction: () => void;
+    // updateFunction: () => void;
+    show: boolean;
     children: React.ReactNode;
 };
 
-function DetailsModal({ children, deleteFunction, updateFunction, itemId }: detailsModal) {
-    const { data, error, isLoading } = useGetIncomesByIdQuery(1);
-    const [deleteIncome, deleteResult] = useDeleteIncomeMutation();
-    const [updateIncome, updateResult] = useUpdateIncomeMutation();
-
-    const show = useAppSelector((state) => state.detailsModal.show);
+function DetailsModal({ children, show }: detailsModal) {
     const dispatch = useAppDispatch();
-
-    // useEffect(() => {
-    //     if (!isLoading && data != undefined) {
-    //         setAmount(data.amount), setDetail(data.details), setDate(data.date), setId(data.id);
-    //     }
-    // }, [isLoading, data]);
+    const detailsModalState = useAppSelector((state) => state.detailsModal.show);
 
     if (!show) {
         return null;
     }
 
-    const handleDeleteIncome = (e) => {
-        e.preventDefault;
-        deleteIncome(id);
-        handleClosing();
-    };
-
-    const handleUpdateIncome = (e) => {
-        e.preventDefault;
-
-        const incomeData: updateIncomeDto = {
-            id: itemId,
-            data: { amount: amount, details: details, date: date },
-        };
-        updateIncome(incomeData);
-        console.log(updateResult);
-        handleClosing();
-    };
-
     const handleClosing = () => dispatch(hideModal());
 
+    const handleDelete = (a) => "";
+    const handleUpdate = (a) => "";
+
+    const currentModal = Object.keys(detailsModalState).filter((k) => detailsModalState[k]);
+
+    let title: string = "";
+
+    switch (currentModal[0]) {
+        case "income":
+            title = "Income Details";
+            break;
+        case "fixedIncome":
+            title = "Fixed Income Details";
+            break;
+    }
+
     return (
-        <ModalContainer closingHandler={handleClosing}>
+        <ModalContainer closingHandler={handleClosing} title={title}>
             {children}
             <span className="formDivider"></span>
             <div className="self-end flex gap-x-2">
                 <button type="reset" className="formButton" onClick={handleClosing}>
                     <p>Cancel</p>
                 </button>
-                <button
-                    className="formButton hover:bg-red-500"
-                    onClick={(event) => handleDeleteIncome(event)}
-                >
+                <button className="formButton hover:bg-red-500" onClick={(event) => handleDelete(event)}>
                     <p>Delete</p>
                 </button>
-                <button className="formButton" onClick={(event) => handleUpdateIncome(event)}>
+                <button className="formButton" onClick={(event) => handleUpdate(event)}>
                     <p>Save</p>
                 </button>
             </div>
