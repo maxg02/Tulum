@@ -5,11 +5,12 @@ type modalField = {
         | React.Dispatch<React.SetStateAction<number>>
         | React.Dispatch<React.SetStateAction<string>>
         | React.Dispatch<React.SetStateAction<Date>>;
+    defaultValue?: number | string | Date;
 };
 
 type listModalField = modalField & { label: string; values: string[] };
 
-export function AmountField({ fieldStateHandler }: modalField) {
+export function AmountField({ fieldStateHandler, defaultValue }: modalField & { defaultValue: number }) {
     return (
         <div className="flex flex-col gap-y-1">
             <label htmlFor="amount">Amount</label>
@@ -19,13 +20,14 @@ export function AmountField({ fieldStateHandler }: modalField) {
                 name="amount"
                 className="formInput w-full"
                 placeholder="Amount"
+                value={defaultValue ?? undefined}
                 onChange={(e) => fieldStateHandler(parseInt(e.target.value))}
             ></input>
         </div>
     );
 }
 
-export function DetailsField({ fieldStateHandler }: modalField) {
+export function DetailsField({ fieldStateHandler, defaultValue }: modalField & { defaultValue: string }) {
     return (
         <div className="flex flex-col gap-y-1">
             <label htmlFor="details">Details</label>
@@ -35,13 +37,14 @@ export function DetailsField({ fieldStateHandler }: modalField) {
                 name="details"
                 className="formInput w-full"
                 placeholder="Details"
+                value={defaultValue ?? undefined}
                 onChange={(e) => fieldStateHandler(e.target.value)}
             ></input>
         </div>
     );
 }
 
-export function DateField({ fieldStateHandler }: modalField) {
+export function DateField({ fieldStateHandler, defaultValue }: modalField & { defaultValue: Date }) {
     return (
         <div className="flex flex-col gap-y-1">
             <label htmlFor="date">Date</label>
@@ -51,6 +54,7 @@ export function DateField({ fieldStateHandler }: modalField) {
                 name="date"
                 className="formInput w-full"
                 placeholder="Date"
+                value={defaultValue ?? undefined}
                 onChange={(e) => fieldStateHandler(e.target.value)}
             ></input>
         </div>
