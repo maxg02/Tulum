@@ -34,12 +34,14 @@ export const apiSlice = createApi({
                 method: "PUT",
                 body: incomeData.data,
             }),
+            invalidatesTags: ["Income"],
         }),
         deleteIncome: builder.mutation({
             query: (Id: number) => ({
                 url: `income/${Id}`,
                 method: "DELETE",
             }),
+            invalidatesTags: ["Income"],
         }),
         //Fixed Income endpoints
         getFixedIncomesByUserId: builder.query({
