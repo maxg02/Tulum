@@ -12,6 +12,12 @@ function CreateModal({ children, show, createFunction }: createModal) {
     const dispatch = useAppDispatch();
     const createModalState = useAppSelector((state) => state.createModal.show);
 
+    const handleClosing = () => dispatch(hideModal());
+
+    if (show === false) {
+        return null;
+    }
+
     const currentModal = Object.keys(createModalState).filter((k) => createModalState[k]);
 
     let title: string = "";
@@ -21,22 +27,14 @@ function CreateModal({ children, show, createFunction }: createModal) {
             title = "Create Income";
             break;
         case "fixedIncome":
-            title = "Fixed Income";
+            title = "Create Fixed Income";
             break;
     }
-
-    //const title = useAppSelector((state) => state.createModal.title);
-
-    const handleClosing = () => dispatch(hideModal());
 
     const handleCreate = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault;
         createFunction();
     };
-
-    if (show === false) {
-        return null;
-    }
 
     return (
         <ModalContainer closingHandler={handleClosing} title={title}>
