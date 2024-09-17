@@ -11,6 +11,7 @@ export const apiSlice = createApi({
     }),
     tagTypes: ["Income", "FixedIncome"],
     endpoints: (builder) => ({
+        //Income endpoints
         getIncomesByUserId: builder.query({
             query: (userId: number) => `income/user/${userId}`,
             providesTags: ["Income"],
@@ -39,7 +40,7 @@ export const apiSlice = createApi({
                 method: "DELETE",
             }),
         }),
-
+        //Fixed Income endpoints
         getFixedIncomesByUserId: builder.query({
             query: (userId) => `fixedincome/user/${userId}`,
             providesTags: ["FixedIncome"],
@@ -57,7 +58,7 @@ export const apiSlice = createApi({
 
 export const {
     useGetIncomesByUserIdQuery,
-    useGetIncomesByIdQuery,
+    useLazyGetIncomesByIdQuery,
     useCreateIncomeMutation,
     useUpdateIncomeMutation,
     useDeleteIncomeMutation,
