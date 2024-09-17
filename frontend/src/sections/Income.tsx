@@ -239,9 +239,9 @@ export default function Budget() {
                 />
             </CreateModal>
             <DetailsModal show={detailsModalState.show.income}>
-                <AmountField fieldStateHandler={setAmount} />
-                <DetailsField fieldStateHandler={setDetails} />
-                <DateField fieldStateHandler={setDate} />
+                <AmountField defaultValue={amount} fieldStateHandler={setAmount} />
+                <DetailsField defaultValue={details} fieldStateHandler={setDetails} />
+                <DateField defaultValue={date} fieldStateHandler={setDate} />
             </DetailsModal>
         </div>
     );
