@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import SectionContent from "../components/SectionContent";
@@ -8,12 +8,13 @@ import {
     useGetIncomesByUserIdQuery,
     useGetFixedIncomesByUserIdQuery,
     createIncomeDto,
+    incomeDto,
     useCreateIncomeMutation,
-    useLazyGetIncomesByIdQuery,
     useDeleteIncomeMutation,
     useUpdateIncomeMutation,
     useCreateFixedIncomeMutation,
     createFixedIncomeDto,
+    updateIncomeDto,
 } from "../../api/apiSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
@@ -39,10 +40,12 @@ export default function Budget() {
     const detailsModalState = useAppSelector((state) => state.detailsModal);
 
     //Income Handling
-    const { data: iData, error: iError, isLoading: iIsLoading } = useGetIncomesByUserIdQuery(1);
-    const [getIncomeById, incomeByIdResult, lastPromiseInfo] = useLazyGetIncomesByIdQuery();
-    const [createIncome, incomeCreateResult] = useCreateIncomeMutation();
+    const { data: iData, isLoading: iIsLoading } = useGetIncomesByUserIdQuery(1);
+    const [createIncome] = useCreateIncomeMutation();
+    const [deleteIncome] = useDeleteIncomeMutation();
+    const [updateIncome] = useUpdateIncomeMutation();
 
+    // Show create Income Modal
     const showCreateIncomeModal = () => {
         clearFieldValues();
         const newState = { ...createModalState };
@@ -50,19 +53,23 @@ export default function Budget() {
 
         dispatch(showCreateModal(newState));
     };
-    const showDetailsIncomeModal = (incomeId) => {
+
+    // Show details Income Modal
+    const showDetailsIncomeModal = (incomeId: number) => {
         clearFieldValues();
         const newState = { ...detailsModalState };
         newState.id = incomeId;
         newState.show = { ...detailsModalState.show, income: true };
 
-        const incomeData = iData.filter((i) => i.id === incomeId)[0];
+        const incomeData = iData.filter((i: incomeDto) => i.id === incomeId)[0];
 
         setAmount(incomeData.amount);
         setDetails(incomeData.details);
         setDate(incomeData.date);
         dispatch(showDetailsModal(newState));
     };
+
+    // Create Income Function
     const createIncomeHandler = () => {
         const incomeData: createIncomeDto = {
             amount: amount,
@@ -72,10 +79,27 @@ export default function Budget() {
         createIncome(incomeData);
     };
 
-    //Fixed Income Handling
-    const { data: fiData, error: fiError, isLoading: fiIsLoading } = useGetFixedIncomesByUserIdQuery(1);
-    const [createFixedIncome, fiResult] = useCreateFixedIncomeMutation();
+    // Delete Income Function
+    const deleteIncomeHandler = () => {
+        const incomeId = detailsModalState.id;
+        deleteIncome(incomeId!);
+    };
 
+    // Update Income Function
+    const updateIncomeHandler = () => {
+        const incomeData: updateIncomeDto = {
+            id: detailsModalState.id!,
+            data: { amount: amount, details: details, date: date },
+        };
+
+        updateIncome(incomeData);
+    };
+
+    //Fixed Income Handling
+    const { data: fiData, isLoading: fiIsLoading } = useGetFixedIncomesByUserIdQuery(1);
+    const [createFixedIncome] = useCreateFixedIncomeMutation();
+
+    // Show create Fixed Income Modal
     const showCreateFixedIncomeModal = () => {
         clearFieldValues();
         const newState = { ...createModalState };
@@ -83,6 +107,8 @@ export default function Budget() {
 
         dispatch(showModal(newState));
     };
+
+    // Create Fixed income function
     const createFixedIncomeHandler = () => {
         const fixedIncomeData: createFixedIncomeDto = {
             amount: amount,
@@ -240,10 +266,14 @@ export default function Budget() {
                 <ListField
                     fieldStateHandler={setPeriodicity}
                     label="Periodicity"
-                    values={fixedIncomeData.columns[2].values}
+                    values={fixedIncomeData.columns[2].values!}
                 />
             </CreateModal>
-            <DetailsModal show={detailsModalState.show.income}>
+            <DetailsModal
+                updateFunction={updateIncomeHandler}
+                deleteFunction={deleteIncomeHandler}
+                show={detailsModalState.show.income}
+            >
                 <AmountField defaultValue={amount} fieldStateHandler={setAmount} />
                 <DetailsField defaultValue={details} fieldStateHandler={setDetails} />
                 <DateField defaultValue={date} fieldStateHandler={setDate} />
