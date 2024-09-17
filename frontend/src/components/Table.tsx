@@ -33,15 +33,15 @@ function Table({
     data,
     dark = false,
     tablePrefix,
+    detailsFunction,
 }: {
     data: dataObject;
     dark?: boolean;
     tablePrefix: string;
+    detailsFunction: (incomeId: number) => void;
 }) {
     const [FilterDropState, setFilterDropState] = useState<boolean>(false);
     const [ColumnsSort, setColumnsSort] = useState<sortValues>(data.columns.map(() => "null"));
-
-    const dispatch = useAppDispatch();
 
     const handleSortToggle = (columnKey: number) => {
         const sortState = ColumnsSort;
@@ -90,7 +90,7 @@ function Table({
                         : "border-custom-ly2 hover:bg-custom-ly2"
                 } cursor-pointer`}
                 key={key}
-                onClick={() => dispatch(showModal(item.id))}
+                onClick={() => detailsFunction(item.id)}
             >
                 {item.data.map((content, key) => (
                     <td key={key}>
