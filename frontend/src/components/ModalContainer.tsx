@@ -5,7 +5,7 @@ import React from "react";
 type modalBody = {
     closingHandler: () => {
         payload: undefined;
-        type: "createModal/hideModal";
+        type: "createModal/hideModal" | "detailsModal/hideModal";
     };
     children: React.ReactNode;
     title: string;
