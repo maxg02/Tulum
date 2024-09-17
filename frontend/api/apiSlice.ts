@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
+export type incomeDto = { id: number; amount: number; details: string; date: Date };
 export type createIncomeDto = { amount: number; details: string; date: Date };
 export type updateIncomeDto = { id: number; data: { amount: number; details: string; date: Date } };
 
