@@ -61,7 +61,12 @@ export function DateField({ fieldStateHandler, defaultValue }: modalField & { de
     );
 }
 
-export function ListField({ fieldStateHandler, label, values }: listModalField) {
+export function ListField({
+    fieldStateHandler,
+    label,
+    values,
+    defaultValue,
+}: listModalField & { defaultValue: number }) {
     return (
         <div className="flex flex-col gap-y-1">
             <label htmlFor="date">{label}</label>
@@ -75,8 +80,11 @@ export function ListField({ fieldStateHandler, label, values }: listModalField) 
                         placeholder="Date"
                         value={key}
                         onChange={(e) => fieldStateHandler(parseInt(e.target.value))}
+                        checked={key === defaultValue}
                     ></input>
-                    <label htmlFor={"list" + key}>{item}</label>
+                    <label htmlFor={"list" + key}>
+                        {item} {key} - {defaultValue}
+                    </label>
                 </div>
             ))}
         </div>
