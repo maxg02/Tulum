@@ -119,14 +119,35 @@ export default function Budget() {
     };
 
     let incomesRow: tableRow, fixedIncomesRow: tableRow;
+    const currentDate: Date = new Date();
+    const currentMonth: string = new Intl.DateTimeFormat("en-US", { month: "long" }).format(currentDate);
+    const currentYear: number = currentDate.getFullYear();
+    let totalIncome: number = 0;
+    let totalMonthIncome: number = 0;
+    let totalYearIncome: number = 0;
 
+    // Income data handling
     if (!iIsLoading && iData != undefined) {
         incomesRow = iData.map((income: { id: number; amount: number; details: string; date: Date }) => ({
             id: income.id,
             data: [income.amount, income.details, new Date(income.date).toLocaleDateString("en-US")],
         }));
+
+        totalIncome = iData.reduce((acc: number, next: incomeDto) => acc + next.amount, 0);
+
+        const monthIncomes = iData.filter(
+            (income) => new Date(income.date).getMonth() === currentDate.getMonth()
+        );
+
+        const yearIncomes = iData.filter(
+            (income) => new Date(income.date).getFullYear() === currentDate.getFullYear()
+        );
+
+        totalMonthIncome = monthIncomes.reduce((acc: number, next: incomeDto) => acc + next.amount, 0);
+        totalYearIncome = yearIncomes.reduce((acc: number, next: incomeDto) => acc + next.amount, 0);
     }
 
+    // Fixed Income data handling
     if (!fiIsLoading && fiData != undefined) {
         fixedIncomesRow = fiData.map(
             (fIncome: { id: number; amount: number; details: string; periodicity: string }) => ({
@@ -195,16 +216,16 @@ export default function Budget() {
                     <div className="flex flex-col w-5/12 gap-y-9">
                         <div className="infoContainer1 h-[18%]">
                             <p>Total Income</p>
-                            <h1 className="font-light text-5xl my-auto">RD$75000</h1>
+                            <h1 className="font-light text-5xl my-auto">RD${totalIncome}</h1>
                         </div>
                         <div className="flex gap-x-9 h-[18%]">
                             <div className="infoContainer1 flex-1 bg-gradient-to-b from-custom-secondary to-custom-accent shadow-none">
-                                <p>January Income</p>
-                                <h1 className="font-light text-5xl my-auto">RD$75000</h1>
+                                <p>{`${currentMonth} Income`}</p>
+                                <h1 className="font-light text-5xl my-auto">RD${totalMonthIncome}</h1>
                             </div>
                             <div className="infoContainer1 flex-1 bg-gradient-to-b from-custom-secondary to-custom-accent shadow-none">
-                                <p>2024 Income</p>
-                                <h1 className="font-light text-5xl my-auto">RD$750K</h1>
+                                <p>{`${currentYear} Income`}</p>
+                                <h1 className="font-light text-5xl my-auto">RD${totalYearIncome}</h1>
                             </div>
                         </div>
                         <div className="infoContainer1 flex-1">
