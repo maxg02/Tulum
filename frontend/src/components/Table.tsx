@@ -38,7 +38,7 @@ function Table({
     data: dataObject;
     dark?: boolean;
     tablePrefix: string;
-    detailsFunction: (incomeId: number) => void;
+    detailsFunction: (itemId: number) => void;
 }) {
     const [FilterDropState, setFilterDropState] = useState<boolean>(false);
     const [ColumnsSort, setColumnsSort] = useState<sortValues>(data.columns.map(() => "null"));
