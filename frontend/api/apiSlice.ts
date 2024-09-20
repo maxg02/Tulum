@@ -22,9 +22,6 @@ export const apiSlice = createApi({
             query: (userId: number) => `income/user/${userId}`,
             providesTags: ["Income"],
         }),
-        getIncomesById: builder.query({
-            query: (Id: number) => `income/${Id}`,
-        }),
         createIncome: builder.mutation({
             query: (incomeData: createIncomeDto) => ({
                 url: "income",
@@ -48,6 +45,7 @@ export const apiSlice = createApi({
             }),
             invalidatesTags: ["Income"],
         }),
+
         //Fixed Income endpoints
         getFixedIncomesByUserId: builder.query({
             query: (userId) => `fixedincome/user/${userId}`,
@@ -61,16 +59,32 @@ export const apiSlice = createApi({
             }),
             invalidatesTags: ["FixedIncome"],
         }),
+        updateFixedIncome: builder.mutation({
+            query: (fixedIncomeData: updateFixedIncomeDto) => ({
+                url: `fixedincome/${fixedIncomeData.id}`,
+                method: "PUT",
+                body: fixedIncomeData.data,
+            }),
+            invalidatesTags: ["FixedIncome"],
+        }),
+        deleteFixedIncome: builder.mutation({
+            query: (Id: number) => ({
+                url: `fixedincome/${Id}`,
+                method: "DELETE",
+            }),
+            invalidatesTags: ["FixedIncome"],
+        }),
     }),
 });
 
 export const {
     useGetIncomesByUserIdQuery,
-    useLazyGetIncomesByIdQuery,
     useCreateIncomeMutation,
     useUpdateIncomeMutation,
     useDeleteIncomeMutation,
 
     useGetFixedIncomesByUserIdQuery,
     useCreateFixedIncomeMutation,
+    useUpdateFixedIncomeMutation,
+    useDeleteFixedIncomeMutation,
 } = apiSlice;
