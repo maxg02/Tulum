@@ -15,6 +15,10 @@ import {
     useCreateFixedIncomeMutation,
     createFixedIncomeDto,
     updateIncomeDto,
+    updateFixedIncomeDto,
+    useDeleteFixedIncomeMutation,
+    useUpdateFixedIncomeMutation,
+    fixedIncomeDto,
 } from "../../api/apiSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
@@ -98,6 +102,8 @@ export default function Budget() {
     //Fixed Income Handling
     const { data: fiData, isLoading: fiIsLoading } = useGetFixedIncomesByUserIdQuery(1);
     const [createFixedIncome] = useCreateFixedIncomeMutation();
+    const [deleteFixedIncome] = useDeleteFixedIncomeMutation();
+    const [updateFixedIncome] = useUpdateFixedIncomeMutation();
 
     // Show create Fixed Income Modal
     const showCreateFixedIncomeModal = () => {
@@ -105,7 +111,22 @@ export default function Budget() {
         const newState = { ...createModalState };
         newState.fixedIncome = true;
 
-        dispatch(showModal(newState));
+        dispatch(showCreateModal(newState));
+    };
+
+    const showDetailsFixedIncomeModal = (fixedIncomeId: number) => {
+        clearFieldValues();
+        const newState = { ...detailsModalState };
+        newState.id = fixedIncomeId;
+        newState.show = { ...detailsModalState.show, fixedIncome: true };
+
+        const fixedIncomeData = fiData.filter((i: fixedIncomeDto) => i.id === fixedIncomeId)[0];
+
+        setAmount(fixedIncomeData.amount);
+        setDetails(fixedIncomeData.details);
+        setPeriodicity(fixedIncomeData.periodicity);
+
+        dispatch(showDetailsModal(newState));
     };
 
     // Create Fixed income function
@@ -116,6 +137,22 @@ export default function Budget() {
             periodicity: periodicity,
         };
         createFixedIncome(fixedIncomeData);
+    };
+
+    // Delete Fixed Income Function
+    const deleteFixedIncomeHandler = () => {
+        const fixedIncomeId = detailsModalState.id;
+        deleteFixedIncome(fixedIncomeId!);
+    };
+
+    // Update Fixed Income Function
+    const updateFixedIncomeHandler = () => {
+        const fixedIncomeData: updateFixedIncomeDto = {
+            id: detailsModalState.id!,
+            data: { amount: amount, details: details, periodicity: periodicity },
+        };
+
+        updateFixedIncome(fixedIncomeData);
     };
 
     let incomesRow: tableRow, fixedIncomesRow: tableRow;
@@ -270,7 +307,14 @@ export default function Budget() {
                                 </button>
                             </div>
                             <div className="flex flex-1 items-center w-full">
-                                <Table data={fixedIncomeData} tablePrefix="FI" dark />
+                                <Table
+                                    data={fixedIncomeData}
+                                    tablePrefix="FI"
+                                    dark
+                                    detailsFunction={(fixedIncomeId: number) =>
+                                        showDetailsFixedIncomeModal(fixedIncomeId)
+                                    }
+                                />
                             </div>
                         </div>
                     </div>
@@ -298,6 +342,20 @@ export default function Budget() {
                 <AmountField defaultValue={amount} fieldStateHandler={setAmount} />
                 <DetailsField defaultValue={details} fieldStateHandler={setDetails} />
                 <DateField defaultValue={date} fieldStateHandler={setDate} />
+            </DetailsModal>
+            <DetailsModal
+                updateFunction={updateFixedIncomeHandler}
+                deleteFunction={deleteFixedIncomeHandler}
+                show={detailsModalState.show.fixedIncome}
+            >
+                <AmountField defaultValue={amount} fieldStateHandler={setAmount} />
+                <DetailsField defaultValue={details} fieldStateHandler={setDetails} />
+                <ListField
+                    fieldStateHandler={setPeriodicity}
+                    label="Periodicity"
+                    values={fixedIncomeData.columns[2].values!}
+                    defaultValue={periodicity}
+                />
             </DetailsModal>
         </div>
     );
