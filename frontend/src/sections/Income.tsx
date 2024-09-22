@@ -29,6 +29,8 @@ import { showModal as showCreateModal } from "../reducers/createModalReducers";
 import { showModal as showDetailsModal } from "../reducers/detailsModalReducers";
 import { AmountField, DateField, DetailsField, ListField } from "../components/ModalsFields";
 
+export const periodicityValues = ["Daily", "Weekly", "Biweekly", "Monthly", "Quarterly", "Annual"];
+
 export default function Budget() {
     const [amount, setAmount] = useState<number>(0);
     const [details, setDetails] = useState<string>("");
@@ -215,7 +217,7 @@ export default function Budget() {
             {
                 name: "Periodicity",
                 type: "list",
-                values: ["Daily", "Weekly", "Biweekly", "Monthly", "Quarterly", "Annual"],
+                values: periodicityValues,
             },
         ],
         rows: fixedIncomesRow ?? [
