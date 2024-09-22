@@ -7,15 +7,13 @@ namespace backend.Mappers
     public static class FixedIncomeMappers
     {
         public static FixedIncomeDto ToFixedIncomeDto(this FixedIncome FixedIncomeModel)
-        {
-            Periodicity periodicityValue = (Periodicity)FixedIncomeModel.Periodicity;
-            
+        {            
             return new FixedIncomeDto
             {
                 Id = FixedIncomeModel.Id,
                 Amount = FixedIncomeModel.Amount,
                 Details = FixedIncomeModel.Details,
-                Periodicity = periodicityValue.ToString()
+                Periodicity = FixedIncomeModel.Periodicity
             };
         }
 
