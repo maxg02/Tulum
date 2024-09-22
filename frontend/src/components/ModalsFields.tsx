@@ -80,11 +80,9 @@ export function ListField({
                         placeholder="Date"
                         value={key}
                         onChange={(e) => fieldStateHandler(parseInt(e.target.value))}
-                        checked={key === defaultValue}
+                        checked={defaultValue ? key === defaultValue : undefined}
                     ></input>
-                    <label htmlFor={"list" + key}>
-                        {item} {key} - {defaultValue}
-                    </label>
+                    <label htmlFor={"list" + key}>{item}</label>
                 </div>
             ))}
         </div>
