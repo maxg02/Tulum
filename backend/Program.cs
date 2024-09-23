@@ -21,6 +21,7 @@ builder.Services.AddDbContext<ApplicationDBContext>(options =>
 
 builder.Services.AddScoped<IIncomeRepo, IncomeRepo>();
 builder.Services.AddScoped<IFixedIncomeRepo, FixedIncomeRepo>();
+builder.Services.AddScoped<IExpenseCategoryRepo, ExpenseCategoryRepo>();
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
