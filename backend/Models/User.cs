@@ -10,7 +10,6 @@ namespace backend.Models
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public List<Income> Incomes { get; set; } = new List<Income>();
         public List<FixedIncome> FixedIncomes { get; set; } = new List<FixedIncome>();
-        public List<BudgetPlan> BudgetPlans { get; set; } = new List<BudgetPlan>(); 
         public List<SavingGoal> SavingGoals { get; set; } = new List<SavingGoal>();
         public List<ExpenseCategory> Expense_Categories { get; set; } = new List<ExpenseCategory>();
     }
