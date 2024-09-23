@@ -7,6 +7,5 @@
         public string Details { get; set; } = String.Empty;
         public DateTime Date { get; set; } = DateTime.Now;
         public int ExpenseCategoryId { get; set; }
-        public ExpenseCategory? ExpenseCategory { get; set; }
     }
 }
