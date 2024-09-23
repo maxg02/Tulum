@@ -322,11 +322,13 @@ export default function Budget() {
                     </div>
                 </div>
             </SectionContent>
+            {/* Create Income Modal */}
             <CreateModal show={createModalState.income} createFunction={createIncomeHandler}>
                 <AmountField fieldStateHandler={setAmount} />
                 <DetailsField fieldStateHandler={setDetails} />
                 <DateField fieldStateHandler={setDate} />
             </CreateModal>
+            {/* Create Fixed Income Modal */}
             <CreateModal show={createModalState.fixedIncome} createFunction={createFixedIncomeHandler}>
                 <AmountField fieldStateHandler={setAmount} />
                 <DetailsField fieldStateHandler={setDetails} />
@@ -336,6 +338,7 @@ export default function Budget() {
                     values={fixedIncomeData.columns[2].values!}
                 />
             </CreateModal>
+            {/* Details Income Modal */}
             <DetailsModal
                 updateFunction={updateIncomeHandler}
                 deleteFunction={deleteIncomeHandler}
@@ -345,6 +348,7 @@ export default function Budget() {
                 <DetailsField defaultValue={details} fieldStateHandler={setDetails} />
                 <DateField defaultValue={date} fieldStateHandler={setDate} />
             </DetailsModal>
+            {/* Details Fixed Income Modal */}
             <DetailsModal
                 updateFunction={updateFixedIncomeHandler}
                 deleteFunction={deleteFixedIncomeHandler}
