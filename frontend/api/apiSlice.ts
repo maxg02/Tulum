@@ -15,7 +15,7 @@ export const apiSlice = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: "http://localhost:5085/api/",
     }),
-    tagTypes: ["Income", "FixedIncome"],
+    tagTypes: ["Income", "FixedIncome", "ExpenseCategory"],
     endpoints: (builder) => ({
         //Income endpoints
         getIncomesByUserId: builder.query({
@@ -74,6 +74,16 @@ export const apiSlice = createApi({
             }),
             invalidatesTags: ["FixedIncome"],
         }),
+
+        //Expense Category endpoints
+        getExpenseCategoryFullByUserId: builder.query({
+            query: (userId) => `expensecategory/user/full/${userId}`,
+            providesTags: ["ExpenseCategory"],
+        }),
+        getExpenseCategoryBudgetByUserId: builder.query({
+            query: (userId) => `expensecategory/user/budget/${userId}`,
+            providesTags: ["ExpenseCategory"],
+        }),
     }),
 });
 
@@ -87,4 +97,7 @@ export const {
     useCreateFixedIncomeMutation,
     useUpdateFixedIncomeMutation,
     useDeleteFixedIncomeMutation,
+
+    useGetExpenseCategoryFullByUserIdQuery,
+    useGetExpenseCategoryBudgetByUserIdQuery,
 } = apiSlice;
