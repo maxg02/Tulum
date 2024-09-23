@@ -7,6 +7,6 @@
         public string Details { get; set; } = String.Empty;
         public int Periodicity { get; set; }
         public int ExpenseCategoryId { get; set; }
-        public ExpenseCategory? ExpenseCategory { get; set; }
+        public ExpenseCategory ExpenseCategory { get; set; } = null!;
     }
 }

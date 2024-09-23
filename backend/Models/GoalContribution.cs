@@ -6,7 +6,7 @@
         public int Deposit {  get; set; }
         public DateTime Date { get; set; } = DateTime.Now;
         public int SavingGoalId { get; set; }
-        public SavingGoal? SavingGoal { get; set; } 
+        public SavingGoal SavingGoal { get; set; } = null!; 
 
     }
 }

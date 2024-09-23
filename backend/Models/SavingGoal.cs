@@ -9,6 +9,6 @@
         public int? Periodicity { get; set; }
         public List<GoalContribution> GoalContributions { get; set; } = new List<GoalContribution>();
         public int UserId { get; set; }
-        public User? User { get; set; }
+        public User User { get; set; } = null!;
     }
 }
