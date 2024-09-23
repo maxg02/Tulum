@@ -6,20 +6,22 @@ import Table, { tableRow } from "../components/Table";
 import { dataObject } from "../components/Table";
 import {
     useGetIncomesByUserIdQuery,
-    useGetFixedIncomesByUserIdQuery,
-    createIncomeDto,
-    incomeDto,
     useCreateIncomeMutation,
     useDeleteIncomeMutation,
     useUpdateIncomeMutation,
-    useCreateFixedIncomeMutation,
-    createFixedIncomeDto,
+    incomeDto,
     updateIncomeDto,
-    updateFixedIncomeDto,
+    createIncomeDto,
+    useGetFixedIncomesByUserIdQuery,
+    useCreateFixedIncomeMutation,
     useDeleteFixedIncomeMutation,
     useUpdateFixedIncomeMutation,
     fixedIncomeDto,
+    updateFixedIncomeDto,
+    createFixedIncomeDto,
+    useGetExpenseCategoryBudgetByUserIdQuery,
 } from "../../api/apiSlice";
+import { periodicityValues } from "../components/Constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import CreateModal from "../components/CreateModal";
@@ -28,8 +30,6 @@ import { useAppDispatch, useAppSelector } from "../hooks";
 import { showModal as showCreateModal } from "../reducers/createModalReducers";
 import { showModal as showDetailsModal } from "../reducers/detailsModalReducers";
 import { AmountField, DateField, DetailsField, ListField } from "../components/ModalsFields";
-
-export const periodicityValues = ["Daily", "Weekly", "Biweekly", "Monthly", "Quarterly", "Annual"];
 
 export default function Budget() {
     const [amount, setAmount] = useState<number>(0);
@@ -45,17 +45,44 @@ export default function Budget() {
     const createModalState = useAppSelector((state) => state.createModal.show);
     const detailsModalState = useAppSelector((state) => state.detailsModal);
 
+    let incomesRow: tableRow, fixedIncomesRow: tableRow;
+    const currentDate: Date = new Date();
+    const currentMonth: string = new Intl.DateTimeFormat("en-US", { month: "long" }).format(currentDate);
+    const currentYear: number = currentDate.getFullYear();
+    let totalIncome: number = 0;
+    let totalMonthIncome: number = 0;
+    let totalYearIncome: number = 0;
+
     //Income Handling
-    const { data: iData, isLoading: iIsLoading } = useGetIncomesByUserIdQuery(1);
+    const { data: incomeData, isLoading: incomeIsLoading } = useGetIncomesByUserIdQuery(1);
     const [createIncome] = useCreateIncomeMutation();
     const [deleteIncome] = useDeleteIncomeMutation();
     const [updateIncome] = useUpdateIncomeMutation();
+
+    //Fixed Income Handling
+    const { data: fixedIncomeData, isLoading: fixedIncomeIsLoading } = useGetFixedIncomesByUserIdQuery(1);
+    const [createFixedIncome] = useCreateFixedIncomeMutation();
+    const [deleteFixedIncome] = useDeleteFixedIncomeMutation();
+    const [updateFixedIncome] = useUpdateFixedIncomeMutation();
+
+    //Expense Category for Budget Handling
+    const { data: expenseCategoryData, isLoading: expenseCategoryIsLoading } =
+        useGetExpenseCategoryBudgetByUserIdQuery(1);
 
     // Show create Income Modal
     const showCreateIncomeModal = () => {
         clearFieldValues();
         const newState = { ...createModalState };
         newState.income = true;
+
+        dispatch(showCreateModal(newState));
+    };
+
+    // Show create Fixed Income Modal
+    const showCreateFixedIncomeModal = () => {
+        clearFieldValues();
+        const newState = { ...createModalState };
+        newState.fixedIncome = true;
 
         dispatch(showCreateModal(newState));
     };
@@ -67,11 +94,27 @@ export default function Budget() {
         newState.id = incomeId;
         newState.show = { ...detailsModalState.show, income: true };
 
-        const incomeData = iData.filter((i: incomeDto) => i.id === incomeId)[0];
+        const incomeData = incomeData.filter((i: incomeDto) => i.id === incomeId)[0];
 
         setAmount(incomeData.amount);
         setDetails(incomeData.details);
         setDate(incomeData.date);
+        dispatch(showDetailsModal(newState));
+    };
+
+    // Show details Fixed Income Modal
+    const showDetailsFixedIncomeModal = (fixedIncomeId: number) => {
+        clearFieldValues();
+        const newState = { ...detailsModalState };
+        newState.id = fixedIncomeId;
+        newState.show = { ...detailsModalState.show, fixedIncome: true };
+
+        const fixedIncomeData = fixedIncomeData.filter((i: fixedIncomeDto) => i.id === fixedIncomeId)[0];
+
+        setAmount(fixedIncomeData.amount);
+        setDetails(fixedIncomeData.details);
+        setPeriodicity(fixedIncomeData.periodicity);
+
         dispatch(showDetailsModal(newState));
     };
 
@@ -85,10 +128,26 @@ export default function Budget() {
         createIncome(incomeData);
     };
 
+    // Create Fixed income function
+    const createFixedIncomeHandler = () => {
+        const fixedIncomeData: createFixedIncomeDto = {
+            amount: amount,
+            details: details,
+            periodicity: periodicity,
+        };
+        createFixedIncome(fixedIncomeData);
+    };
+
     // Delete Income Function
     const deleteIncomeHandler = () => {
         const incomeId = detailsModalState.id;
         deleteIncome(incomeId!);
+    };
+
+    // Delete Fixed Income Function
+    const deleteFixedIncomeHandler = () => {
+        const fixedIncomeId = detailsModalState.id;
+        deleteFixedIncome(fixedIncomeId!);
     };
 
     // Update Income Function
@@ -101,52 +160,6 @@ export default function Budget() {
         updateIncome(incomeData);
     };
 
-    //Fixed Income Handling
-    const { data: fiData, isLoading: fiIsLoading } = useGetFixedIncomesByUserIdQuery(1);
-    const [createFixedIncome] = useCreateFixedIncomeMutation();
-    const [deleteFixedIncome] = useDeleteFixedIncomeMutation();
-    const [updateFixedIncome] = useUpdateFixedIncomeMutation();
-
-    // Show create Fixed Income Modal
-    const showCreateFixedIncomeModal = () => {
-        clearFieldValues();
-        const newState = { ...createModalState };
-        newState.fixedIncome = true;
-
-        dispatch(showCreateModal(newState));
-    };
-
-    const showDetailsFixedIncomeModal = (fixedIncomeId: number) => {
-        clearFieldValues();
-        const newState = { ...detailsModalState };
-        newState.id = fixedIncomeId;
-        newState.show = { ...detailsModalState.show, fixedIncome: true };
-
-        const fixedIncomeData = fiData.filter((i: fixedIncomeDto) => i.id === fixedIncomeId)[0];
-
-        setAmount(fixedIncomeData.amount);
-        setDetails(fixedIncomeData.details);
-        setPeriodicity(fixedIncomeData.periodicity);
-
-        dispatch(showDetailsModal(newState));
-    };
-
-    // Create Fixed income function
-    const createFixedIncomeHandler = () => {
-        const fixedIncomeData: createFixedIncomeDto = {
-            amount: amount,
-            details: details,
-            periodicity: periodicity,
-        };
-        createFixedIncome(fixedIncomeData);
-    };
-
-    // Delete Fixed Income Function
-    const deleteFixedIncomeHandler = () => {
-        const fixedIncomeId = detailsModalState.id;
-        deleteFixedIncome(fixedIncomeId!);
-    };
-
     // Update Fixed Income Function
     const updateFixedIncomeHandler = () => {
         const fixedIncomeData: updateFixedIncomeDto = {
@@ -157,28 +170,22 @@ export default function Budget() {
         updateFixedIncome(fixedIncomeData);
     };
 
-    let incomesRow: tableRow, fixedIncomesRow: tableRow;
-    const currentDate: Date = new Date();
-    const currentMonth: string = new Intl.DateTimeFormat("en-US", { month: "long" }).format(currentDate);
-    const currentYear: number = currentDate.getFullYear();
-    let totalIncome: number = 0;
-    let totalMonthIncome: number = 0;
-    let totalYearIncome: number = 0;
-
     // Income data handling
-    if (!iIsLoading && iData != undefined) {
-        incomesRow = iData.map((income: { id: number; amount: number; details: string; date: Date }) => ({
-            id: income.id,
-            data: [income.amount, income.details, new Date(income.date).toLocaleDateString("en-US")],
-        }));
+    if (!incomeIsLoading && incomeData != undefined) {
+        incomesRow = incomeData.map(
+            (income: { id: number; amount: number; details: string; date: Date }) => ({
+                id: income.id,
+                data: [income.amount, income.details, new Date(income.date).toLocaleDateString("en-US")],
+            })
+        );
 
-        totalIncome = iData.reduce((acc: number, next: incomeDto) => acc + next.amount, 0);
+        totalIncome = incomeData.reduce((acc: number, next: incomeDto) => acc + next.amount, 0);
 
-        const monthIncomes = iData.filter(
+        const monthIncomes = incomeData.filter(
             (income) => new Date(income.date).getMonth() === currentDate.getMonth()
         );
 
-        const yearIncomes = iData.filter(
+        const yearIncomes = incomeData.filter(
             (income) => new Date(income.date).getFullYear() === currentDate.getFullYear()
         );
 
@@ -187,16 +194,16 @@ export default function Budget() {
     }
 
     // Fixed Income data handling
-    if (!fiIsLoading && fiData != undefined) {
-        fixedIncomesRow = fiData.map(
-            (fIncome: { id: number; amount: number; details: string; periodicity: string }) => ({
-                id: fIncome.id,
-                data: [fIncome.amount, fIncome.details, fIncome.periodicity],
+    if (!fixedIncomeIsLoading && fixedIncomeData != undefined) {
+        fixedIncomesRow = fixedIncomeData.map(
+            (fixedIncome: { id: number; amount: number; details: string; periodicity: string }) => ({
+                id: fixedIncome.id,
+                data: [fixedIncome.amount, fixedIncome.details, fixedIncome.periodicity],
             })
         );
     }
 
-    const incomeData: dataObject = {
+    const incomeTableData: dataObject = {
         columns: [
             { name: "Income", type: "amount" },
             { name: "Details", type: "string" },
@@ -210,7 +217,7 @@ export default function Budget() {
         ],
     };
 
-    const fixedIncomeData: dataObject = {
+    const fixedIncomeTableData: dataObject = {
         columns: [
             { name: "Income", type: "amount" },
             { name: "Details", type: "string" },
