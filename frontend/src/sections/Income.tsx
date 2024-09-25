@@ -129,7 +129,7 @@ export default function Budget() {
         newState.show = { ...detailsModalState.show, budgetPlanning: true };
 
         const budgetData: expenseCategoryDto = budgetPlanningData.filter(
-            (ec: expenseCategoryDto) => ec.budgetPlan!.id === budgetId
+            (ec: expenseCategoryDto) => ec.budgetPlan?.id === budgetId
         )[0];
 
         setAmount(budgetData.budgetPlan!.amount);
@@ -225,11 +225,11 @@ export default function Budget() {
         const expenseCategoriesWithBudgets = budgetPlanningData.filter((ec) => ec.budgetPlan);
 
         budgetPlanningRow = expenseCategoriesWithBudgets.map((expenseCategory: expenseCategoryDto) => ({
-            id: expenseCategory.budgetPlan?.id,
+            id: expenseCategory.budgetPlan!.id,
             data: [
                 expenseCategory.category,
-                expenseCategory.budgetPlan?.amount,
-                expenseCategory.budgetPlan?.periodicity,
+                expenseCategory.budgetPlan!.amount,
+                expenseCategory.budgetPlan!.periodicity,
             ],
         }));
     }
