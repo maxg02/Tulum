@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export type modalState = {
-    show: { income: boolean; fixedIncome: boolean };
+    show: { income: boolean; fixedIncome: boolean; budgetPlanning: boolean };
 };
 
 export const initialState: modalState = {
-    show: { income: false, fixedIncome: false },
+    show: { income: false, fixedIncome: false, budgetPlanning: false },
 };
 
 export const createModalSlice = createSlice({
