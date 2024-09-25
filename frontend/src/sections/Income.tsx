@@ -20,6 +20,7 @@ import {
     updateFixedIncomeDto,
     createFixedIncomeDto,
     useGetExpenseCategoryBudgetByUserIdQuery,
+    expenseCategoryDto,
 } from "../../api/apiSlice";
 import { periodicityValues } from "../components/Constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -45,7 +46,7 @@ export default function Budget() {
     const createModalState = useAppSelector((state) => state.createModal.show);
     const detailsModalState = useAppSelector((state) => state.detailsModal);
 
-    let incomesRow: tableRow, fixedIncomesRow: tableRow;
+    let incomesRow: tableRow[], fixedIncomesRow: tableRow[], budgetPlanningRow: tableRow[];
     const currentDate: Date = new Date();
     const currentMonth: string = new Intl.DateTimeFormat("en-US", { month: "long" }).format(currentDate);
     const currentYear: number = currentDate.getFullYear();
@@ -66,7 +67,7 @@ export default function Budget() {
     const [updateFixedIncome] = useUpdateFixedIncomeMutation();
 
     //Expense Category for Budget Handling
-    const { data: expenseCategoryData, isLoading: expenseCategoryIsLoading } =
+    const { data: budgetPlanningData, isLoading: budgetPlanningIsLoading } =
         useGetExpenseCategoryBudgetByUserIdQuery(1);
 
     // Show create Income Modal
@@ -94,7 +95,7 @@ export default function Budget() {
         newState.id = incomeId;
         newState.show = { ...detailsModalState.show, income: true };
 
-        const incomeData = incomeData.filter((i: incomeDto) => i.id === incomeId)[0];
+        const incomeData: incomeDto = incomeData.filter((i: incomeDto) => i.id === incomeId)[0];
 
         setAmount(incomeData.amount);
         setDetails(incomeData.details);
@@ -109,11 +110,31 @@ export default function Budget() {
         newState.id = fixedIncomeId;
         newState.show = { ...detailsModalState.show, fixedIncome: true };
 
-        const fixedIncomeData = fixedIncomeData.filter((i: fixedIncomeDto) => i.id === fixedIncomeId)[0];
+        const fixedIncomeData: fixedIncomeDto = fixedIncomeData.filter(
+            (i: fixedIncomeDto) => i.id === fixedIncomeId
+        )[0];
 
         setAmount(fixedIncomeData.amount);
         setDetails(fixedIncomeData.details);
         setPeriodicity(fixedIncomeData.periodicity);
+
+        dispatch(showDetailsModal(newState));
+    };
+
+    // Show details Fixed Income Modal
+    const showDetailsBudgetPlanningModal = (budgetId: number) => {
+        clearFieldValues();
+        const newState = { ...detailsModalState };
+        newState.id = budgetId;
+        newState.show = { ...detailsModalState.show, budgetPlanning: true };
+
+        const budgetData: expenseCategoryDto = budgetPlanningData.filter(
+            (ec: expenseCategoryDto) => ec.budgetPlan!.id === budgetId
+        )[0];
+
+        setAmount(budgetData.budgetPlan!.amount);
+        setDetails(budgetData.category);
+        setPeriodicity(budgetData.budgetPlan!.periodicity);
 
         dispatch(showDetailsModal(newState));
     };
@@ -172,12 +193,10 @@ export default function Budget() {
 
     // Income data handling
     if (!incomeIsLoading && incomeData != undefined) {
-        incomesRow = incomeData.map(
-            (income: { id: number; amount: number; details: string; date: Date }) => ({
-                id: income.id,
-                data: [income.amount, income.details, new Date(income.date).toLocaleDateString("en-US")],
-            })
-        );
+        incomesRow = incomeData.map((income: incomeDto) => ({
+            id: income.id,
+            data: [income.amount, income.details, new Date(income.date).toLocaleDateString("en-US")],
+        }));
 
         totalIncome = incomeData.reduce((acc: number, next: incomeDto) => acc + next.amount, 0);
 
@@ -195,14 +214,27 @@ export default function Budget() {
 
     // Fixed Income data handling
     if (!fixedIncomeIsLoading && fixedIncomeData != undefined) {
-        fixedIncomesRow = fixedIncomeData.map(
-            (fixedIncome: { id: number; amount: number; details: string; periodicity: string }) => ({
-                id: fixedIncome.id,
-                data: [fixedIncome.amount, fixedIncome.details, fixedIncome.periodicity],
-            })
-        );
+        fixedIncomesRow = fixedIncomeData.map((fixedIncome: fixedIncomeDto) => ({
+            id: fixedIncome.id,
+            data: [fixedIncome.amount, fixedIncome.details, fixedIncome.periodicity],
+        }));
     }
 
+    //budget Planning data handling
+    if (!budgetPlanningIsLoading && budgetPlanningData != undefined) {
+        const expenseCategoriesWithBudgets = budgetPlanningData.filter((ec) => ec.budgetPlan);
+
+        budgetPlanningRow = expenseCategoriesWithBudgets.map((expenseCategory: expenseCategoryDto) => ({
+            id: expenseCategory.budgetPlan?.id,
+            data: [
+                expenseCategory.category,
+                expenseCategory.budgetPlan?.amount,
+                expenseCategory.budgetPlan?.periodicity,
+            ],
+        }));
+    }
+
+    //Income table structure
     const incomeTableData: dataObject = {
         columns: [
             { name: "Income", type: "amount" },
@@ -217,6 +249,7 @@ export default function Budget() {
         ],
     };
 
+    //Fixed Income table structure
     const fixedIncomeTableData: dataObject = {
         columns: [
             { name: "Income", type: "amount" },
@@ -235,23 +268,24 @@ export default function Budget() {
         ],
     };
 
-    // const budgetPlanningData: dataObject = {
-    //     columns: [
-    //         { name: "Details", type: "string" },
-    //         { name: "Amount", type: "amount" },
-    //         {
-    //             name: "Periodicity",
-    //             type: "list",
-    //             values: ["Daily", "Weekly", "Biweekly", "Monthly", "Quarterly", "Annual"],
-    //         },
-    //     ],
-    //     rows: [
-    //         {
-    //             id: 1500,
-    //             data: ["pepe", 2500, 2],
-    //         },
-    //     ],
-    // };
+    //Budget Planning table structure
+    const budgetPlanningTableData: dataObject = {
+        columns: [
+            { name: "Category", type: "string" },
+            { name: "Amount", type: "amount" },
+            {
+                name: "Periodicity",
+                type: "list",
+                values: periodicityValues,
+            },
+        ],
+        rows: budgetPlanningRow ?? [
+            {
+                id: 1500,
+                data: ["pepe", 2500, 2],
+            },
+        ],
+    };
 
     return (
         <div className="flex flex-1 gap-8">
@@ -276,9 +310,15 @@ export default function Budget() {
                         </div>
                         <div className="infoContainer1 flex-1">
                             <p>Budget Planning</p>
-                            {/* <div className="flex flex-1 items-center w-full">
-                                <Table data={budgetPlanningData} tablePrefix="BP" />
-                            </div> */}
+                            <div className="flex flex-1 items-center w-full">
+                                <Table
+                                    data={budgetPlanningTableData}
+                                    tablePrefix="BP"
+                                    detailsFunction={(budgetId: number) =>
+                                        showDetailsBudgetPlanningModal(budgetId)
+                                    }
+                                />
+                            </div>
                         </div>
                     </div>
                     <div className="flex flex-col flex-1 gap-y-9">
@@ -296,7 +336,7 @@ export default function Budget() {
                             <div className="flex items-center flex-1 w-full">
                                 <Table
                                     dark
-                                    data={incomeData}
+                                    data={incomeTableData}
                                     tablePrefix="I"
                                     detailsFunction={(incomeId: number) =>
                                         showDetailsIncomeModal(incomeId)
@@ -317,7 +357,7 @@ export default function Budget() {
                             </div>
                             <div className="flex flex-1 items-center w-full">
                                 <Table
-                                    data={fixedIncomeData}
+                                    data={fixedIncomeTableData}
                                     tablePrefix="FI"
                                     dark
                                     detailsFunction={(fixedIncomeId: number) =>
@@ -342,7 +382,7 @@ export default function Budget() {
                 <ListField
                     fieldStateHandler={setPeriodicity}
                     label="Periodicity"
-                    values={fixedIncomeData.columns[2].values!}
+                    values={fixedIncomeTableData.columns[2].values!}
                 />
             </CreateModal>
             {/* Details Income Modal */}
@@ -366,7 +406,22 @@ export default function Budget() {
                 <ListField
                     fieldStateHandler={setPeriodicity}
                     label="Periodicity"
-                    values={fixedIncomeData.columns[2].values!}
+                    values={fixedIncomeTableData.columns[2].values!}
+                    defaultValue={periodicity}
+                />
+            </DetailsModal>
+            {/* Details Budget Planning Modal */}
+            <DetailsModal
+                updateFunction={() => {}}
+                deleteFunction={() => {}}
+                show={detailsModalState.show.budgetPlanning}
+            >
+                <AmountField defaultValue={amount} fieldStateHandler={setAmount} />
+                <DetailsField defaultValue={details} fieldStateHandler={setDetails} />
+                <ListField
+                    fieldStateHandler={setPeriodicity}
+                    label="Periodicity"
+                    values={budgetPlanningTableData.columns[2].values!}
                     defaultValue={periodicity}
                 />
             </DetailsModal>
