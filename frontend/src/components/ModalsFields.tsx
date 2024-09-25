@@ -9,6 +9,7 @@ type modalField = {
 };
 
 type listModalField = modalField & { label: string; values: string[] };
+type selectModalField = modalField & { label: string; values: { id: number; value: string }[] };
 
 export function AmountField({ fieldStateHandler, defaultValue }: modalField & { defaultValue: number }) {
     return (
@@ -85,6 +86,36 @@ export function ListField({
                     <label htmlFor={"list" + key}>{item}</label>
                 </div>
             ))}
+        </div>
+    );
+}
+
+export function SelectField({
+    fieldStateHandler,
+    label,
+    values,
+    defaultValue,
+}: selectModalField & { defaultValue: number }) {
+    return (
+        <div className="flex flex-col gap-y-1">
+            <label htmlFor="select">{label}</label>
+            <select
+                id="select"
+                name={`select ${label}`}
+                className="formInput bg-custom-ly1 bg-custom-ly2 border-none cursor-pointer"
+            >
+                {values
+                    ? values.map((item, key) => (
+                          <option
+                              selected={item.id === defaultValue ? true : undefined}
+                              key={key}
+                              value={item.id}
+                          >
+                              {item.value}
+                          </option>
+                      ))
+                    : null}
+            </select>
         </div>
     );
 }
