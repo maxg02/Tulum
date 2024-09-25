@@ -11,6 +11,12 @@ export type updateFixedIncomeDto = {
     data: { amount: number; details: string; periodicity: number };
 };
 
+export type expenseCategoryDto = {
+    id: number;
+    category: string;
+    budgetPlan?: { id: number; amount: number; expenseCategoryId: number; periodicity: number };
+};
+
 export const apiSlice = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: "http://localhost:5085/api/",
