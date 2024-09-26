@@ -61,7 +61,7 @@ namespace backend.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> CreateFixedIncome([FromRoute] int id)
+        public async Task<IActionResult> DeleteFixedIncome([FromRoute] int id)
         {
             var fixedIncome = await _fixedIncomeRepo.DeleteAsync(id);
 
