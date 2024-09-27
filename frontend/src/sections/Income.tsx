@@ -90,6 +90,15 @@ export default function Budget() {
         dispatch(showCreateModal(newState));
     };
 
+    // Show create budget planning Modal
+    const showCreateBudgetModal = () => {
+        clearFieldValues();
+        const newState = { ...createModalState };
+        newState.budgetPlanning = true;
+
+        dispatch(showCreateModal(newState));
+    };
+
     // Show details Income Modal
     const showDetailsIncomeModal = (incomeId: number) => {
         clearFieldValues();
@@ -316,7 +325,16 @@ export default function Budget() {
                             </div>
                         </div>
                         <div className="infoContainer1 flex-1">
-                            <p>Budget Planning</p>
+                            <div className="grid grid-cols-3 w-full">
+                                <p className="col-start-2 mx-auto">Budget Planning</p>
+                                <button
+                                    className="ml-auto tableButton flex gap-x-2 p-0 items-center opacity-55 hover:opacity-100"
+                                    onClick={showCreateBudgetModal}
+                                >
+                                    <p>New</p>
+                                    <FontAwesomeIcon icon={faPlus} />
+                                </button>
+                            </div>
                             <div className="flex flex-1 items-center w-full">
                                 <Table
                                     data={budgetPlanningTableData}
@@ -390,6 +408,20 @@ export default function Budget() {
                     fieldStateHandler={setPeriodicity}
                     label="Periodicity"
                     values={fixedIncomeTableData.columns[2].values!}
+                />
+            </CreateModal>
+            {/* Create Budget Modal */}
+            <CreateModal show={createModalState.budgetPlanning} createFunction={createFixedIncomeHandler}>
+                <AmountField fieldStateHandler={setAmount} />
+                <SelectField
+                    fieldStateHandler={setSelectValue}
+                    label="Category"
+                    values={categorySelectValues}
+                />
+                <ListField
+                    fieldStateHandler={setPeriodicity}
+                    label="Periodicity"
+                    values={budgetPlanningTableData.columns[2].values!}
                 />
             </CreateModal>
             {/* Details Income Modal */}
