@@ -6,6 +6,6 @@ namespace backend.Dtos.ExpenseCategory
     {
         public int Id { get; set; }
         public string Category { get; set; } = String.Empty;
-        public BudgetPlan? BudgetPlan { get; set; }
+        public backend.Models.BudgetPlan? BudgetPlan { get; set; }
     }
 }
