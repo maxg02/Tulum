@@ -170,6 +170,8 @@ export default function Budget() {
         createFixedIncome(fixedIncomeData);
     };
 
+    const createBudgetHandler = () => {};
+
     // Delete Income Function
     const deleteIncomeHandler = () => {
         const incomeId = detailsModalState.id;
@@ -411,7 +413,7 @@ export default function Budget() {
                 />
             </CreateModal>
             {/* Create Budget Modal */}
-            <CreateModal show={createModalState.budgetPlanning} createFunction={createFixedIncomeHandler}>
+            <CreateModal show={createModalState.budgetPlanning} createFunction={createBudgetHandler}>
                 <AmountField fieldStateHandler={setAmount} />
                 <SelectField
                     fieldStateHandler={setSelectValue}
