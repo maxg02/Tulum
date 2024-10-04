@@ -103,6 +103,7 @@ export function SelectField({
                 id="select"
                 name={`select ${label}`}
                 className="formInput bg-custom-ly1 bg-custom-ly2 border-none cursor-pointer"
+                onChange={(e) => fieldStateHandler(parseInt(e.target.value))}
             >
                 {values
                     ? values.map((item, key) => (
