@@ -104,18 +104,23 @@ export function SelectField({
                 name={`select ${label}`}
                 className="formInput bg-custom-ly1 bg-custom-ly2 border-none cursor-pointer"
                 onChange={(e) => fieldStateHandler(parseInt(e.target.value))}
+                disabled={defaultValue ? true : false}
             >
-                {values
-                    ? values.map((item, key) => (
-                          <option
-                              selected={item.id === defaultValue ? true : undefined}
-                              key={key}
-                              value={item.id}
-                          >
-                              {item.value}
-                          </option>
-                      ))
-                    : null}
+                {defaultValue ?? (
+                    <option selected disabled value="">
+                        Select Expense Category
+                    </option>
+                )}
+                {values &&
+                    values.map((item, key) => (
+                        <option
+                            selected={item.id === defaultValue ? true : undefined}
+                            key={key}
+                            value={item.id}
+                        >
+                            {item.value}
+                        </option>
+                    ))}
             </select>
         </div>
     );
