@@ -17,6 +17,12 @@ export type expenseCategoryDto = {
     budgetPlan?: { id: number; amount: number; expenseCategoryId: number; periodicity: number };
 };
 
+export type cuBudgetPlanDto = {
+    amount: number;
+    expenseCategoryId: number;
+    periodicity: number;
+};
+
 export const apiSlice = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: "http://localhost:5085/api/",
@@ -90,6 +96,16 @@ export const apiSlice = createApi({
             query: (userId) => `expensecategory/user/budget/${userId}`,
             providesTags: ["ExpenseCategory"],
         }),
+
+        //Budget Plan endpoints
+        createBudgetPlan: builder.mutation({
+            query: (budgetPlanData: cuBudgetPlanDto) => ({
+                url: "budgetplan",
+                method: "POST",
+                body: budgetPlanData,
+            }),
+            invalidatesTags: ["ExpenseCategory"],
+        }),
     }),
 });
 
@@ -106,4 +122,6 @@ export const {
 
     useGetExpenseCategoryFullByUserIdQuery,
     useGetExpenseCategoryBudgetByUserIdQuery,
+
+    useCreateBudgetPlanMutation,
 } = apiSlice;
