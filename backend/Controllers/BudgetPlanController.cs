@@ -19,11 +19,37 @@ namespace backend.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateBudgetPlan([FromBody] CUBudgetPlanRequestDto budgetPlanDto)
+        public async Task<IActionResult> CreateBudgetPlan([FromBody] CreateBudgetPlanRequestDto budgetPlanDto)
         {
-            var budgetPlan = await _budgetPlanRepo.CreateAsync(budgetPlanDto.ToBudgetPlanFromCUDto());
+            var budgetPlan = await _budgetPlanRepo.CreateAsync(budgetPlanDto.ToBudgetPlanFromCreateDto());
 
             return Ok(budgetPlan);
+        }
+
+        [HttpPut("${id}")]
+        public async Task<IActionResult> UpdateBudgetPlan([FromRoute] int id, [FromBody] UpdateBudgetPlanRequestDto budgetPlanDto)
+        {
+            var budgetPlan = await _budgetPlanRepo.UpdateAsync(id, budgetPlanDto);
+
+            if (budgetPlan == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(budgetPlan);
+        }
+
+        [HttpDelete("${id}")]
+        public async Task<IActionResult> DeleteBudgetPlan([FromRoute] int id)
+        {
+            var budgetPlan = await _budgetPlanRepo.DeleteAsync(id);
+
+            if (budgetPlan == null)
+            {
+                return NotFound();
+            }
+
+            return NoContent();
         }
     }
 }

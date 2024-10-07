@@ -2,6 +2,8 @@
 using backend.Dtos.BudgetPlan;
 using backend.Models;
 using backend.Repositories.Interfaces;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Repositories.Repos
 {
@@ -19,14 +21,36 @@ namespace backend.Repositories.Repos
             return budgetPlan;
         }
 
-        public Task<BudgetPlan?> DeleteAsync(int id)
+        public async Task<BudgetPlan?> DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            var budgetPlan = await _context.BudgetPlans.FirstOrDefaultAsync(bp => bp.Id == id);
+            
+            if (budgetPlan == null)
+            {
+                return null;
+            }
+            
+            _context.BudgetPlans.Remove(budgetPlan);
+            await _context.SaveChangesAsync();
+
+            return budgetPlan;
         }
 
-        public Task<BudgetPlan?> UpdateAsync(int id, CUBudgetPlanRequestDto budgetPlanDto)
+        public async Task<BudgetPlan?> UpdateAsync(int id,UpdateBudgetPlanRequestDto budgetPlanDto)
         {
-            throw new NotImplementedException();
+            var budgetPlan = await _context.BudgetPlans.FirstOrDefaultAsync(bp => bp.Id == id);
+
+            if (budgetPlan == null)
+            {
+                return null;
+            }
+
+            budgetPlan.Amount = budgetPlanDto.Amount;
+            budgetPlan.Periodicity = budgetPlanDto.Periodicity;
+
+            await _context.SaveChangesAsync();
+
+            return budgetPlan;
         }
     }
 }
