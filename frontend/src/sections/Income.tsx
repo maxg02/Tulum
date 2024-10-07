@@ -173,6 +173,7 @@ export default function Budget() {
         createFixedIncome(fixedIncomeData);
     };
 
+    // Create budget plan function
     const createBudgetHandler = () => {
         const budgetPlanData: cuBudgetPlanDto = {
             amount: amount,
@@ -322,7 +323,6 @@ export default function Budget() {
             <Sidebar currentSection="Income" />
             <SectionContent>
                 <Header currentSection="Income" />
-                <p>{selectValue}</p>
                 <div className="flex-1 flex overflow-hidden gap-x-9">
                     <div className="flex flex-col w-5/12 gap-y-9">
                         <div className="infoContainer1 h-[18%]">
