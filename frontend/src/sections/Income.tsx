@@ -144,7 +144,7 @@ export default function Budget() {
         )[0];
 
         setAmount(budgetData.budgetPlan!.amount);
-        setDetails(budgetData.category);
+        setSelectValue(budgetData.id);
         setPeriodicity(budgetData.budgetPlan!.periodicity);
 
         dispatch(showDetailsModal(newState));
