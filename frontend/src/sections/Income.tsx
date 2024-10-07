@@ -21,6 +21,8 @@ import {
     createFixedIncomeDto,
     useGetExpenseCategoryBudgetByUserIdQuery,
     expenseCategoryDto,
+    cuBudgetPlanDto,
+    useCreateBudgetPlanMutation,
 } from "../../api/apiSlice";
 import { periodicityValues } from "../components/Constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -40,7 +42,7 @@ export default function Budget() {
     const [selectValue, setSelectValue] = useState<number>(0);
 
     const clearFieldValues = () => {
-        setAmount(0), setDetails(""), setDate(new Date());
+        setAmount(0), setDetails(""), setDate(new Date()), setPeriodicity(0), setSelectValue(0);
     };
 
     const dispatch = useAppDispatch();
@@ -54,7 +56,7 @@ export default function Budget() {
     let totalIncome: number = 0;
     let totalMonthIncome: number = 0;
     let totalYearIncome: number = 0;
-    let categorySelectValues: { id: number; value: string }[] | undefined;
+    let categorySelectValues: { id: number; value: string; budgetPlan: boolean }[] | undefined;
 
     //Income Handling
     const { data: incomeData, isLoading: incomeIsLoading } = useGetIncomesByUserIdQuery(1);
@@ -68,9 +70,10 @@ export default function Budget() {
     const [deleteFixedIncome] = useDeleteFixedIncomeMutation();
     const [updateFixedIncome] = useUpdateFixedIncomeMutation();
 
-    //Expense Category for Budget Handling
+    //Budget Plan Handling
     const { data: budgetPlanningData, isLoading: budgetPlanningIsLoading } =
         useGetExpenseCategoryBudgetByUserIdQuery(1);
+    const [createBudgetPlan] = useCreateBudgetPlanMutation();
 
     // Show create Income Modal
     const showCreateIncomeModal = () => {
@@ -132,7 +135,7 @@ export default function Budget() {
         dispatch(showDetailsModal(newState));
     };
 
-    // Show details Fixed Income Modal
+    // Show details Budget Plan Modal
     const showDetailsBudgetPlanningModal = (budgetId: number) => {
         clearFieldValues();
         const newState = { ...detailsModalState };
@@ -170,7 +173,15 @@ export default function Budget() {
         createFixedIncome(fixedIncomeData);
     };
 
-    const createBudgetHandler = () => {};
+    const createBudgetHandler = () => {
+        const budgetPlanData: cuBudgetPlanDto = {
+            amount: amount,
+            expenseCategoryId: selectValue,
+            periodicity: periodicity,
+        };
+
+        createBudgetPlan(budgetPlanData);
+    };
 
     // Delete Income Function
     const deleteIncomeHandler = () => {
@@ -249,6 +260,7 @@ export default function Budget() {
         categorySelectValues = budgetPlanningData.map((ec: expenseCategoryDto) => ({
             id: ec.id,
             value: ec.category,
+            budgetPlan: ec.budgetPlan ? true : false,
         }));
     }
 
@@ -310,6 +322,7 @@ export default function Budget() {
             <Sidebar currentSection="Income" />
             <SectionContent>
                 <Header currentSection="Income" />
+                <p>{selectValue}</p>
                 <div className="flex-1 flex overflow-hidden gap-x-9">
                     <div className="flex flex-col w-5/12 gap-y-9">
                         <div className="infoContainer1 h-[18%]">
@@ -418,7 +431,7 @@ export default function Budget() {
                 <SelectField
                     fieldStateHandler={setSelectValue}
                     label="Category"
-                    values={categorySelectValues}
+                    values={categorySelectValues?.filter((ec) => !ec.budgetPlan)}
                 />
                 <ListField
                     fieldStateHandler={setPeriodicity}
