@@ -5,7 +5,7 @@ namespace backend.Mappers
 {
     public static class BudgetPlanMappers
     {
-        public static BudgetPlan ToBudgetPlanFromCUDto(this CUBudgetPlanRequestDto budgetPlanDto)
+        public static BudgetPlan ToBudgetPlanFromCreateDto(this CreateBudgetPlanRequestDto budgetPlanDto)
         {
             return new BudgetPlan
             {
