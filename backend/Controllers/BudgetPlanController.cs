@@ -26,7 +26,7 @@ namespace backend.Controllers
             return Ok(budgetPlan);
         }
 
-        [HttpPut("${id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdateBudgetPlan([FromRoute] int id, [FromBody] UpdateBudgetPlanRequestDto budgetPlanDto)
         {
             var budgetPlan = await _budgetPlanRepo.UpdateAsync(id, budgetPlanDto);
@@ -39,7 +39,7 @@ namespace backend.Controllers
             return Ok(budgetPlan);
         }
 
-        [HttpDelete("${id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBudgetPlan([FromRoute] int id)
         {
             var budgetPlan = await _budgetPlanRepo.DeleteAsync(id);
