@@ -21,8 +21,11 @@ import {
     createFixedIncomeDto,
     useGetExpenseCategoryBudgetByUserIdQuery,
     expenseCategoryDto,
-    cuBudgetPlanDto,
+    createBudgetPlanDto,
+    updateBudgetPlanDto,
     useCreateBudgetPlanMutation,
+    useDeleteBudgetPlanMutation,
+    useUpdateBudgetPlanMutation,
 } from "../../api/apiSlice";
 import { periodicityValues } from "../components/Constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -74,6 +77,8 @@ export default function Budget() {
     const { data: budgetPlanningData, isLoading: budgetPlanningIsLoading } =
         useGetExpenseCategoryBudgetByUserIdQuery(1);
     const [createBudgetPlan] = useCreateBudgetPlanMutation();
+    const [deleteBudgetPlan] = useDeleteBudgetPlanMutation();
+    const [updateBudgetPlan] = useUpdateBudgetPlanMutation();
 
     // Show create Income Modal
     const showCreateIncomeModal = () => {
@@ -109,11 +114,11 @@ export default function Budget() {
         newState.id = incomeId;
         newState.show = { ...detailsModalState.show, income: true };
 
-        const incomeData: incomeDto = incomeData.filter((i: incomeDto) => i.id === incomeId)[0];
+        const selectedIncomeData: incomeDto = incomeData.filter((i: incomeDto) => i.id === incomeId)[0];
 
-        setAmount(incomeData.amount);
-        setDetails(incomeData.details);
-        setDate(incomeData.date);
+        setAmount(selectedIncomeData.amount);
+        setDetails(selectedIncomeData.details);
+        setDate(selectedIncomeData.date);
         dispatch(showDetailsModal(newState));
     };
 
@@ -124,13 +129,13 @@ export default function Budget() {
         newState.id = fixedIncomeId;
         newState.show = { ...detailsModalState.show, fixedIncome: true };
 
-        const fixedIncomeData: fixedIncomeDto = fixedIncomeData.filter(
+        const selectedFixedIncomeData: fixedIncomeDto = fixedIncomeData.filter(
             (i: fixedIncomeDto) => i.id === fixedIncomeId
         )[0];
 
-        setAmount(fixedIncomeData.amount);
-        setDetails(fixedIncomeData.details);
-        setPeriodicity(fixedIncomeData.periodicity);
+        setAmount(selectedFixedIncomeData.amount);
+        setDetails(selectedFixedIncomeData.details);
+        setPeriodicity(selectedFixedIncomeData.periodicity);
 
         dispatch(showDetailsModal(newState));
     };
@@ -175,7 +180,7 @@ export default function Budget() {
 
     // Create budget plan function
     const createBudgetHandler = () => {
-        const budgetPlanData: cuBudgetPlanDto = {
+        const budgetPlanData: createBudgetPlanDto = {
             amount: amount,
             expenseCategoryId: selectValue,
             periodicity: periodicity,
@@ -196,6 +201,12 @@ export default function Budget() {
         deleteFixedIncome(fixedIncomeId!);
     };
 
+    // Delete Budget Plan Function
+    const deleteBudgetPlanHandler = () => {
+        const budgetPlanId = detailsModalState.id;
+        deleteBudgetPlan(budgetPlanId!);
+    };
+
     // Update Income Function
     const updateIncomeHandler = () => {
         const incomeData: updateIncomeDto = {
@@ -214,6 +225,16 @@ export default function Budget() {
         };
 
         updateFixedIncome(fixedIncomeData);
+    };
+
+    // Update Budget Plan Function
+    const updateBudgetPlanHandler = () => {
+        const budgetPlanData: updateBudgetPlanDto = {
+            id: detailsModalState.id!,
+            data: { amount: amount, periodicity: periodicity },
+        };
+
+        updateBudgetPlan(budgetPlanData);
     };
 
     // Income data handling
@@ -466,8 +487,8 @@ export default function Budget() {
             </DetailsModal>
             {/* Details Budget Planning Modal */}
             <DetailsModal
-                updateFunction={() => {}}
-                deleteFunction={() => {}}
+                updateFunction={updateBudgetPlanHandler}
+                deleteFunction={deleteBudgetPlanHandler}
                 show={detailsModalState.show.budgetPlanning}
             >
                 <AmountField defaultValue={amount} fieldStateHandler={setAmount} />
