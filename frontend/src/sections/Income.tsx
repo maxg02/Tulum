@@ -36,6 +36,7 @@ import { useAppDispatch, useAppSelector } from "../hooks";
 import { showModal as showCreateModal } from "../reducers/createModalReducers";
 import { showModal as showDetailsModal } from "../reducers/detailsModalReducers";
 import { AmountField, DateField, DetailsField, ListField, SelectField } from "../components/ModalsFields";
+import Loader from "../components/Loader";
 
 export default function Budget() {
     const [amount, setAmount] = useState<number>(0);
@@ -293,12 +294,7 @@ export default function Budget() {
             { name: "Details", type: "string" },
             { name: "Date", type: "date" },
         ],
-        rows: incomesRow ?? [
-            {
-                id: 1500,
-                data: [2500, "pepe", "23/25/2024"],
-            },
-        ],
+        rows: incomesRow,
     };
 
     //Fixed Income table structure
@@ -372,13 +368,17 @@ export default function Budget() {
                                 </button>
                             </div>
                             <div className="flex flex-1 items-center w-full">
-                                <Table
-                                    data={budgetPlanningTableData}
-                                    tablePrefix="BP"
-                                    detailsFunction={(budgetId: number) =>
-                                        showDetailsBudgetPlanningModal(budgetId)
-                                    }
-                                />
+                                {budgetPlanningIsLoading ? (
+                                    <Loader />
+                                ) : (
+                                    <Table
+                                        data={budgetPlanningTableData}
+                                        tablePrefix="BP"
+                                        detailsFunction={(budgetId: number) =>
+                                            showDetailsBudgetPlanningModal(budgetId)
+                                        }
+                                    />
+                                )}
                             </div>
                         </div>
                     </div>
@@ -395,14 +395,18 @@ export default function Budget() {
                                 </button>
                             </div>
                             <div className="flex items-center flex-1 w-full">
-                                <Table
-                                    dark
-                                    data={incomeTableData}
-                                    tablePrefix="I"
-                                    detailsFunction={(incomeId: number) =>
-                                        showDetailsIncomeModal(incomeId)
-                                    }
-                                />
+                                {incomeIsLoading ? (
+                                    <Loader />
+                                ) : (
+                                    <Table
+                                        dark
+                                        data={incomeTableData}
+                                        tablePrefix="I"
+                                        detailsFunction={(incomeId: number) =>
+                                            showDetailsIncomeModal(incomeId)
+                                        }
+                                    />
+                                )}
                             </div>
                         </div>
                         <div className="flex-1 infoContainer2">
@@ -417,14 +421,18 @@ export default function Budget() {
                                 </button>
                             </div>
                             <div className="flex flex-1 items-center w-full">
-                                <Table
-                                    data={fixedIncomeTableData}
-                                    tablePrefix="FI"
-                                    dark
-                                    detailsFunction={(fixedIncomeId: number) =>
-                                        showDetailsFixedIncomeModal(fixedIncomeId)
-                                    }
-                                />
+                                {fixedIncomeIsLoading ? (
+                                    <Loader />
+                                ) : (
+                                    <Table
+                                        data={fixedIncomeTableData}
+                                        tablePrefix="FI"
+                                        dark
+                                        detailsFunction={(fixedIncomeId: number) =>
+                                            showDetailsFixedIncomeModal(fixedIncomeId)
+                                        }
+                                    />
+                                )}
                             </div>
                         </div>
                     </div>
