@@ -17,10 +17,15 @@ export type expenseCategoryDto = {
     budgetPlan?: { id: number; amount: number; expenseCategoryId: number; periodicity: number };
 };
 
-export type cuBudgetPlanDto = {
+export type createBudgetPlanDto = {
     amount: number;
     expenseCategoryId: number;
     periodicity: number;
+};
+
+export type updateBudgetPlanDto = {
+    id: number;
+    data: { amount: number; periodicity: number };
 };
 
 export const apiSlice = createApi({
