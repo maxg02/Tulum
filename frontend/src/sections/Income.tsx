@@ -117,7 +117,7 @@ export default function Budget() {
         newState.id = incomeId;
         newState.show = { ...detailsModalState.show, income: true };
 
-        const selectedIncomeData: incomeDto = incomeData.filter((i: incomeDto) => i.id === incomeId)[0];
+        const selectedIncomeData: incomeDto = incomeData!.filter((i: incomeDto) => i.id === incomeId)[0];
 
         setAmount(selectedIncomeData.amount);
         setDetails(selectedIncomeData.details);
@@ -132,7 +132,7 @@ export default function Budget() {
         newState.id = fixedIncomeId;
         newState.show = { ...detailsModalState.show, fixedIncome: true };
 
-        const selectedFixedIncomeData: fixedIncomeDto = fixedIncomeData.filter(
+        const selectedFixedIncomeData: fixedIncomeDto = fixedIncomeData!.filter(
             (i: fixedIncomeDto) => i.id === fixedIncomeId
         )[0];
 
@@ -150,7 +150,7 @@ export default function Budget() {
         newState.id = budgetId;
         newState.show = { ...detailsModalState.show, budgetPlanning: true };
 
-        const budgetData: expenseCategoryDto = budgetPlanningData.filter(
+        const budgetData: expenseCategoryDto = budgetPlanningData!.filter(
             (ec: expenseCategoryDto) => ec.budgetPlan?.id === budgetId
         )[0];
 
@@ -496,7 +496,7 @@ export default function Budget() {
                     defaultValue={selectValue}
                     fieldStateHandler={setSelectValue}
                     label="Category"
-                    values={categorySelectValues}
+                    values={categorySelectValues!}
                 />
                 <ListField
                     fieldStateHandler={setPeriodicity}
