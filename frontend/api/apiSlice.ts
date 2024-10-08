@@ -15,6 +15,8 @@ export type expenseCategoryDto = {
     id: number;
     category: string;
     budgetPlan?: { id: number; amount: number; expenseCategoryId: number; periodicity: number };
+    expenses?: [];
+    fixedExpenses?: [];
 };
 
 export type createBudgetPlanDto = {
