@@ -37,8 +37,8 @@ export const apiSlice = createApi({
     tagTypes: ["Income", "FixedIncome", "ExpenseCategory"],
     endpoints: (builder) => ({
         //Income endpoints
-        getIncomesByUserId: builder.query({
-            query: (userId: number) => `income/user/${userId}`,
+        getIncomesByUserId: builder.query<incomeDto[], number>({
+            query: (userId) => `income/user/${userId}`,
             providesTags: ["Income"],
         }),
         createIncome: builder.mutation({
@@ -66,7 +66,7 @@ export const apiSlice = createApi({
         }),
 
         //Fixed Income endpoints
-        getFixedIncomesByUserId: builder.query({
+        getFixedIncomesByUserId: builder.query<fixedIncomeDto[], number>({
             query: (userId) => `fixedincome/user/${userId}`,
             providesTags: ["FixedIncome"],
         }),
@@ -95,11 +95,11 @@ export const apiSlice = createApi({
         }),
 
         //Expense Category endpoints
-        getExpenseCategoryFullByUserId: builder.query({
+        getExpenseCategoryFullByUserId: builder.query<expenseCategoryDto[], number>({
             query: (userId) => `expensecategory/user/full/${userId}`,
             providesTags: ["ExpenseCategory"],
         }),
-        getExpenseCategoryBudgetByUserId: builder.query({
+        getExpenseCategoryBudgetByUserId: builder.query<expenseCategoryDto[], number>({
             query: (userId) => `expensecategory/user/budget/${userId}`,
             providesTags: ["ExpenseCategory"],
         }),
