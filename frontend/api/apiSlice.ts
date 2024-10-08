@@ -104,10 +104,25 @@ export const apiSlice = createApi({
 
         //Budget Plan endpoints
         createBudgetPlan: builder.mutation({
-            query: (budgetPlanData: cuBudgetPlanDto) => ({
+            query: (budgetPlanData: createBudgetPlanDto) => ({
                 url: "budgetplan",
                 method: "POST",
                 body: budgetPlanData,
+            }),
+            invalidatesTags: ["ExpenseCategory"],
+        }),
+        updateBudgetPlan: builder.mutation({
+            query: (budgetPlanData: updateBudgetPlanDto) => ({
+                url: `budgetPlan/${budgetPlanData.id}`,
+                method: "PUT",
+                body: budgetPlanData.data,
+            }),
+            invalidatesTags: ["ExpenseCategory"],
+        }),
+        deleteBudgetPlan: builder.mutation({
+            query: (Id: number) => ({
+                url: `budgetplan/${Id}`,
+                method: "DELETE",
             }),
             invalidatesTags: ["ExpenseCategory"],
         }),
@@ -129,4 +144,6 @@ export const {
     useGetExpenseCategoryBudgetByUserIdQuery,
 
     useCreateBudgetPlanMutation,
+    useDeleteBudgetPlanMutation,
+    useUpdateBudgetPlanMutation,
 } = apiSlice;
