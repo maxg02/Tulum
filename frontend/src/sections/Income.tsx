@@ -53,7 +53,9 @@ export default function Budget() {
     const createModalState = useAppSelector((state) => state.createModal.show);
     const detailsModalState = useAppSelector((state) => state.detailsModal);
 
-    let incomesRow: tableRow[], fixedIncomesRow: tableRow[], budgetPlanningRow: tableRow[];
+    let incomesRow: tableRow[] = [],
+        fixedIncomesRow: tableRow[] = [],
+        budgetPlanningRow: tableRow[] = [];
     const currentDate: Date = new Date();
     const currentMonth: string = new Intl.DateTimeFormat("en-US", { month: "long" }).format(currentDate);
     const currentYear: number = currentDate.getFullYear();
@@ -308,12 +310,7 @@ export default function Budget() {
                 values: periodicityValues,
             },
         ],
-        rows: fixedIncomesRow ?? [
-            {
-                id: 1500,
-                data: [2500, "pepe", 1],
-            },
-        ],
+        rows: fixedIncomesRow,
     };
 
     //Budget Planning table structure
@@ -327,12 +324,7 @@ export default function Budget() {
                 values: periodicityValues,
             },
         ],
-        rows: budgetPlanningRow ?? [
-            {
-                id: 1500,
-                data: ["pepe", 2500, 2],
-            },
-        ],
+        rows: budgetPlanningRow,
     };
 
     return (
