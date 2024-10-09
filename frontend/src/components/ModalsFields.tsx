@@ -5,7 +5,6 @@ type modalField = {
         | React.Dispatch<React.SetStateAction<number>>
         | React.Dispatch<React.SetStateAction<string>>
         | React.Dispatch<React.SetStateAction<Date>>;
-    defaultValue?: number | string | Date;
 };
 
 type listModalField = modalField & { label: string; values: string[] };
