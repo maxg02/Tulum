@@ -5,14 +5,37 @@ import SectionContent from "../components/SectionContent";
 import { PieChart } from "@mui/x-charts/PieChart";
 import { gradientColors } from "../components/Colors";
 import DiamondList from "../components/DiamondList";
-import Table, { dataObject } from "../components/Table";
+import Table, { dataObject, tableRow } from "../components/Table";
+import { expenseCategoryDto, useGetExpenseCategoryFullByUserIdQuery } from "../../api/apiSlice";
 
 export default function Expenses() {
     const [highlightedValue, setHighlightedValue] = useState(null);
 
+    let expensesRow: tableRow[] = [],
+        fixedExpensesRow: tableRow[] = [],
+        budgetExpensesRow: tableRow[] = [];
+
     interface pieChartSlice {
         label: string;
         value: number;
+    }
+
+    //Expense Category Handling
+    const { data: expenseCategoryData, isLoading: expenseCategoryIsLoading } =
+        useGetExpenseCategoryFullByUserIdQuery(1);
+
+    // Expenses Data handling
+    if (!expenseCategoryIsLoading && expenseCategoryData != undefined) {
+        expenseCategoryData
+            .filter((eC: expenseCategoryDto) => eC.expenses!.length)
+            .map((eC: expenseCategoryDto) =>
+                eC.expenses!.map((e) => {
+                    expensesRow.push({
+                        id: e.id,
+                        data: [e.amount, e.details, new Date(e.date).toLocaleDateString("en-US"), 1],
+                    });
+                })
+            );
     }
 
     const dataPieChart: pieChartSlice[] = [
@@ -49,13 +72,7 @@ export default function Expenses() {
                 values: ["Food", "Transport", "House/Utilities", "Entertainment", "Personal/Medical"],
             },
         ],
-        rows: [
-            [3500, "Lorem ipsum dolor sit amet consectetur. Mauris fusce.", "06/05/24", 0],
-            [3500, "Lorem ipsum dolor sit amet consectetur. Mauris fusce.", "01/05/24", 1],
-            [3500, "Lorem ipsum dolor sit amet consectetur. Mauris fusce.", "29/04/24", 2],
-            [3500, "Lorem ipsum dolor sit amet consectetur. Mauris fusce.", "20/04/24", 3],
-            [3500, "Lorem ipsum dolor sit amet consectetur. Mauris fusce.", "15/04/24", 4],
-        ],
+        rows: expensesRow,
     };
 
     const budgetExpensesData: dataObject = {
@@ -63,12 +80,7 @@ export default function Expenses() {
             { name: "Budget", type: "string" },
             { name: "Expenses", type: "progress" },
         ],
-        rows: [
-            ["Food", { value: 3500, total: 6000 }],
-            ["Transport", { value: 1500, total: 5000 }],
-            ["House/Utilities", { value: 13000, total: 15000 }],
-            ["Personal/Medical", { value: 4000, total: 7500 }],
-        ],
+        rows: budgetExpensesRow,
     };
 
     const fixedExpensesData: dataObject = {
@@ -86,12 +98,7 @@ export default function Expenses() {
                 values: ["Food", "Transport", "House/Utilities", "Entertainment", "Personal/Medical"],
             },
         ],
-        rows: [
-            [3500, "Lorem ipsum dolor sit amet consectetur. Mauris fusce.", 0, 0],
-            [3500, "Lorem ipsum dolor sit amet consectetur. Mauris fusce.", 1, 1],
-            [3500, "Lorem ipsum dolor sit amet consectetur. Mauris fusce.", 2, 2],
-            [3500, "Lorem ipsum dolor sit amet consectetur. Mauris fusce.", 3, 3],
-        ],
+        rows: fixedExpensesRow,
     };
 
     return (
