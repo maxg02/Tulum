@@ -11,7 +11,7 @@ type modalField = {
 type listModalField = modalField & { label: string; values: string[] };
 type selectModalField = modalField & { label: string; values: { id: number; value: string }[] };
 
-export function AmountField({ fieldStateHandler, defaultValue }: modalField & { defaultValue: number }) {
+export function AmountField({ fieldStateHandler, defaultValue }: modalField & { defaultValue?: number }) {
     return (
         <div className="flex flex-col gap-y-1">
             <label htmlFor="amount">Amount</label>
@@ -28,7 +28,10 @@ export function AmountField({ fieldStateHandler, defaultValue }: modalField & { 
     );
 }
 
-export function DetailsField({ fieldStateHandler, defaultValue }: modalField & { defaultValue: string }) {
+export function DetailsField({
+    fieldStateHandler,
+    defaultValue,
+}: modalField & { defaultValue?: string }) {
     return (
         <div className="flex flex-col gap-y-1">
             <label htmlFor="details">Details</label>
@@ -45,7 +48,7 @@ export function DetailsField({ fieldStateHandler, defaultValue }: modalField & {
     );
 }
 
-export function DateField({ fieldStateHandler, defaultValue }: modalField & { defaultValue: Date }) {
+export function DateField({ fieldStateHandler, defaultValue }: modalField & { defaultValue?: Date }) {
     return (
         <div className="flex flex-col gap-y-1">
             <label htmlFor="date">Date</label>
@@ -67,7 +70,7 @@ export function ListField({
     label,
     values,
     defaultValue,
-}: listModalField & { defaultValue: number }) {
+}: listModalField & { defaultValue?: number }) {
     return (
         <div className="flex flex-col gap-y-1">
             <label htmlFor="date">{label}</label>
@@ -95,14 +98,14 @@ export function SelectField({
     label,
     values,
     defaultValue,
-}: selectModalField & { defaultValue: number }) {
+}: selectModalField & { defaultValue?: number }) {
     return (
         <div className="flex flex-col gap-y-1">
             <label htmlFor="select">{label}</label>
             <select
                 id="select"
                 name={`select ${label}`}
-                className="formInput bg-custom-ly1 bg-custom-ly2 border-none cursor-pointer"
+                className="formInput bg-custom-ly2 border-none cursor-pointer"
                 onChange={(e) => fieldStateHandler(parseInt(e.target.value))}
                 disabled={defaultValue ? true : false}
             >
