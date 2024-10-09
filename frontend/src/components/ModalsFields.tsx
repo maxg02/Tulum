@@ -9,7 +9,10 @@ type modalField = {
 };
 
 type listModalField = modalField & { label: string; values: string[] };
-type selectModalField = modalField & { label: string; values: { id: number; value: string }[] };
+type selectModalField = modalField & {
+    label: string;
+    values: { id: number; value: string }[] | undefined;
+};
 
 export function AmountField({ fieldStateHandler, defaultValue }: modalField & { defaultValue?: number }) {
     return (
