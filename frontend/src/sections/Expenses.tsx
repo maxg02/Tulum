@@ -163,7 +163,16 @@ export default function Expenses() {
                             </div>
                         </div>
                         <div className="infoContainer1 flex-1">
-                            <p>Expenses</p>
+                            <div className="grid grid-cols-3 w-full">
+                                <p className="col-start-2 mx-auto">Expenses</p>
+                                <button
+                                    className="ml-auto tableButton flex gap-x-2 p-0 items-center opacity-55 hover:opacity-100"
+                                    onClick={showCreateExpenseModal}
+                                >
+                                    <p>New</p>
+                                    <FontAwesomeIcon icon={faPlus} />
+                                </button>
+                            </div>
                             <div className="flex items-center flex-1 w-full">
                                 <Table data={expensesData} tablePrefix="E" />
                             </div>
