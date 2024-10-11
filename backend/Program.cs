@@ -23,6 +23,7 @@ builder.Services.AddScoped<IIncomeRepo, IncomeRepo>();
 builder.Services.AddScoped<IFixedIncomeRepo, FixedIncomeRepo>();
 builder.Services.AddScoped<IExpenseCategoryRepo, ExpenseCategoryRepo>();
 builder.Services.AddScoped<IBudgetPlanRepo, BudgetPlanRepo>();
+builder.Services.AddScoped<IExpenseRepo, ExpenseRepo>();
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
