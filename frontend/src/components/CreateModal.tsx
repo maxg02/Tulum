@@ -32,6 +32,9 @@ function CreateModal({ children, show, createFunction }: createModal) {
         case "budgetPlanning":
             title = "Create Budget Plan";
             break;
+        case "expense":
+            title = "Create Expense";
+            break;
     }
 
     const handleCreate = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
