@@ -6,8 +6,8 @@ namespace backend.Dtos.ExpenseCategory
     {
         public int Id { get; set; }
         public string Category { get; set; } = String.Empty;
-        public List<Expense> Expenses { get; set; } = new List<Expense>();
+        public List<Models.Expense> Expenses { get; set; } = new List<Models.Expense>();
         public List<FixedExpense> FixedExpenses { get; set; } = new List<FixedExpense>();
-        public backend.Models.BudgetPlan? BudgetPlan { get; set; }
+        public Models.BudgetPlan? BudgetPlan { get; set; }
     }
 }
