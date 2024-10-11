@@ -16,7 +16,7 @@ namespace backend.Controllers
         public ExpenseController(IExpenseRepo expenseRepo) => _expenseRepo = expenseRepo;
 
         [HttpPost]
-        public async Task<IActionResult> CreateExpense(CreateExpenseRequestDto expenseDto)
+        public async Task<IActionResult> CreateExpense(CUExpenseRequestDto expenseDto)
         {
             var expense = await _expenseRepo.CreateAsync(expenseDto.toExpenseFromCreateDto());
 

@@ -1,6 +1,6 @@
 ﻿namespace backend.Dtos.Expense
 {
-    public class CreateExpenseRequestDto
+    public class CUExpenseRequestDto
     {
         public int Amount { get; set; }
         public string Details { get; set; } = String.Empty;
