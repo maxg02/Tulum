@@ -7,18 +7,48 @@ import { gradientColors } from "../components/Colors";
 import DiamondList from "../components/DiamondList";
 import Table, { dataObject, tableRow } from "../components/Table";
 import { expenseCategoryDto, useGetExpenseCategoryFullByUserIdQuery } from "../../api/apiSlice";
+import Loader from "../components/Loader";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { useAppDispatch, useAppSelector } from "../hooks";
+import { showModal as showCreateModal } from "../reducers/createModalReducers";
+import { showModal as showDetailsModal } from "../reducers/detailsModalReducers";
+import CreateModal from "../components/CreateModal";
+import { AmountField, DateField, DetailsField, ListField, SelectField } from "../components/ModalsFields";
 
 export default function Expenses() {
     const [highlightedValue, setHighlightedValue] = useState(null);
+    const [amount, setAmount] = useState<number>(0);
+    const [details, setDetails] = useState<string>("");
+    const [date, setDate] = useState<Date>(new Date());
+    const [periodicity, setPeriodicity] = useState<number>(0);
+    const [selectValue, setSelectValue] = useState<number>(0);
 
     let expensesRow: tableRow[] = [],
         fixedExpensesRow: tableRow[] = [],
-        budgetExpensesRow: tableRow[] = [];
+        budgetExpensesRow: tableRow[] = [],
+        categorySelectValues:
+            | {
+                  id: number;
+                  value: string;
+                  budgetPlan: boolean;
+                  expense: boolean;
+                  fixedExpense: boolean;
+              }[]
+            | undefined;
 
-    interface pieChartSlice {
+    type pieChartSlice = {
         label: string;
         value: number;
-    }
+    };
+
+    const clearFieldValues = () => {
+        setAmount(0), setDetails(""), setDate(new Date()), setPeriodicity(0), setSelectValue(0);
+    };
+
+    const dispatch = useAppDispatch();
+    const createModalState = useAppSelector((state) => state.createModal.show);
+    const detailsModalState = useAppSelector((state) => state.detailsModal);
 
     //Expense Category Handling
     const { data: expenseCategoryData, isLoading: expenseCategoryIsLoading } =
@@ -245,6 +275,17 @@ export default function Expenses() {
                     </div>
                 </div>
             </SectionContent>
+            {/* Create Budget Modal */}
+            <CreateModal show={createModalState.expense} createFunction={createExpenseHandler}>
+                <AmountField fieldStateHandler={setAmount} />
+                <SelectField
+                    fieldStateHandler={setSelectValue}
+                    label="Category"
+                    values={categorySelectValues}
+                />
+                <DetailsField fieldStateHandler={setDetails} />
+                <DateField fieldStateHandler={setDate} />
+            </CreateModal>
         </div>
     );
 }
