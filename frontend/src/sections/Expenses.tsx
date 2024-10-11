@@ -63,14 +63,10 @@ export default function Expenses() {
 
     const expensesData: dataObject = {
         columns: [
-            { name: "Expenses", type: "amount" },
+            { name: "Amount", type: "amount" },
             { name: "Details", type: "string" },
             { name: "Date", type: "date" },
-            {
-                name: "Category",
-                type: "list",
-                values: ["Food", "Transport", "House/Utilities", "Entertainment", "Personal/Medical"],
-            },
+            { name: "Category", type: "string" },
         ],
         rows: expensesRow,
     };
