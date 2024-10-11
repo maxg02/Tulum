@@ -174,7 +174,17 @@ export default function Expenses() {
                                 </button>
                             </div>
                             <div className="flex items-center flex-1 w-full">
-                                <Table data={expensesData} tablePrefix="E" />
+                                {expenseCategoryIsLoading ? (
+                                    <Loader />
+                                ) : (
+                                    <Table
+                                        data={expensesData}
+                                        detailsFunction={(expenseId: number) =>
+                                            showDetailsExpenseModal(expenseId)
+                                        }
+                                        tablePrefix="E"
+                                    />
+                                )}
                             </div>
                         </div>
                     </div>
