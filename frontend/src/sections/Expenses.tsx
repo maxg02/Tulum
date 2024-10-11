@@ -24,7 +24,7 @@ export default function Expenses() {
     const { data: expenseCategoryData, isLoading: expenseCategoryIsLoading } =
         useGetExpenseCategoryFullByUserIdQuery(1);
 
-    // Expenses Data handling
+    // Expenses Category Data handling
     if (!expenseCategoryIsLoading && expenseCategoryData != undefined) {
         expenseCategoryData
             .filter((eC: expenseCategoryDto) => eC.expenses!.length)
@@ -32,11 +32,56 @@ export default function Expenses() {
                 eC.expenses!.map((e) => {
                     expensesRow.push({
                         id: e.id,
-                        data: [e.amount, e.details, new Date(e.date).toLocaleDateString("en-US"), 1],
+                        data: [
+                            e.amount,
+                            e.details,
+                            new Date(e.date).toLocaleDateString("en-US"),
+                            eC.category,
+                        ],
                     });
                 })
             );
+
+        categorySelectValues = expenseCategoryData.map((ec: expenseCategoryDto) => ({
+            id: ec.id,
+            value: ec.category,
+            budgetPlan: ec.budgetPlan ? true : false,
+            expense: ec.expenses!.length ? true : false,
+            fixedExpense: ec.expenses!.length ? true : false,
+        }));
     }
+
+    // Show create Expense Modal
+    const showCreateExpenseModal = () => {
+        clearFieldValues();
+        const newState = { ...createModalState };
+        newState.expense = true;
+
+        dispatch(showCreateModal(newState));
+    };
+
+    //Show details Expense Modal
+    const showDetailsExpenseModal = (expenseId: number) => {
+        // clearFieldValues();
+        // const newState = { ...detailsModalState };
+        // newState.id = expenseId;
+        // newState.show = { ...detailsModalState.show, expense: true };
+        // const selectedIncomeData: incomeDto = incomeData!.filter((i: incomeDto) => i.id === incomeId)[0];
+        // setAmount(selectedIncomeData.amount);
+        // setDetails(selectedIncomeData.details);
+        // setDate(selectedIncomeData.date);
+        // dispatch(showDetailsModal(newState));
+    };
+
+    // Create expense function
+    const createExpenseHandler = () => {
+        // const budgetPlanData: createBudgetPlanDto = {
+        //     amount: amount,
+        //     expenseCategoryId: selectValue,
+        //     periodicity: periodicity,
+        // };
+        // createBudgetPlan(budgetPlanData);
+    };
 
     const dataPieChart: pieChartSlice[] = [
         {
