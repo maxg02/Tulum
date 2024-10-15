@@ -30,10 +30,20 @@ export type createBudgetPlanDto = {
     expenseCategoryId: number;
     periodicity: number;
 };
-
 export type updateBudgetPlanDto = {
     id: number;
     data: { amount: number; periodicity: number };
+};
+
+export type createExpenseDto = {
+    amount: number;
+    details: string;
+    date: Date;
+    expenseCategoryId: number;
+};
+export type updateExpenseDto = {
+    id: number;
+    data: { amount: number; details: string; date: Date; expenseCategoryId: number };
 };
 
 export const apiSlice = createApi({
@@ -134,6 +144,31 @@ export const apiSlice = createApi({
             }),
             invalidatesTags: ["ExpenseCategory"],
         }),
+
+        //Expense endpoints
+        createExpense: builder.mutation({
+            query: (expenseData: createExpenseDto) => ({
+                url: "expense",
+                method: "POST",
+                body: expenseData,
+            }),
+            invalidatesTags: ["ExpenseCategory"],
+        }),
+        updateExpense: builder.mutation({
+            query: (expenseData: updateExpenseDto) => ({
+                url: `expense/${expenseData.id}`,
+                method: "PUT",
+                body: expenseData.data,
+            }),
+            invalidatesTags: ["ExpenseCategory"],
+        }),
+        deleteExpense: builder.mutation({
+            query: (Id: number) => ({
+                url: `expense/${Id}`,
+                method: "DELETE",
+            }),
+            invalidatesTags: ["ExpenseCategory"],
+        }),
     }),
 });
 
@@ -154,4 +189,8 @@ export const {
     useCreateBudgetPlanMutation,
     useDeleteBudgetPlanMutation,
     useUpdateBudgetPlanMutation,
+
+    useCreateExpenseMutation,
+    useUpdateExpenseMutation,
+    useDeleteExpenseMutation,
 } = apiSlice;
