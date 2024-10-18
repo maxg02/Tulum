@@ -35,6 +35,13 @@ export type updateBudgetPlanDto = {
     data: { amount: number; periodicity: number };
 };
 
+export type expenseDto = {
+    id: number;
+    amount: number;
+    details: string;
+    date: Date;
+    expenseCategoryId: number;
+};
 export type createExpenseDto = {
     amount: number;
     details: string;
