@@ -100,7 +100,8 @@ export function SelectField({
     label,
     values,
     defaultValue,
-}: selectModalField & { defaultValue?: number }) {
+    disabled = false,
+}: selectModalField & { defaultValue?: number; disabled?: boolean }) {
     return (
         <div className="flex flex-col gap-y-1">
             <label htmlFor="select">{label}</label>
@@ -109,7 +110,7 @@ export function SelectField({
                 name={`select ${label}`}
                 className="formInput bg-custom-ly2 border-none cursor-pointer"
                 onChange={(e) => fieldStateHandler(parseInt(e.target.value))}
-                disabled={defaultValue ? true : false}
+                disabled={disabled}
             >
                 {defaultValue ?? (
                     <option selected disabled value="">
