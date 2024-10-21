@@ -497,6 +497,7 @@ export default function Budget() {
                     fieldStateHandler={setSelectValue}
                     label="Category"
                     values={categorySelectValues!}
+                    disabled
                 />
                 <ListField
                     fieldStateHandler={setPeriodicity}
