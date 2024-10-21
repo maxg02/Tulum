@@ -6,7 +6,16 @@ import { PieChart } from "@mui/x-charts/PieChart";
 import { gradientColors } from "../components/Colors";
 import DiamondList from "../components/DiamondList";
 import Table, { dataObject, tableRow } from "../components/Table";
-import { expenseCategoryDto, useGetExpenseCategoryFullByUserIdQuery } from "../../api/apiSlice";
+import {
+    expenseDto,
+    createExpenseDto,
+    expenseCategoryDto,
+    updateExpenseDto,
+    useCreateExpenseMutation,
+    useDeleteExpenseMutation,
+    useGetExpenseCategoryFullByUserIdQuery,
+    useUpdateExpenseMutation,
+} from "../../api/apiSlice";
 import Loader from "../components/Loader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
@@ -56,6 +65,11 @@ export default function Expenses() {
     //Expense Category Handling
     const { data: expenseCategoryData, isLoading: expenseCategoryIsLoading } =
         useGetExpenseCategoryFullByUserIdQuery(1);
+
+    //Expense Handling
+    const [createExpense] = useCreateExpenseMutation();
+    const [deleteExpense] = useDeleteExpenseMutation();
+    const [updateExpense] = useUpdateExpenseMutation();
 
     // Expenses Category Data handling
     if (!expenseCategoryIsLoading && expenseCategoryData != undefined) {
@@ -129,36 +143,32 @@ export default function Expenses() {
 
     // Create expense function
     const createExpenseHandler = () => {
-        // const budgetPlanData: createBudgetPlanDto = {
-        //     amount: amount,
-        //     expenseCategoryId: selectValue,
-        //     periodicity: periodicity,
-        // };
-        // createBudgetPlan(budgetPlanData);
+        const expenseData: createExpenseDto = {
+            amount: amount,
+            details: details,
+            date: date,
+            expenseCategoryId: selectValue,
+        };
+        createExpense(expenseData);
     };
 
-    const dataPieChart: pieChartSlice[] = [
-        {
-            label: "Food",
-            value: 20000,
-        },
-        {
-            label: "Transport",
-            value: 2000,
-        },
-        {
-            label: "House/Utilities",
-            value: 14000,
-        },
-        {
-            label: "Personal/Medical",
-            value: 12000,
-        },
-        {
-            label: "Others",
-            value: 2500,
-        },
-    ];
+    // Delete Expense Function
+    const deleteExpenseHandler = () => {
+        const expenseId = detailsModalState.id;
+        deleteExpense(expenseId!);
+    };
+
+    // Update Expense Function
+    const updateExpenseHandler = () => {
+        const expenseData: updateExpenseDto = {
+            id: detailsModalState.id!,
+            data: { amount: amount, details: details, date: date, expenseCategoryId: selectValue },
+        };
+
+        updateExpense(expenseData);
+    };
+
+    const dataPieChart: pieChartSlice[] = monthExpensesData;
 
     const expensesData: dataObject = {
         columns: [
