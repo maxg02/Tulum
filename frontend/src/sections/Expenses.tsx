@@ -15,6 +15,7 @@ import { showModal as showCreateModal } from "../reducers/createModalReducers";
 import { showModal as showDetailsModal } from "../reducers/detailsModalReducers";
 import CreateModal from "../components/CreateModal";
 import { AmountField, DateField, DetailsField, ListField, SelectField } from "../components/ModalsFields";
+import DetailsModal from "../components/DetailsModal";
 
 export default function Expenses() {
     const [highlightedValue, setHighlightedValue] = useState(null);
@@ -27,6 +28,8 @@ export default function Expenses() {
     let expensesRow: tableRow[] = [],
         fixedExpensesRow: tableRow[] = [],
         budgetExpensesRow: tableRow[] = [],
+        allExpenses: expenseDto[] | undefined = [],
+        monthExpensesData: pieChartSlice[] = [],
         categorySelectValues:
             | {
                   id: number;
@@ -79,6 +82,24 @@ export default function Expenses() {
             expense: ec.expenses!.length ? true : false,
             fixedExpense: ec.expenses!.length ? true : false,
         }));
+
+        allExpenses = expenseCategoryData
+            ?.map((ec) => ec.expenses)
+            .reduce((acc, currentvalue) => acc!.concat(currentvalue!));
+
+        const monthExpenses = allExpenses?.filter(
+            (expense) => new Date(expense.date).getMonth() === currentDate.getMonth()
+        );
+
+        const monthExpensesByCategory: object = Object.groupBy(
+            monthExpenses,
+            (expense) => expense.expenseCategoryId
+        );
+
+        monthExpensesData = Object.keys(monthExpensesByCategory).map((key) => ({
+            label: categorySelectValues?.find((c) => c.id === parseInt(key))?.value,
+            value: monthExpensesByCategory[key].reduce((acc, expense) => acc + expense.amount, 0),
+        }));
     }
 
     // Show create Expense Modal
@@ -92,15 +113,18 @@ export default function Expenses() {
 
     //Show details Expense Modal
     const showDetailsExpenseModal = (expenseId: number) => {
-        // clearFieldValues();
-        // const newState = { ...detailsModalState };
-        // newState.id = expenseId;
-        // newState.show = { ...detailsModalState.show, expense: true };
-        // const selectedIncomeData: incomeDto = incomeData!.filter((i: incomeDto) => i.id === incomeId)[0];
-        // setAmount(selectedIncomeData.amount);
-        // setDetails(selectedIncomeData.details);
-        // setDate(selectedIncomeData.date);
-        // dispatch(showDetailsModal(newState));
+        clearFieldValues();
+        const newState = { ...detailsModalState };
+        newState.id = expenseId;
+        newState.show = { ...detailsModalState.show, expense: true };
+
+        const selectedExpenseData = allExpenses!.find((exp) => exp.id === expenseId);
+
+        setAmount(selectedExpenseData.amount);
+        setDetails(selectedExpenseData.details);
+        setDate(selectedExpenseData.date);
+        setSelectValue(selectedExpenseData?.expenseCategoryId);
+        dispatch(showDetailsModal(newState));
     };
 
     // Create expense function
@@ -286,6 +310,21 @@ export default function Expenses() {
                 <DetailsField fieldStateHandler={setDetails} />
                 <DateField fieldStateHandler={setDate} />
             </CreateModal>
+            <DetailsModal
+                updateFunction={updateExpenseHandler}
+                deleteFunction={deleteExpenseHandler}
+                show={detailsModalState.show.expense}
+            >
+                <AmountField defaultValue={amount} fieldStateHandler={setAmount} />
+                <DetailsField defaultValue={details} fieldStateHandler={setDetails} />
+                <DateField defaultValue={date} fieldStateHandler={setDate} />
+                <SelectField
+                    defaultValue={selectValue}
+                    fieldStateHandler={setSelectValue}
+                    label="Category"
+                    values={categorySelectValues!}
+                />
+            </DetailsModal>
         </div>
     );
 }
