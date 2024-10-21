@@ -34,6 +34,15 @@ export default function Expenses() {
     const [periodicity, setPeriodicity] = useState<number>(0);
     const [selectValue, setSelectValue] = useState<number>(0);
 
+    type pieChartSlice = {
+        label: string;
+        value: number;
+    };
+
+    const currentDate: Date = new Date();
+    const currentMonth: string = new Intl.DateTimeFormat("en-US", { month: "long" }).format(currentDate);
+    const currentYear: number = currentDate.getFullYear();
+
     let expensesRow: tableRow[] = [],
         fixedExpensesRow: tableRow[] = [],
         budgetExpensesRow: tableRow[] = [],
@@ -48,12 +57,6 @@ export default function Expenses() {
                   fixedExpense: boolean;
               }[]
             | undefined;
-
-    type pieChartSlice = {
-        label: string;
-        value: number;
-    };
-
     const clearFieldValues = () => {
         setAmount(0), setDetails(""), setDate(new Date()), setPeriodicity(0), setSelectValue(0);
     };
@@ -214,52 +217,61 @@ export default function Expenses() {
                 <div className="flex-1 flex flex-col overflow-hidden gap-y-9">
                     <div className="flex flex-1 gap-x-9">
                         <div className="infoContainer1 w-2/5">
-                            <p>January Expenses</p>
+                            <p>{`${currentMonth} Income`}</p>
                             <div className="w-full flex-1 flex items-center justify-center gap-x-9">
                                 <div className="w-80 h-full relative">
-                                    <PieChart
-                                        colors={[
-                                            gradientColors[0],
-                                            gradientColors[1],
-                                            gradientColors[2],
-                                            gradientColors[3],
-                                            gradientColors[4],
-                                        ]}
-                                        margin={{ left: 0, right: 0 }}
-                                        series={[
-                                            {
-                                                data: dataPieChart,
-                                                id: "A",
-                                                innerRadius: "65%",
-                                                paddingAngle: 2,
-                                                cornerRadius: 3,
-                                                highlightScope: { fade: "global", highlight: "item" },
-                                                faded: { color: "gray", additionalRadius: -5 },
-                                                valueFormatter: (value) => `RD$${value.value}`,
-                                            },
-                                        ]}
-                                        onHighlightChange={setHighlightedValue}
-                                        slotProps={{ legend: { hidden: true } }}
-                                        sx={{
-                                            "& .MuiPieArc-root": { strokeWidth: 0 },
-                                        }}
-                                        tooltip={{
-                                            trigger: "item",
-                                            classes: {
-                                                labelCell: "hidden",
-                                                valueCell: "ml-3 p-3",
-                                                markCell: "pl-3 pr-0",
-                                            },
-                                        }}
-                                    ></PieChart>
-                                    <h2 className="font-light text-3xl absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                                        {`RD$${
-                                            dataPieChart.reduce((acc, currentValue) => ({
-                                                ...currentValue,
-                                                value: acc.value + currentValue.value,
-                                            })).value
-                                        }`}
-                                    </h2>
+                                    {expenseCategoryIsLoading ? (
+                                        <Loader />
+                                    ) : (
+                                        <>
+                                            <PieChart
+                                                colors={[
+                                                    gradientColors[0],
+                                                    gradientColors[1],
+                                                    gradientColors[2],
+                                                    gradientColors[3],
+                                                    gradientColors[4],
+                                                ]}
+                                                margin={{ left: 0, right: 0 }}
+                                                series={[
+                                                    {
+                                                        data: dataPieChart,
+                                                        id: "A",
+                                                        innerRadius: "65%",
+                                                        paddingAngle: 2,
+                                                        cornerRadius: 3,
+                                                        highlightScope: {
+                                                            fade: "global",
+                                                            highlight: "item",
+                                                        },
+                                                        faded: { color: "gray", additionalRadius: -5 },
+                                                        valueFormatter: (value) => `RD$${value.value}`,
+                                                    },
+                                                ]}
+                                                onHighlightChange={setHighlightedValue}
+                                                slotProps={{ legend: { hidden: true } }}
+                                                sx={{
+                                                    "& .MuiPieArc-root": { strokeWidth: 0 },
+                                                }}
+                                                tooltip={{
+                                                    trigger: "item",
+                                                    classes: {
+                                                        labelCell: "hidden",
+                                                        valueCell: "ml-3 p-3",
+                                                        markCell: "pl-3 pr-0",
+                                                    },
+                                                }}
+                                            ></PieChart>
+                                            <h2 className="font-light text-3xl absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                                                {`RD$${
+                                                    dataPieChart.reduce((acc, currentValue) => ({
+                                                        ...currentValue,
+                                                        value: acc.value + currentValue.value,
+                                                    })).value
+                                                }`}
+                                            </h2>
+                                        </>
+                                    )}
                                 </div>
                                 <DiamondList
                                     items={dataPieChart.map((x) => x.label)}
