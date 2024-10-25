@@ -117,6 +117,20 @@ export default function Expenses() {
             label: categorySelectValues?.find((c) => c.id === parseInt(key))?.value,
             value: monthExpensesByCategory[key].reduce((acc, expense) => acc + expense.amount, 0),
         }));
+
+        budgetExpensesRow = expenseCategoryData
+            .filter((ec) => ec.budgetPlan)
+            .map((expenseCategory: expenseCategoryDto) => ({
+                id: expenseCategory.budgetPlan!.id,
+                data: [
+                    expenseCategory.category,
+                    {
+                        value: monthExpensesData.find((ec) => ec.label === expenseCategory.category)
+                            ?.value,
+                        total: expenseCategory.budgetPlan!.amount,
+                    },
+                ],
+            }));
     }
 
     // Show create Expense Modal
