@@ -217,7 +217,7 @@ export default function Expenses() {
                 <div className="flex-1 flex flex-col overflow-hidden gap-y-9">
                     <div className="flex flex-1 gap-x-9">
                         <div className="infoContainer1 w-2/5">
-                            <p>{`${currentMonth} Income`}</p>
+                            <p>{`${currentMonth} Expenses`}</p>
                             <div className="w-full flex-1 flex items-center justify-center gap-x-9">
                                 <div className="w-80 h-full relative">
                                     {expenseCategoryIsLoading ? (
