@@ -109,7 +109,9 @@ function Table({
                                 >
                                     <div
                                         className="h-full bg-gradient-to-r from-custom-secondary to-custom-accent rounded-[0.30rem]"
-                                        style={{ width: `${(content.value * 100) / content.total}%` }}
+                                        style={{
+                                            width: `min(${(content.value * 100) / content.total}%,100%)`,
+                                        }}
                                     ></div>
                                 </div>
                                 <div className="flex justify-between px-1">
