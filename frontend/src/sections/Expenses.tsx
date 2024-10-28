@@ -15,6 +15,12 @@ import {
     useDeleteExpenseMutation,
     useGetExpenseCategoryFullByUserIdQuery,
     useUpdateExpenseMutation,
+    fixedExpenseDto,
+    createFixedExpenseDto,
+    useCreateFixedExpenseMutation,
+    useDeleteFixedExpenseMutation,
+    useUpdateFixedExpenseMutation,
+    updateFixedExpenseDto,
 } from "../../api/apiSlice";
 import Loader from "../components/Loader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -25,6 +31,7 @@ import { showModal as showDetailsModal } from "../reducers/detailsModalReducers"
 import CreateModal from "../components/CreateModal";
 import { AmountField, DateField, DetailsField, ListField, SelectField } from "../components/ModalsFields";
 import DetailsModal from "../components/DetailsModal";
+import { periodicityValues } from "../components/Constants";
 
 export default function Expenses() {
     const [highlightedValue, setHighlightedValue] = useState(null);
@@ -47,6 +54,7 @@ export default function Expenses() {
         fixedExpensesRow: tableRow[] = [],
         budgetExpensesRow: tableRow[] = [],
         allExpenses: expenseDto[] | undefined = [],
+        allFixedExpenses: fixedExpenseDto[] | undefined = [],
         monthExpensesData: pieChartSlice[] = [],
         categorySelectValues:
             | {
@@ -74,6 +82,11 @@ export default function Expenses() {
     const [deleteExpense] = useDeleteExpenseMutation();
     const [updateExpense] = useUpdateExpenseMutation();
 
+    //Fixed Expense Handling
+    const [createFixedExpense] = useCreateFixedExpenseMutation();
+    const [deleteFixedExpense] = useDeleteFixedExpenseMutation();
+    const [updateFixedExpense] = useUpdateFixedExpenseMutation();
+
     // Expenses Category Data handling
     if (!expenseCategoryIsLoading && expenseCategoryData != undefined) {
         expenseCategoryData
@@ -92,6 +105,17 @@ export default function Expenses() {
                 })
             );
 
+        expenseCategoryData
+            .filter((eC: expenseCategoryDto) => eC.fixedExpenses!.length)
+            .map((eC: expenseCategoryDto) =>
+                eC.fixedExpenses!.map((fe) => {
+                    fixedExpensesRow.push({
+                        id: fe.id,
+                        data: [fe.amount, fe.details, fe.periodicity, eC.category],
+                    });
+                })
+            );
+
         categorySelectValues = expenseCategoryData.map((ec: expenseCategoryDto) => ({
             id: ec.id,
             value: ec.category,
@@ -102,7 +126,11 @@ export default function Expenses() {
 
         allExpenses = expenseCategoryData
             ?.map((ec) => ec.expenses)
-            .reduce((acc, currentvalue) => acc!.concat(currentvalue!));
+            .reduce((acc, currentValue) => acc!.concat(currentValue!));
+
+        allFixedExpenses = expenseCategoryData
+            ?.map((ec) => ec.fixedExpenses)
+            .reduce((acc, currentValue) => acc!.concat(currentValue!));
 
         const monthExpenses = allExpenses?.filter(
             (expense) => new Date(expense.date).getMonth() === currentDate.getMonth()
@@ -142,6 +170,15 @@ export default function Expenses() {
         dispatch(showCreateModal(newState));
     };
 
+    // Show create Fixed Expense Modal
+    const showCreateFixedExpenseModal = () => {
+        clearFieldValues();
+        const newState = { ...createModalState };
+        newState.fixedExpense = true;
+
+        dispatch(showCreateModal(newState));
+    };
+
     //Show details Expense Modal
     const showDetailsExpenseModal = (expenseId: number) => {
         clearFieldValues();
@@ -151,10 +188,26 @@ export default function Expenses() {
 
         const selectedExpenseData = allExpenses!.find((exp) => exp.id === expenseId);
 
-        setAmount(selectedExpenseData.amount);
-        setDetails(selectedExpenseData.details);
-        setDate(selectedExpenseData.date);
-        setSelectValue(selectedExpenseData?.expenseCategoryId);
+        setAmount(selectedExpenseData!.amount);
+        setDetails(selectedExpenseData!.details);
+        setDate(selectedExpenseData!.date);
+        setSelectValue(selectedExpenseData!.expenseCategoryId);
+        dispatch(showDetailsModal(newState));
+    };
+
+    //Show details Fixed Expense Modal
+    const showDetailsFixedExpenseModal = (fixedExpenseId: number) => {
+        clearFieldValues();
+        const newState = { ...detailsModalState };
+        newState.id = fixedExpenseId;
+        newState.show = { ...detailsModalState.show, fixedExpense: true };
+
+        const selectedFixedExpenseData = allFixedExpenses!.find((fExp) => fExp.id === fixedExpenseId);
+
+        setAmount(selectedFixedExpenseData!.amount);
+        setDetails(selectedFixedExpenseData!.details);
+        setPeriodicity(selectedFixedExpenseData!.periodicity);
+        setSelectValue(selectedFixedExpenseData!.expenseCategoryId);
         dispatch(showDetailsModal(newState));
     };
 
@@ -169,10 +222,27 @@ export default function Expenses() {
         createExpense(expenseData);
     };
 
+    // Create fixed expense function
+    const createFixedExpenseHandler = () => {
+        const fixedExpenseData: createFixedExpenseDto = {
+            amount: amount,
+            details: details,
+            periodicity: periodicity,
+            expenseCategoryId: selectValue,
+        };
+        createFixedExpense(fixedExpenseData);
+    };
+
     // Delete Expense Function
     const deleteExpenseHandler = () => {
         const expenseId = detailsModalState.id;
         deleteExpense(expenseId!);
+    };
+
+    // Delete Fixed Expense Function
+    const deleteFixedExpenseHandler = () => {
+        const fixedExpenseId = detailsModalState.id;
+        deleteFixedExpense(fixedExpenseId!);
     };
 
     // Update Expense Function
@@ -183,6 +253,21 @@ export default function Expenses() {
         };
 
         updateExpense(expenseData);
+    };
+
+    // Update Fixed Expense Function
+    const updateFixedExpenseHandler = () => {
+        const fixedExpenseData: updateFixedExpenseDto = {
+            id: detailsModalState.id!,
+            data: {
+                amount: amount,
+                details: details,
+                periodicity: periodicity,
+                expenseCategoryId: selectValue,
+            },
+        };
+
+        updateFixedExpense(fixedExpenseData);
     };
 
     const dataPieChart: pieChartSlice[] = monthExpensesData;
@@ -212,13 +297,9 @@ export default function Expenses() {
             {
                 name: "Periodicity",
                 type: "list",
-                values: ["Annual", "Monthly", "Biweekly", "Weekly"],
+                values: periodicityValues,
             },
-            {
-                name: "Category",
-                type: "list",
-                values: ["Food", "Transport", "House/Utilities", "Entertainment", "Personal/Medical"],
-            },
+            { name: "Category", type: "string" },
         ],
         rows: fixedExpensesRow,
     };
@@ -327,15 +408,34 @@ export default function Expenses() {
                             </div>
                         </div>
                         <div className="infoContainer2 flex-1">
-                            <p>Fixed Expenses</p>
+                            <div className="grid grid-cols-3 w-full">
+                                <p className="col-start-2 mx-auto">Fixed Expenses</p>
+                                <button
+                                    className="ml-auto tableButton flex gap-x-2 p-0 items-center opacity-55 hover:opacity-100"
+                                    onClick={showCreateFixedExpenseModal}
+                                >
+                                    <p>New</p>
+                                    <FontAwesomeIcon icon={faPlus} />
+                                </button>
+                            </div>
                             <div className="flex items-center flex-1 w-full">
-                                <Table dark data={fixedExpensesData} tablePrefix="FE" />
+                                {expenseCategoryIsLoading ? (
+                                    <Loader />
+                                ) : (
+                                    <Table
+                                        data={fixedExpensesData}
+                                        detailsFunction={(fixedExpenseId: number) =>
+                                            showDetailsFixedExpenseModal(fixedExpenseId)
+                                        }
+                                        tablePrefix="E"
+                                    />
+                                )}
                             </div>
                         </div>
                     </div>
                 </div>
             </SectionContent>
-            {/* Create Budget Modal */}
+            {/* Create Expense Modal */}
             <CreateModal show={createModalState.expense} createFunction={createExpenseHandler}>
                 <AmountField fieldStateHandler={setAmount} />
                 <SelectField
@@ -346,6 +446,7 @@ export default function Expenses() {
                 <DetailsField fieldStateHandler={setDetails} />
                 <DateField fieldStateHandler={setDate} />
             </CreateModal>
+            {/* Expense Details Modal */}
             <DetailsModal
                 updateFunction={updateExpenseHandler}
                 deleteFunction={deleteExpenseHandler}
@@ -354,6 +455,42 @@ export default function Expenses() {
                 <AmountField defaultValue={amount} fieldStateHandler={setAmount} />
                 <DetailsField defaultValue={details} fieldStateHandler={setDetails} />
                 <DateField defaultValue={date} fieldStateHandler={setDate} />
+                <SelectField
+                    defaultValue={selectValue}
+                    fieldStateHandler={setSelectValue}
+                    label="Category"
+                    values={categorySelectValues!}
+                />
+            </DetailsModal>
+            {/* Create Fixed Expense Modal */}
+            <CreateModal show={createModalState.fixedExpense} createFunction={createFixedExpenseHandler}>
+                <AmountField fieldStateHandler={setAmount} />
+                <SelectField
+                    fieldStateHandler={setSelectValue}
+                    label="Category"
+                    values={categorySelectValues}
+                />
+                <DetailsField fieldStateHandler={setDetails} />
+                <ListField
+                    fieldStateHandler={setPeriodicity}
+                    label="Periodicity"
+                    values={fixedExpensesData.columns[2].values!}
+                />
+            </CreateModal>
+            {/* Fixed Expense Details Modal */}
+            <DetailsModal
+                updateFunction={updateFixedExpenseHandler}
+                deleteFunction={deleteFixedExpenseHandler}
+                show={detailsModalState.show.fixedExpense}
+            >
+                <AmountField defaultValue={amount} fieldStateHandler={setAmount} />
+                <DetailsField defaultValue={details} fieldStateHandler={setDetails} />
+                <ListField
+                    fieldStateHandler={setPeriodicity}
+                    label="Periodicity"
+                    values={fixedExpensesData.columns[2].values!}
+                    defaultValue={periodicity}
+                />
                 <SelectField
                     defaultValue={selectValue}
                     fieldStateHandler={setSelectValue}
