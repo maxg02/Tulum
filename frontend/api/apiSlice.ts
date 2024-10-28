@@ -53,6 +53,24 @@ export type updateExpenseDto = {
     data: { amount: number; details: string; date: Date; expenseCategoryId: number };
 };
 
+export type fixedExpenseDto = {
+    id: number;
+    amount: number;
+    details: string;
+    periodicity: number;
+    expenseCategoryId: number;
+};
+export type createFixedExpenseDto = {
+    amount: number;
+    details: string;
+    periodicity: number;
+    expenseCategoryId: number;
+};
+export type updateFixedExpenseDto = {
+    id: number;
+    data: { amount: number; details: string; periodicity: number; expenseCategoryId: number };
+};
+
 export const apiSlice = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: "http://localhost:5085/api/",
