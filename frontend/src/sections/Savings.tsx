@@ -24,10 +24,10 @@ export default function Savings() {
             { name: "Date", type: "date" },
         ],
         rows: [
-            [3500, "Car", "06/05/22"],
-            [5000, "Transport", "06/05/22"],
-            [150000, "House", "06/05/22"],
-            [15000, "University", "06/05/22"],
+            { id: 1, data: [3500, "Car", "06/05/22"] },
+            { id: 2, data: [5000, "Transport", "06/05/22"] },
+            { id: 3, data: [150000, "House", "06/05/22"] },
+            { id: 4, data: [15000, "University", "06/05/22"] },
         ],
     };
 
@@ -39,11 +39,11 @@ export default function Savings() {
             { name: "Periodicity", type: "list", values: ["Annual", "Monthly", "Biweekly", "Weekly"] },
         ],
         rows: [
-            ["House", 3000000, 1000, 3],
-            ["Car", 1500000, null, null],
-            ["University", 50000, 15000, 2],
-            ["Weeding", 50000, 15000, 2],
-            ["Computer", 60000, 5000, 1],
+            { id: 1, data: ["House", 3000000, 1000, 3] },
+            { id: 2, data: ["Car", 1500000, null, null] },
+            { id: 3, data: ["University", 50000, 15000, 2] },
+            { id: 4, data: ["Weeding", 50000, 15000, 2] },
+            { id: 5, data: ["Computer", 60000, 5000, 1] },
         ],
     };
 
