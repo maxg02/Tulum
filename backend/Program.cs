@@ -25,6 +25,7 @@ builder.Services.AddScoped<IExpenseCategoryRepo, ExpenseCategoryRepo>();
 builder.Services.AddScoped<IBudgetPlanRepo, BudgetPlanRepo>();
 builder.Services.AddScoped<IExpenseRepo, ExpenseRepo>();
 builder.Services.AddScoped<IFixedExpenseRepo, FixedExpenseRepo>();
+builder.Services.AddScoped<ISavingGoalRepo, SavingGoalRepo>();
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
