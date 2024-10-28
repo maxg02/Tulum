@@ -47,6 +47,9 @@ function DetailsModal({ children, show, deleteFunction, updateFunction }: detail
         case "expense":
             title = "Expense Details";
             break;
+        case "fixedExpense":
+            title = "Fixed Expense Details";
+            break;
     }
 
     return (
