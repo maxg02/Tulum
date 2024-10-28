@@ -194,6 +194,31 @@ export const apiSlice = createApi({
             }),
             invalidatesTags: ["ExpenseCategory"],
         }),
+
+        //Fixed Expense endpoints
+        createFixedExpense: builder.mutation({
+            query: (fixedExpenseData: createFixedExpenseDto) => ({
+                url: "fixedexpense",
+                method: "POST",
+                body: fixedExpenseData,
+            }),
+            invalidatesTags: ["ExpenseCategory"],
+        }),
+        updateFixedExpense: builder.mutation({
+            query: (fixedExpenseData: updateFixedExpenseDto) => ({
+                url: `fixedexpense/${fixedExpenseData.id}`,
+                method: "PUT",
+                body: fixedExpenseData.data,
+            }),
+            invalidatesTags: ["ExpenseCategory"],
+        }),
+        deleteFixedExpense: builder.mutation({
+            query: (Id: number) => ({
+                url: `fixedexpense/${Id}`,
+                method: "DELETE",
+            }),
+            invalidatesTags: ["ExpenseCategory"],
+        }),
     }),
 });
 
@@ -218,4 +243,8 @@ export const {
     useCreateExpenseMutation,
     useUpdateExpenseMutation,
     useDeleteExpenseMutation,
+
+    useCreateFixedExpenseMutation,
+    useUpdateFixedExpenseMutation,
+    useDeleteFixedExpenseMutation,
 } = apiSlice;
