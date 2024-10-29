@@ -64,19 +64,19 @@ export default function Budget() {
     let totalYearIncome: number = 0;
     let categorySelectValues: { id: number; value: string; budgetPlan: boolean }[] | undefined;
 
-    //Income Handling
+    //Income Fetching
     const { data: incomeData, isLoading: incomeIsLoading } = useGetIncomesByUserIdQuery(1);
     const [createIncome] = useCreateIncomeMutation();
     const [deleteIncome] = useDeleteIncomeMutation();
     const [updateIncome] = useUpdateIncomeMutation();
 
-    //Fixed Income Handling
+    //Fixed Income Fetching
     const { data: fixedIncomeData, isLoading: fixedIncomeIsLoading } = useGetFixedIncomesByUserIdQuery(1);
     const [createFixedIncome] = useCreateFixedIncomeMutation();
     const [deleteFixedIncome] = useDeleteFixedIncomeMutation();
     const [updateFixedIncome] = useUpdateFixedIncomeMutation();
 
-    //Budget Plan Handling
+    //Budget Plan Fetching
     const { data: budgetPlanningData, isLoading: budgetPlanningIsLoading } =
         useGetExpenseCategoryBudgetByUserIdQuery(1);
     const [createBudgetPlan] = useCreateBudgetPlanMutation();

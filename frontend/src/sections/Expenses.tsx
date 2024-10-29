@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import SectionContent from "../components/SectionContent";
@@ -48,11 +48,10 @@ export default function Expenses() {
 
     const currentDate: Date = new Date();
     const currentMonth: string = new Intl.DateTimeFormat("en-US", { month: "long" }).format(currentDate);
-    const currentYear: number = currentDate.getFullYear();
+    const expensesRow: tableRow[] = [],
+        fixedExpensesRow: tableRow[] = [];
 
-    let expensesRow: tableRow[] = [],
-        fixedExpensesRow: tableRow[] = [],
-        budgetExpensesRow: tableRow[] = [],
+    let budgetExpensesRow: tableRow[] = [],
         allExpenses: expenseDto[] | undefined = [],
         allFixedExpenses: fixedExpenseDto[] | undefined = [],
         monthExpensesData: pieChartSlice[] = [],
@@ -73,16 +72,16 @@ export default function Expenses() {
     const createModalState = useAppSelector((state) => state.createModal.show);
     const detailsModalState = useAppSelector((state) => state.detailsModal);
 
-    //Expense Category Handling
+    //Expense Category Fetching
     const { data: expenseCategoryData, isLoading: expenseCategoryIsLoading } =
         useGetExpenseCategoryFullByUserIdQuery(1);
 
-    //Expense Handling
+    //Expense Fetching
     const [createExpense] = useCreateExpenseMutation();
     const [deleteExpense] = useDeleteExpenseMutation();
     const [updateExpense] = useUpdateExpenseMutation();
 
-    //Fixed Expense Handling
+    //Fixed Expense Fetching
     const [createFixedExpense] = useCreateFixedExpenseMutation();
     const [deleteFixedExpense] = useDeleteFixedExpenseMutation();
     const [updateFixedExpense] = useUpdateFixedExpenseMutation();
@@ -138,11 +137,11 @@ export default function Expenses() {
 
         const monthExpensesByCategory: object = Object.groupBy(
             monthExpenses,
-            (expense) => expense.expenseCategoryId
+            (expense: expenseDto) => expense.expenseCategoryId
         );
 
         monthExpensesData = Object.keys(monthExpensesByCategory).map((key) => ({
-            label: categorySelectValues?.find((c) => c.id === parseInt(key))?.value,
+            label: categorySelectValues?.find((c) => c.id === parseInt(key))!.value,
             value: monthExpensesByCategory[key].reduce((acc, expense) => acc + expense.amount, 0),
         }));
 
