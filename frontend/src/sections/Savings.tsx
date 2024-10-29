@@ -3,9 +3,26 @@ import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import SectionContent from "../components/SectionContent";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronUp, faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { faChevronUp, faChevronDown, faPlus } from "@fortawesome/free-solid-svg-icons";
 import CustomGauge from "../components/CustomGauge";
-import Table, { dataObject } from "../components/Table";
+import Table, { dataObject, tableRow } from "../components/Table";
+import {
+    createSavingGoalDto,
+    savingGoalDto,
+    updateSavingGoalDto,
+    useCreateSavingGoalMutation,
+    useDeleteSavingGoalMutation,
+    useGetSavingGoalsByUserIdQuery,
+    useUpdateSavingGoalMutation,
+} from "../../api/apiSlice";
+import { periodicityValues } from "../components/Constants";
+import Loader from "../components/Loader";
+import { useAppDispatch, useAppSelector } from "../hooks";
+import { showModal as showCreateModal } from "../reducers/createModalReducers";
+import { showModal as showDetailsModal } from "../reducers/detailsModalReducers";
+import CreateModal from "../components/CreateModal";
+import { AmountField, DetailsField, ListField, SelectField } from "../components/ModalsFields";
+import DetailsModal from "../components/DetailsModal";
 
 export type goalsProgress = {
     value: number;
@@ -16,8 +33,48 @@ export type goalsProgress = {
 
 export default function Savings() {
     const [goalsProgressScroll, setGoalsProgressScroll] = useState<number>(0);
+    const [amount, setAmount] = useState<number>(0);
+    const [amountFC, setAmountFC] = useState<number | undefined>(undefined);
+    const [details, setDetails] = useState<string>("");
+    const [date, setDate] = useState<Date>(new Date());
+    const [periodicity, setPeriodicity] = useState<number | undefined>(undefined);
+    const [selectValue, setSelectValue] = useState<number>(0);
 
-    const goalsContributionsData: dataObject = {
+    let savingGoalsRow: tableRow[] = [];
+
+    const clearFieldValues = () => {
+        setAmount(0),
+            setAmountFC(undefined),
+            setDetails(""),
+            setDate(new Date()),
+            setPeriodicity(undefined),
+            setSelectValue(0);
+    };
+
+    const dispatch = useAppDispatch();
+    const createModalState = useAppSelector((state) => state.createModal.show);
+    const detailsModalState = useAppSelector((state) => state.detailsModal);
+
+    //Saving Goal Fetching
+    const { data: savingGoalData, isLoading: savingGoalIsLoading } = useGetSavingGoalsByUserIdQuery(1);
+    const [createSavingGoal] = useCreateSavingGoalMutation();
+    const [deleteSavingGoal] = useDeleteSavingGoalMutation();
+    const [updateSavingGoal] = useUpdateSavingGoalMutation();
+
+    //Saving goals data handling
+    if (!savingGoalIsLoading && savingGoalData != undefined) {
+        savingGoalsRow = savingGoalData.map((savingGoal: savingGoalDto) => ({
+            id: savingGoal.id,
+            data: [
+                savingGoal.details,
+                savingGoal.goal,
+                savingGoal.fixedContribution,
+                savingGoal.periodicity,
+            ],
+        }));
+    }
+
+    const goalsContributionsTableData: dataObject = {
         columns: [
             { name: "Deposit", type: "amount" },
             { name: "Goal", type: "string" },
@@ -31,20 +88,72 @@ export default function Savings() {
         ],
     };
 
-    const savingGoalsData: dataObject = {
+    const savingGoalsTableData: dataObject = {
         columns: [
             { name: "Detail", type: "string" },
             { name: "Cost", type: "amount" },
             { name: "Fixed Contribution", type: "amount" },
-            { name: "Periodicity", type: "list", values: ["Annual", "Monthly", "Biweekly", "Weekly"] },
+            { name: "Periodicity", type: "list", values: periodicityValues },
         ],
-        rows: [
-            { id: 1, data: ["House", 3000000, 1000, 3] },
-            { id: 2, data: ["Car", 1500000, null, null] },
-            { id: 3, data: ["University", 50000, 15000, 2] },
-            { id: 4, data: ["Weeding", 50000, 15000, 2] },
-            { id: 5, data: ["Computer", 60000, 5000, 1] },
-        ],
+        rows: savingGoalsRow,
+    };
+
+    // Show create Saving Goal Modal
+    const showCreateSavingGoalModal = () => {
+        clearFieldValues();
+        const newState = { ...createModalState };
+        newState.savingGoal = true;
+
+        dispatch(showCreateModal(newState));
+    };
+
+    //Show details Saving Goal Modal
+    const showDetailsSavingGoalModal = (savingGoalId: number) => {
+        clearFieldValues();
+        const newState = { ...detailsModalState };
+        newState.id = savingGoalId;
+        newState.show = { ...detailsModalState.show, savingGoal: true };
+
+        const selectedSavingGoalData = savingGoalData!.find((sv) => sv.id === savingGoalId);
+
+        setAmount(selectedSavingGoalData!.goal);
+        setAmountFC(selectedSavingGoalData!.fixedContribution);
+        setDetails(selectedSavingGoalData!.details);
+        setPeriodicity(selectedSavingGoalData!.periodicity);
+        dispatch(showDetailsModal(newState));
+    };
+
+    // Create Saving Goal function
+    const createSavingGoalHandler = () => {
+        const savingGoalData: createSavingGoalDto = {
+            goal: amount,
+            details: details,
+            periodicity: periodicity,
+            fixedContribution: amountFC,
+        };
+
+        createSavingGoal(savingGoalData);
+    };
+
+    // Delete Saving Goal Function
+    const deleteSavingGoalHandler = () => {
+        const SavingGoalId = detailsModalState.id;
+        deleteSavingGoal(SavingGoalId!);
+    };
+
+    // Update Saving Goal Function
+    const updateSavingGoalHandler = () => {
+        const savingGoalData: updateSavingGoalDto = {
+            id: detailsModalState.id!,
+            data: {
+                goal: amount,
+                details: details,
+                fixedContribution: amountFC,
+                periodicity: periodicity,
+            },
+        };
+
+        updateSavingGoal(savingGoalData);
     };
 
     const goalsProgress: goalsProgress[] = [
@@ -136,19 +245,68 @@ export default function Savings() {
                             <div className="infoContainer2 flex-auto basis-3/5">
                                 <p>Goals Contributions</p>
                                 <div className="flex flex-1 items-center w-full">
-                                    <Table data={goalsContributionsData} tablePrefix="GC" dark />
+                                    <Table data={goalsContributionsTableData} tablePrefix="GC" dark />
                                 </div>
                             </div>
                         </div>
                         <div className="infoContainer2 flex-1">
-                            <p>Saving Goals</p>
+                            <div className="grid grid-cols-3 w-full">
+                                <p className="col-start-2 mx-auto">Saving Goals</p>
+                                <button
+                                    className="ml-auto tableButton flex gap-x-2 p-0 items-center opacity-55 hover:opacity-100"
+                                    onClick={showCreateSavingGoalModal}
+                                >
+                                    <p>New</p>
+                                    <FontAwesomeIcon icon={faPlus} />
+                                </button>
+                            </div>
                             <div className="flex flex-1 items-center w-full">
-                                <Table data={savingGoalsData} tablePrefix="SG" dark />
+                                {savingGoalIsLoading ? (
+                                    <Loader />
+                                ) : (
+                                    <Table
+                                        data={savingGoalsTableData}
+                                        tablePrefix="SG"
+                                        detailsFunction={(sVId: number) =>
+                                            showDetailsSavingGoalModal(sVId)
+                                        }
+                                        dark
+                                    />
+                                )}
                             </div>
                         </div>
                     </div>
                 </div>
             </SectionContent>
+            <CreateModal show={createModalState.savingGoal} createFunction={createSavingGoalHandler}>
+                <DetailsField fieldStateHandler={setDetails} />
+                <AmountField fieldStateHandler={setAmount} />
+                <AmountField fieldStateHandler={setAmountFC} customLabel="Fixed Contribution" />
+                <ListField
+                    fieldStateHandler={setPeriodicity}
+                    label="Periodicity"
+                    values={savingGoalsTableData.columns[3].values!}
+                />
+            </CreateModal>
+            <DetailsModal
+                updateFunction={updateSavingGoalHandler}
+                deleteFunction={deleteSavingGoalHandler}
+                show={detailsModalState.show.savingGoal}
+            >
+                <DetailsField defaultValue={details} fieldStateHandler={setDetails} />
+                <AmountField defaultValue={amount} fieldStateHandler={setAmount} />
+                <AmountField
+                    defaultValue={amountFC}
+                    customLabel="Fixed Contribution"
+                    fieldStateHandler={setAmountFC}
+                />
+                <ListField
+                    fieldStateHandler={setPeriodicity}
+                    label="Periodicity"
+                    values={savingGoalsTableData.columns[3].values!}
+                    defaultValue={periodicity}
+                />
+            </DetailsModal>
         </div>
     );
 }
