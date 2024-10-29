@@ -428,6 +428,7 @@ export default function Expenses() {
                                             showDetailsFixedExpenseModal(fixedExpenseId)
                                         }
                                         tablePrefix="E"
+                                        dark
                                     />
                                 )}
                             </div>
