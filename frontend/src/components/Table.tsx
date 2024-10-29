@@ -18,7 +18,7 @@ import { showModal } from "../reducers/detailsModalReducers";
 type sortValues = ("asc" | "desc" | "null")[];
 export type tableRow = {
     id: number;
-    data: (string | number | { value: number; total: number } | null)[];
+    data: (string | number | { value: number; total: number } | null | undefined)[];
 };
 export type dataObject = {
     columns: {
@@ -38,7 +38,7 @@ function Table({
     data: dataObject;
     dark?: boolean;
     tablePrefix: string;
-    detailsFunction: (itemId: number) => void;
+    detailsFunction?: (itemId: number) => void;
 }) {
     const [FilterDropState, setFilterDropState] = useState<boolean>(false);
     const [ColumnsSort, setColumnsSort] = useState<sortValues>(data.columns.map(() => "null"));
@@ -97,7 +97,7 @@ function Table({
                         {data.columns[key].type === "string" || data.columns[key].type === "date" ? (
                             <p className="truncate">{content}</p>
                         ) : data.columns[key].type === "amount" ? (
-                            <p>{content === null ? "" : `RD$${content}`}</p>
+                            <p>{content === null || content === undefined ? "" : `RD$${content}`}</p>
                         ) : data.columns[key].type === "list" ? (
                             <p>{data.columns[key].values[content]}</p>
                         ) : (
