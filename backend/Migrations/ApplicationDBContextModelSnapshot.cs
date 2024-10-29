@@ -44,7 +44,7 @@ namespace backend.Migrations
                     b.HasIndex("ExpenseCategoryId")
                         .IsUnique();
 
-                    b.ToTable("BudgetPlans");
+                    b.ToTable("BudgetPlans", (string)null);
                 });
 
             modelBuilder.Entity("backend.Models.Expense", b =>
@@ -72,7 +72,7 @@ namespace backend.Migrations
 
                     b.HasIndex("ExpenseCategoryId");
 
-                    b.ToTable("Expenses");
+                    b.ToTable("Expenses", (string)null);
                 });
 
             modelBuilder.Entity("backend.Models.ExpenseCategory", b =>
@@ -94,7 +94,7 @@ namespace backend.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ExpenseCategories");
+                    b.ToTable("ExpenseCategories", (string)null);
                 });
 
             modelBuilder.Entity("backend.Models.FixedExpense", b =>
@@ -122,7 +122,7 @@ namespace backend.Migrations
 
                     b.HasIndex("ExpenseCategoryId");
 
-                    b.ToTable("FixedExpenses");
+                    b.ToTable("FixedExpenses", (string)null);
                 });
 
             modelBuilder.Entity("backend.Models.FixedIncome", b =>
@@ -150,7 +150,7 @@ namespace backend.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("FixedIncomes");
+                    b.ToTable("FixedIncomes", (string)null);
                 });
 
             modelBuilder.Entity("backend.Models.GoalContribution", b =>
@@ -174,7 +174,7 @@ namespace backend.Migrations
 
                     b.HasIndex("SavingGoalId");
 
-                    b.ToTable("GoalContributions");
+                    b.ToTable("GoalContributions", (string)null);
                 });
 
             modelBuilder.Entity("backend.Models.Income", b =>
@@ -202,7 +202,7 @@ namespace backend.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Incomes");
+                    b.ToTable("Incomes", (string)null);
                 });
 
             modelBuilder.Entity("backend.Models.SavingGoal", b =>
@@ -217,8 +217,8 @@ namespace backend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool?>("FixedContribution")
-                        .HasColumnType("bit");
+                    b.Property<int?>("FixedContribution")
+                        .HasColumnType("int");
 
                     b.Property<int>("Goal")
                         .HasColumnType("int");
@@ -233,7 +233,7 @@ namespace backend.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("SavingGoals");
+                    b.ToTable("SavingGoals", (string)null);
                 });
 
             modelBuilder.Entity("backend.Models.User", b =>
@@ -257,25 +257,29 @@ namespace backend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("backend.Models.BudgetPlan", b =>
                 {
-                    b.HasOne("backend.Models.ExpenseCategory", null)
+                    b.HasOne("backend.Models.ExpenseCategory", "ExpenseCategory")
                         .WithOne("BudgetPlan")
                         .HasForeignKey("backend.Models.BudgetPlan", "ExpenseCategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("ExpenseCategory");
                 });
 
             modelBuilder.Entity("backend.Models.Expense", b =>
                 {
-                    b.HasOne("backend.Models.ExpenseCategory", null)
+                    b.HasOne("backend.Models.ExpenseCategory", "ExpenseCategory")
                         .WithMany("Expenses")
                         .HasForeignKey("ExpenseCategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("ExpenseCategory");
                 });
 
             modelBuilder.Entity("backend.Models.ExpenseCategory", b =>
@@ -291,11 +295,13 @@ namespace backend.Migrations
 
             modelBuilder.Entity("backend.Models.FixedExpense", b =>
                 {
-                    b.HasOne("backend.Models.ExpenseCategory", null)
+                    b.HasOne("backend.Models.ExpenseCategory", "ExpenseCategory")
                         .WithMany("FixedExpenses")
                         .HasForeignKey("ExpenseCategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("ExpenseCategory");
                 });
 
             modelBuilder.Entity("backend.Models.FixedIncome", b =>

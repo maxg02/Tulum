@@ -6,7 +6,7 @@ namespace backend.Dtos.SavingGoal
     {
         public string Details { get; set; } = String.Empty;
         public int Goal { get; set; }
-        public bool? FixedContribution { get; set; }
+        public int? FixedContribution { get; set; }
         public int? Periodicity { get; set; }
         public int UserId { get; set; }
     }
