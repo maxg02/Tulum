@@ -50,6 +50,9 @@ function DetailsModal({ children, show, deleteFunction, updateFunction }: detail
         case "fixedExpense":
             title = "Fixed Expense Details";
             break;
+        case "savingGoal":
+            title = "Saving Goal Details";
+            break;
     }
 
     return (
