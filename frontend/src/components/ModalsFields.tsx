@@ -2,9 +2,11 @@ import React from "react";
 
 type modalField = {
     fieldStateHandler:
+        | React.Dispatch<React.SetStateAction<number | undefined>>
         | React.Dispatch<React.SetStateAction<number>>
         | React.Dispatch<React.SetStateAction<string>>
         | React.Dispatch<React.SetStateAction<Date>>;
+    customLabel?: string;
 };
 
 type listModalField = modalField & { label: string; values: string[] };
@@ -13,10 +15,14 @@ type selectModalField = modalField & {
     values: { id: number; value: string }[] | undefined;
 };
 
-export function AmountField({ fieldStateHandler, defaultValue }: modalField & { defaultValue?: number }) {
+export function AmountField({
+    fieldStateHandler,
+    defaultValue,
+    customLabel,
+}: modalField & { defaultValue?: number }) {
     return (
         <div className="flex flex-col gap-y-1">
-            <label htmlFor="amount">Amount</label>
+            <label htmlFor="amount">{customLabel ?? "Amount"}</label>
             <input
                 type="number"
                 id="amount"
@@ -33,10 +39,11 @@ export function AmountField({ fieldStateHandler, defaultValue }: modalField & { 
 export function DetailsField({
     fieldStateHandler,
     defaultValue,
+    customLabel,
 }: modalField & { defaultValue?: string }) {
     return (
         <div className="flex flex-col gap-y-1">
-            <label htmlFor="details">Details</label>
+            <label htmlFor="details">{customLabel ?? "Details"}</label>
             <input
                 type="text"
                 id="details"
@@ -50,10 +57,14 @@ export function DetailsField({
     );
 }
 
-export function DateField({ fieldStateHandler, defaultValue }: modalField & { defaultValue?: Date }) {
+export function DateField({
+    fieldStateHandler,
+    defaultValue,
+    customLabel,
+}: modalField & { defaultValue?: Date }) {
     return (
         <div className="flex flex-col gap-y-1">
-            <label htmlFor="date">Date</label>
+            <label htmlFor="date">{customLabel ?? "Date"}</label>
             <input
                 type="datetime-local"
                 id="date"
