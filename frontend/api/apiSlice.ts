@@ -11,20 +11,6 @@ export type updateFixedIncomeDto = {
     data: { amount: number; details: string; periodicity: number };
 };
 
-export type expenseCategoryDto = {
-    id: number;
-    category: string;
-    budgetPlan?: { id: number; amount: number; expenseCategoryId: number; periodicity: number };
-    expenses?: { id: number; amount: number; details: string; date: Date; expenseCategoryId: number }[];
-    fixedExpenses?: {
-        id: number;
-        amount: number;
-        details: string;
-        periodicity: number;
-        expenseCategoryId: number;
-    }[];
-};
-
 export type createBudgetPlanDto = {
     amount: number;
     expenseCategoryId: number;
@@ -71,11 +57,38 @@ export type updateFixedExpenseDto = {
     data: { amount: number; details: string; periodicity: number; expenseCategoryId: number };
 };
 
+export type expenseCategoryDto = {
+    id: number;
+    category: string;
+    budgetPlan?: { id: number; amount: number; expenseCategoryId: number; periodicity: number };
+    expenses?: expenseDto[];
+    fixedExpenses?: fixedExpenseDto[];
+};
+
+export type savingGoalDto = {
+    id: number;
+    goal: number;
+    details: string;
+    periodicity?: number;
+    fixedContribution?: boolean;
+    goalContributions: [];
+};
+export type createSavingGoalDto = {
+    goal: number;
+    details: string;
+    periodicity?: number;
+    fixedContribution?: boolean;
+};
+export type updateSavingGoalDto = {
+    id: number;
+    data: { goal: number; details: string; periodicity?: number; fixedContribution?: boolean };
+};
+
 export const apiSlice = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: "http://localhost:5085/api/",
     }),
-    tagTypes: ["Income", "FixedIncome", "ExpenseCategory"],
+    tagTypes: ["Income", "FixedIncome", "ExpenseCategory", "SavingGoal"],
     endpoints: (builder) => ({
         //Income endpoints
         getIncomesByUserId: builder.query<incomeDto[], number>({
@@ -219,6 +232,35 @@ export const apiSlice = createApi({
             }),
             invalidatesTags: ["ExpenseCategory"],
         }),
+
+        //Saving Goal endpoints
+        getSavingGoalsByUserId: builder.query<savingGoalDto[], number>({
+            query: (userId) => `savinggoal/user/${userId}`,
+            providesTags: ["SavingGoal"],
+        }),
+        createSavingGoal: builder.mutation({
+            query: (savingGoalData: createSavingGoalDto) => ({
+                url: "savinggoal",
+                method: "POST",
+                body: savingGoalData,
+            }),
+            invalidatesTags: ["SavingGoal"],
+        }),
+        updateSavingGoal: builder.mutation({
+            query: (savingGoalData: updateSavingGoalDto) => ({
+                url: `savinggoal/${savingGoalData.id}`,
+                method: "PUT",
+                body: savingGoalData.data,
+            }),
+            invalidatesTags: ["SavingGoal"],
+        }),
+        deleteSavingGoal: builder.mutation({
+            query: (Id: number) => ({
+                url: `savinggoal/${Id}`,
+                method: "DELETE",
+            }),
+            invalidatesTags: ["SavingGoal"],
+        }),
     }),
 });
 
@@ -247,4 +289,9 @@ export const {
     useCreateFixedExpenseMutation,
     useUpdateFixedExpenseMutation,
     useDeleteFixedExpenseMutation,
+
+    useGetSavingGoalsByUserIdQuery,
+    useCreateSavingGoalMutation,
+    useUpdateSavingGoalMutation,
+    useDeleteSavingGoalMutation,
 } = apiSlice;
