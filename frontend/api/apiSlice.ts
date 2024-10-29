@@ -70,18 +70,18 @@ export type savingGoalDto = {
     goal: number;
     details: string;
     periodicity?: number;
-    fixedContribution?: boolean;
+    fixedContribution?: number;
     goalContributions: [];
 };
 export type createSavingGoalDto = {
     goal: number;
     details: string;
     periodicity?: number;
-    fixedContribution?: boolean;
+    fixedContribution?: number;
 };
 export type updateSavingGoalDto = {
     id: number;
-    data: { goal: number; details: string; periodicity?: number; fixedContribution?: boolean };
+    data: { goal: number; details: string; periodicity?: number; fixedContribution?: number };
 };
 
 export const apiSlice = createApi({
