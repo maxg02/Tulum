@@ -112,7 +112,11 @@ export function SelectField({
     values,
     defaultValue,
     disabled = false,
-}: selectModalField & { defaultValue?: number; disabled?: boolean }) {
+}: selectModalField & {
+    defaultValue?: number;
+    disabled?: boolean;
+    values: { id: number; value: string; [x: string]: boolean }[] | undefined;
+}) {
     return (
         <div className="flex flex-col gap-y-1">
             <label htmlFor="select">{label}</label>
@@ -125,7 +129,7 @@ export function SelectField({
             >
                 {defaultValue ?? (
                     <option selected disabled value="">
-                        Select Expense Category
+                        Select {label}
                     </option>
                 )}
                 {values &&
