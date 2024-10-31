@@ -71,7 +71,7 @@ export type savingGoalDto = {
     details: string;
     periodicity?: number;
     fixedContribution?: number;
-    goalContributions: [];
+    goalContributions: goalContributionDto[];
 };
 export type createSavingGoalDto = {
     goal: number;
@@ -82,6 +82,22 @@ export type createSavingGoalDto = {
 export type updateSavingGoalDto = {
     id: number;
     data: { goal: number; details: string; periodicity?: number; fixedContribution?: number };
+};
+
+export type goalContributionDto = {
+    id: number;
+    amount: number;
+    date: Date;
+    savingGoalId: number;
+};
+export type createGoalContributionDto = {
+    amount: number;
+    date: Date;
+    savingGoalId: number;
+};
+export type updateGoalContributionDto = {
+    id: number;
+    data: { amount: number; date: Date; savingGoalId: number };
 };
 
 export const apiSlice = createApi({
@@ -261,6 +277,31 @@ export const apiSlice = createApi({
             }),
             invalidatesTags: ["SavingGoal"],
         }),
+
+        //Goal Contribution endpoints
+        createGoalContribution: builder.mutation({
+            query: (goalContributionData: createGoalContributionDto) => ({
+                url: "goalContribution",
+                method: "POST",
+                body: goalContributionData,
+            }),
+            invalidatesTags: ["SavingGoal"],
+        }),
+        updateGoalContribution: builder.mutation({
+            query: (goalContributionData: updateGoalContributionDto) => ({
+                url: `goalContribution/${goalContributionData.id}`,
+                method: "PUT",
+                body: goalContributionData.data,
+            }),
+            invalidatesTags: ["SavingGoal"],
+        }),
+        deleteGoalContribution: builder.mutation({
+            query: (Id: number) => ({
+                url: `goalContribution/${Id}`,
+                method: "DELETE",
+            }),
+            invalidatesTags: ["SavingGoal"],
+        }),
     }),
 });
 
@@ -294,4 +335,8 @@ export const {
     useCreateSavingGoalMutation,
     useUpdateSavingGoalMutation,
     useDeleteSavingGoalMutation,
+
+    useCreateGoalContributionMutation,
+    useUpdateGoalContributionMutation,
+    useDeleteGoalContributionMutation,
 } = apiSlice;
