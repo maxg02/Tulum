@@ -14,7 +14,7 @@ namespace backend.Controllers
     {
         private readonly IIncomeRepo _incomeRepo;
 
-        public IncomeController(ApplicationDBContext context, IIncomeRepo incomeRepo) 
+        public IncomeController(IIncomeRepo incomeRepo) 
         {
             _incomeRepo = incomeRepo;
         } 
