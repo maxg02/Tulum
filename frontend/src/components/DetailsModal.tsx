@@ -53,6 +53,9 @@ function DetailsModal({ children, show, deleteFunction, updateFunction }: detail
         case "savingGoal":
             title = "Saving Goal Details";
             break;
+        case "goalContribution":
+            title = "Goal Contribution Details";
+            break;
     }
 
     return (

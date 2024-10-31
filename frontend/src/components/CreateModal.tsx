@@ -41,6 +41,9 @@ function CreateModal({ children, show, createFunction }: createModal) {
         case "savingGoal":
             title = "Saving Goal Details";
             break;
+        case "goalContribution":
+            title = "Goal Contribution Details";
+            break;
     }
 
     const handleCreate = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
