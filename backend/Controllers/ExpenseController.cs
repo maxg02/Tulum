@@ -18,7 +18,7 @@ namespace backend.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateExpense([FromBody] CUExpenseRequestDto expenseDto)
         {
-            var expense = await _expenseRepo.CreateAsync(expenseDto.toExpenseFromCreateDto());
+            var expense = await _expenseRepo.CreateAsync(expenseDto.ToExpenseFromCreateDto());
 
             return Ok(expense);
         }

@@ -16,7 +16,7 @@ namespace backend.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateFixedExpense([FromBody] CUFixedExpenseRequestDto fixedExpenseDto)
         {
-            var fixedExpense = await _fixedExpenseRepo.CreateAsync(fixedExpenseDto.toFixedExpenseFromCreateDto());
+            var fixedExpense = await _fixedExpenseRepo.CreateAsync(fixedExpenseDto.ToFixedExpenseFromCreateDto());
 
             return Ok(fixedExpense);
         }

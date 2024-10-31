@@ -5,7 +5,7 @@ namespace backend.Mappers
 {
     public static class FixedExpenseMappers
     {
-        public static FixedExpense toFixedExpenseFromCreateDto(this CUFixedExpenseRequestDto fixedExpenseDto)
+        public static FixedExpense ToFixedExpenseFromCreateDto(this CUFixedExpenseRequestDto fixedExpenseDto)
         {
             return new FixedExpense
             {

@@ -5,7 +5,7 @@ namespace backend.Mappers
 {
     public static class ExpenseMappers
     {
-        public static Expense toExpenseFromCreateDto(this CUExpenseRequestDto expenseDto)
+        public static Expense ToExpenseFromCreateDto(this CUExpenseRequestDto expenseDto)
         {
             return new Expense
             {
