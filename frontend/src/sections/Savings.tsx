@@ -92,7 +92,7 @@ export default function Savings() {
 
         allGoalContributions = savingGoalData
             ?.map((sG) => sG.goalContributions)
-            .reduce((acc, currentValue) => acc!.concat(currentValue!));
+            .reduce((acc, currentValue) => acc!.concat(currentValue!), []);
 
         goalContributionsRow = allGoalContributions.map((goalContribution: goalContributionDto) => ({
             id: goalContribution.id,
