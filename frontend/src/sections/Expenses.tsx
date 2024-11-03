@@ -3,7 +3,7 @@ import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import SectionContent from "../components/SectionContent";
 import { PieChart } from "@mui/x-charts/PieChart";
-import { gradientColors } from "../components/Colors";
+import { basicColors, gradientColors } from "../components/Colors";
 import DiamondList from "../components/DiamondList";
 import Table, { dataObject, tableRow } from "../components/Table";
 import {
@@ -125,11 +125,11 @@ export default function Expenses() {
 
         allExpenses = expenseCategoryData
             ?.map((ec) => ec.expenses)
-            .reduce((acc, currentValue) => acc!.concat(currentValue!));
+            .reduce((acc, currentValue) => acc!.concat(currentValue!), []);
 
         allFixedExpenses = expenseCategoryData
             ?.map((ec) => ec.fixedExpenses)
-            .reduce((acc, currentValue) => acc!.concat(currentValue!));
+            .reduce((acc, currentValue) => acc!.concat(currentValue!), []);
 
         const monthExpenses = allExpenses?.filter(
             (expense) => new Date(expense.date).getMonth() === currentDate.getMonth()
@@ -312,57 +312,93 @@ export default function Expenses() {
                     <div className="flex flex-1 gap-x-9">
                         <div className="infoContainer1 w-2/5">
                             <p>{`${currentMonth} Expenses`}</p>
-                            <div className="w-full flex-1 flex items-center justify-center gap-x-9">
+                            <div
+                                className={`w-full flex-1 flex items-center justify-center ${
+                                    dataPieChart.length && "gap-x-9"
+                                }`}
+                            >
                                 <div className="w-80 h-full relative">
                                     {expenseCategoryIsLoading ? (
                                         <Loader />
                                     ) : (
                                         <>
-                                            <PieChart
-                                                colors={[
-                                                    gradientColors[0],
-                                                    gradientColors[1],
-                                                    gradientColors[2],
-                                                    gradientColors[3],
-                                                    gradientColors[4],
-                                                ]}
-                                                margin={{ left: 0, right: 0 }}
-                                                series={[
-                                                    {
-                                                        data: dataPieChart,
-                                                        id: "A",
-                                                        innerRadius: "65%",
-                                                        paddingAngle: 2,
-                                                        cornerRadius: 3,
-                                                        highlightScope: {
-                                                            fade: "global",
-                                                            highlight: "item",
+                                            {dataPieChart.length ? (
+                                                <PieChart
+                                                    colors={[
+                                                        gradientColors[0],
+                                                        gradientColors[1],
+                                                        gradientColors[2],
+                                                        gradientColors[3],
+                                                        gradientColors[4],
+                                                    ]}
+                                                    margin={{ left: 0, right: 0 }}
+                                                    series={[
+                                                        {
+                                                            data: dataPieChart,
+                                                            id: "A",
+                                                            innerRadius: "65%",
+                                                            paddingAngle: 2,
+                                                            cornerRadius: 3,
+                                                            highlightScope: {
+                                                                fade: "global",
+                                                                highlight: "item",
+                                                            },
+                                                            faded: {
+                                                                color: "gray",
+                                                                additionalRadius: -5,
+                                                            },
+                                                            valueFormatter: (value) =>
+                                                                `RD$${value.value}`,
                                                         },
-                                                        faded: { color: "gray", additionalRadius: -5 },
-                                                        valueFormatter: (value) => `RD$${value.value}`,
-                                                    },
-                                                ]}
-                                                onHighlightChange={setHighlightedValue}
-                                                slotProps={{ legend: { hidden: true } }}
-                                                sx={{
-                                                    "& .MuiPieArc-root": { strokeWidth: 0 },
-                                                }}
-                                                tooltip={{
-                                                    trigger: "item",
-                                                    classes: {
-                                                        labelCell: "hidden",
-                                                        valueCell: "ml-3 p-3",
-                                                        markCell: "pl-3 pr-0",
-                                                    },
-                                                }}
-                                            ></PieChart>
+                                                    ]}
+                                                    onHighlightChange={setHighlightedValue}
+                                                    slotProps={{ legend: { hidden: true } }}
+                                                    sx={{
+                                                        "& .MuiPieArc-root": { strokeWidth: 0 },
+                                                    }}
+                                                    tooltip={{
+                                                        trigger: "item",
+                                                        classes: {
+                                                            labelCell: "hidden",
+                                                            valueCell: "ml-3 p-3",
+                                                            markCell: "pl-3 pr-0",
+                                                        },
+                                                    }}
+                                                ></PieChart>
+                                            ) : (
+                                                <PieChart
+                                                    colors={[basicColors.ly2]}
+                                                    margin={{ left: 0, right: 0 }}
+                                                    series={[
+                                                        {
+                                                            data: [
+                                                                {
+                                                                    label: "empty",
+                                                                    value: 100,
+                                                                },
+                                                            ],
+                                                            id: "B",
+                                                            innerRadius: "65%",
+                                                            paddingAngle: 2,
+                                                            cornerRadius: 3,
+                                                        },
+                                                    ]}
+                                                    slotProps={{ legend: { hidden: true } }}
+                                                    sx={{
+                                                        "& .MuiPieArc-root": { strokeWidth: 0 },
+                                                    }}
+                                                    tooltip={{
+                                                        trigger: "none",
+                                                    }}
+                                                ></PieChart>
+                                            )}
+
                                             <h2 className="font-light text-3xl absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                                                {`RD$${
-                                                    dataPieChart.reduce((acc, currentValue) => ({
-                                                        ...currentValue,
-                                                        value: acc.value + currentValue.value,
-                                                    })).value
-                                                }`}
+                                                {`RD$${dataPieChart.reduce(
+                                                    (acc, currentValue) =>
+                                                        (acc = acc + currentValue.value),
+                                                    0
+                                                )}`}
                                             </h2>
                                         </>
                                     )}
