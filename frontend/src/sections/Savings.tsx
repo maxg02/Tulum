@@ -54,7 +54,8 @@ export default function Savings() {
         }[] = [],
         allGoalContributions: goalContributionDto[] = [],
         totalMonthSavings: number = 0,
-        totalYearSavings: number = 0;
+        totalYearSavings: number = 0,
+        goalsProgressData: goalsProgress[] = [];
 
     const currentDate: Date = new Date();
     const currentMonth: string = new Intl.DateTimeFormat("en-US", { month: "long" }).format(currentDate);
@@ -115,18 +116,41 @@ export default function Savings() {
         }));
 
         const monthSavings = allGoalContributions.filter(
-            (income) => new Date(income.date).getMonth() === currentDate.getMonth()
+            (gC) => new Date(gC.date).getMonth() === currentDate.getMonth()
         );
 
-        // const yearIncomes = incomeData.filter(
-        //     (income) => new Date(income.date).getFullYear() === currentDate.getFullYear()
-        // );
+        const yearSavings = allGoalContributions.filter(
+            (gC) => new Date(gC.date).getFullYear() === currentDate.getFullYear()
+        );
 
         totalMonthSavings = monthSavings.reduce(
             (acc: number, next: goalContributionDto) => acc + next.amount,
             0
         );
-        // totalYearIncome = yearIncomes.reduce((acc: number, next: incomeDto) => acc + next.amount, 0);
+
+        totalYearSavings = yearSavings.reduce(
+            (acc: number, next: goalContributionDto) => acc + next.amount,
+            0
+        );
+
+        const goalContributionsBySavings: object = Object.groupBy(
+            allGoalContributions,
+            (gC: goalContributionDto) => gC.savingGoalId
+        );
+
+        goalsProgressData = savingGoalData.map((sG) => {
+            const progress = goalContributionsBySavings[sG.id.toString()].reduce(
+                (acc, gC: goalContributionDto) => acc + gC.amount,
+                0
+            );
+
+            return {
+                label: sG.details,
+                total: sG.goal,
+                progress: progress,
+                value: (progress * 100) / sG.goal,
+            };
+        });
     }
 
     const goalsContributionsTableData: dataObject = {
@@ -266,13 +290,7 @@ export default function Savings() {
         updateGoalContribution(goalContributionData);
     };
 
-    const goalsProgress: goalsProgress[] = [
-        { value: 86, label: "House", total: 3000000, progress: 2580000 },
-        { value: 25, label: "Car", total: 1500000, progress: 375000 },
-        { value: 40, label: "University", total: 50000, progress: 20000 },
-        { value: 60, label: "Weeding", total: 50000, progress: 30000 },
-        { value: 60, label: "Luhanny", total: 50000, progress: 30000 },
-    ];
+    const goalsProgress = goalsProgressData;
 
     const goalProgressGauges = () =>
         goalsProgress.map((item, key) => (
@@ -350,8 +368,8 @@ export default function Savings() {
                                     </h1>
                                 </div>
                                 <div className="infoContainer1 w-full bg-gradient-to-b from-custom-secondary to-custom-accent shadow-none h-[45%]">
-                                    <p>2024 Savings</p>
-                                    <h1 className="font-light text-5xl my-auto">RD$750K</h1>
+                                    <p>{currentYear} Savings</p>
+                                    <h1 className="font-light text-5xl my-auto">RD${totalYearSavings}</h1>
                                 </div>
                             </div>
                             <div className="infoContainer2 flex-auto basis-3/5">
