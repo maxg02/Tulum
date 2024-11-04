@@ -51,8 +51,14 @@ export default function Savings() {
         savingGoalSelectValues: {
             id: number;
             value: string;
-        }[] = [];
-    let allGoalContributions: goalContributionDto[] = [];
+        }[] = [],
+        allGoalContributions: goalContributionDto[] = [],
+        totalMonthSavings: number = 0,
+        totalYearSavings: number = 0;
+
+    const currentDate: Date = new Date();
+    const currentMonth: string = new Intl.DateTimeFormat("en-US", { month: "long" }).format(currentDate);
+    const currentYear: number = currentDate.getFullYear();
 
     const clearFieldValues = () => {
         setAmount(0),
@@ -107,6 +113,20 @@ export default function Savings() {
             id: sg.id,
             value: sg.details,
         }));
+
+        const monthSavings = allGoalContributions.filter(
+            (income) => new Date(income.date).getMonth() === currentDate.getMonth()
+        );
+
+        // const yearIncomes = incomeData.filter(
+        //     (income) => new Date(income.date).getFullYear() === currentDate.getFullYear()
+        // );
+
+        totalMonthSavings = monthSavings.reduce(
+            (acc: number, next: goalContributionDto) => acc + next.amount,
+            0
+        );
+        // totalYearIncome = yearIncomes.reduce((acc: number, next: incomeDto) => acc + next.amount, 0);
     }
 
     const goalsContributionsTableData: dataObject = {
@@ -324,8 +344,10 @@ export default function Savings() {
                         <div className="flex flex-1 gap-x-8">
                             <div className="flex-auto flex flex-col justify-between">
                                 <div className="infoContainer1 w-full bg-gradient-to-b from-custom-secondary to-custom-accent shadow-none h-[45%]">
-                                    <p>January Savings</p>
-                                    <h1 className="font-light text-5xl my-auto">RD$75000</h1>
+                                    <p>{currentMonth} Savings</p>
+                                    <h1 className="font-light text-5xl my-auto">
+                                        RD${totalMonthSavings}
+                                    </h1>
                                 </div>
                                 <div className="infoContainer1 w-full bg-gradient-to-b from-custom-secondary to-custom-accent shadow-none h-[45%]">
                                     <p>2024 Savings</p>
