@@ -152,8 +152,9 @@ export default function Expenses() {
                 data: [
                     expenseCategory.category,
                     {
-                        value: monthExpensesData.find((ec) => ec.label === expenseCategory.category)
-                            ?.value,
+                        value:
+                            monthExpensesData.find((ec) => ec.label === expenseCategory.category)
+                                ?.value ?? 0,
                         total: expenseCategory.budgetPlan!.amount,
                     },
                 ],
