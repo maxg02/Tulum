@@ -46,9 +46,9 @@ function CreateModal({ children, show, createFunction }: createModal) {
             break;
     }
 
-    const handleCreate = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        e.preventDefault;
+    const handleCreate = () => {
         createFunction();
+        handleClosing();
     };
 
     return (
@@ -59,7 +59,7 @@ function CreateModal({ children, show, createFunction }: createModal) {
                 <button type="reset" className="formButton" onClick={handleClosing}>
                     <p>Cancel</p>
                 </button>
-                <button className="formButton" onClick={(event) => handleCreate(event)}>
+                <button className="formButton" onClick={() => handleCreate()}>
                     <p>Create</p>
                 </button>
             </div>

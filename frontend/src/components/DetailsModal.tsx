@@ -20,14 +20,14 @@ function DetailsModal({ children, show, deleteFunction, updateFunction }: detail
 
     const handleClosing = () => dispatch(hideModal());
 
-    const handleDelete = (e) => {
-        e.preventDefault;
+    const handleDelete = () => {
         deleteFunction();
+        handleClosing();
     };
 
-    const handleUpdate = (e) => {
-        e.preventDefault;
+    const handleUpdate = () => {
         updateFunction();
+        handleClosing();
     };
 
     const currentModal = Object.keys(detailsModalState).filter((k) => detailsModalState[k]);
@@ -66,10 +66,10 @@ function DetailsModal({ children, show, deleteFunction, updateFunction }: detail
                 <button type="reset" className="formButton" onClick={handleClosing}>
                     <p>Cancel</p>
                 </button>
-                <button className="formButton hover:bg-red-500" onClick={(event) => handleDelete(event)}>
+                <button className="formButton hover:bg-red-500" onClick={() => handleDelete()}>
                     <p>Delete</p>
                 </button>
-                <button className="formButton" onClick={(event) => handleUpdate(event)}>
+                <button className="formButton" onClick={() => handleUpdate()}>
                     <p>Save</p>
                 </button>
             </div>

@@ -24,7 +24,9 @@ function ModalContainer({ closingHandler, children, title }: modalBody) {
                         <FontAwesomeIcon icon={faXmark} />
                     </button>
                 </div>
-                <form className="flex flex-col gap-y-3 w-full">{children}</form>
+                <form onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-y-3 w-full">
+                    {children}
+                </form>
             </div>
         </div>
     );
