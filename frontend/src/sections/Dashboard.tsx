@@ -8,6 +8,13 @@ import { PieChart } from "@mui/x-charts/PieChart";
 import { gradientColors } from "../components/Colors";
 import DiamondList from "../components/DiamondList";
 import CustomGauge from "../components/CustomGauge";
+import {
+    expenseDto,
+    incomeDto,
+    useGetExpenseCategoryFullByUserIdQuery,
+    useGetIncomesByUserIdQuery,
+} from "../../api/apiSlice";
+import Loader from "../components/Loader";
 
 const dataLineChart = [
     {
@@ -103,6 +110,81 @@ const dataPieChart: pieChartSlice[] = [
 export default function Dashboard() {
     const [highlightedValue, setHighlightedValue] = useState(null);
 
+    const currentDate: Date = new Date();
+    let dataLineChart: {
+            name: string;
+            inc: number;
+            exp: number;
+        }[] = [],
+        lineChartMaxValue: number = 0;
+
+    const { data: incomeData, isLoading: incomeIsLoading } = useGetIncomesByUserIdQuery(1);
+    const { data: expenseCategoryData, isLoading: expenseCategoryIsLoading } =
+        useGetExpenseCategoryFullByUserIdQuery(1);
+
+    const monthList = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+    ];
+
+    if (
+        !incomeIsLoading &&
+        incomeData != undefined &&
+        !expenseCategoryIsLoading &&
+        expenseCategoryData != undefined
+    ) {
+        const allExpenses = expenseCategoryData
+            .map((ec) => ec.expenses)
+            .reduce((acc, currentValue) => acc!.concat(currentValue!), []);
+
+        const yearIncomes = incomeData.filter(
+            (income) => new Date(income.date).getFullYear() === currentDate.getFullYear()
+        );
+
+        const yearExpenses = allExpenses?.filter(
+            (expense) => new Date(expense.date).getFullYear() === currentDate.getFullYear()
+        );
+
+        dataLineChart = monthList.map((month) => ({
+            name: month,
+            inc: yearIncomes
+                .filter(
+                    (income: incomeDto) =>
+                        new Intl.DateTimeFormat("en-US", { month: "short" }).format(
+                            new Date(income.date)
+                        ) == month
+                )
+                .reduce((acc: number, next: incomeDto) => acc + next.amount, 0),
+            exp: yearExpenses
+                .filter(
+                    (expense: expenseDto) =>
+                        new Intl.DateTimeFormat("en-US", { month: "short" }).format(
+                            new Date(expense.date)
+                        ) == month
+                )
+                .reduce((acc: number, next: expenseDto) => acc + next.amount, 0),
+        }));
+
+        const preLineChartMaxValue = Math.max(
+            ...dataLineChart.map((data) => data.inc),
+            ...dataLineChart.map((data) => data.exp)
+        );
+        lineChartMaxValue =
+            (preLineChartMaxValue + (1000 - (preLineChartMaxValue % 1000))) % 2000 === 0
+                ? preLineChartMaxValue + (1000 - (preLineChartMaxValue % 1000))
+                : preLineChartMaxValue + (1000 - (preLineChartMaxValue % 1000)) + 1000;
+    }
+
     return (
         <div className="flex flex-1 gap-8">
             <Sidebar currentSection="Dashboard" />
@@ -128,48 +210,57 @@ export default function Dashboard() {
                             <MoreDots section="/income" />
                         </div>
                         <div className="infoContainer2 flex-1">
-                            <p>2024 Summary</p>
+                            <p>{currentDate.getFullYear()} Summary</p>
                             <div className="w-full flex-1 flex items-center py-7">
-                                <LineChart
-                                    margin={{ left: 50, right: 11, top: 25 }}
-                                    xAxis={[
-                                        {
-                                            dataKey: "name",
-                                            scaleType: "point",
-                                        },
-                                    ]}
-                                    yAxis={[{ min: 10000 }]}
-                                    series={[
-                                        {
-                                            dataKey: "inc",
-                                            label: "Income",
-                                            color: "#78d2b5",
-                                            curve: "linear",
-                                            stackOrder: "appearance",
-                                        },
-                                        {
-                                            dataKey: "exp",
-                                            label: "Expenses",
-                                            color: "#d96533",
-                                            curve: "linear",
-                                        },
-                                    ]}
-                                    dataset={dataLineChart}
-                                    grid={{ vertical: true, horizontal: true }}
-                                    slotProps={{ legend: { hidden: true } }}
-                                    sx={{
-                                        [`& .${markElementClasses.root}`]: {
-                                            scale: "0.9",
-                                            fill: "#394942",
-                                            strokeWidth: 2,
-                                        },
-                                        "& .MuiChartsAxisHighlight-root": {
-                                            stroke: "white",
-                                            strokeDasharray: 0,
-                                            strokeOpacity: 0.6,
-                                        },
-                                    }}
-                                />
+                                {incomeIsLoading || expenseCategoryIsLoading ? (
+                                    <Loader />
+                                ) : (
+                                    <LineChart
+                                        margin={{ left: 50, right: 11, top: 25 }}
+                                        xAxis={[
+                                            {
+                                                dataKey: "name",
+                                                scaleType: "point",
+                                            },
+                                        ]}
+                                        yAxis={[
+                                            {
+                                                min: 0,
+                                                max: lineChartMaxValue,
+                                            },
+                                        ]}
+                                        series={[
+                                            {
+                                                dataKey: "inc",
+                                                label: "Income",
+                                                color: "#78d2b5",
+                                                curve: "linear",
+                                                stackOrder: "appearance",
+                                            },
+                                            {
+                                                dataKey: "exp",
+                                                label: "Expenses",
+                                                color: "#d96533",
+                                                curve: "linear",
+                                            },
+                                        ]}
+                                        dataset={dataLineChart}
+                                        grid={{ vertical: true, horizontal: true }}
+                                        slotProps={{ legend: { hidden: true } }}
+                                        sx={{
+                                            [`& .${markElementClasses.root}`]: {
+                                                scale: "0.9",
+                                                fill: "#394942",
+                                                strokeWidth: 2,
+                                            },
+                                            "& .MuiChartsAxisHighlight-root": {
+                                                stroke: "white",
+                                                strokeDasharray: 0,
+                                                strokeOpacity: 0.6,
+                                            },
+                                        }}
+                                    />
+                                )}
                             </div>
                             <div className="flex gap-6">
                                 <div className="flex flex-col items-center gap-1">
