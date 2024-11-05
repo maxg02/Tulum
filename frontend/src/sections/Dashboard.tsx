@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { ReactNode, useState } from "react";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import SectionContent from "../components/SectionContent";
@@ -16,73 +16,10 @@ import {
 } from "../../api/apiSlice";
 import Loader from "../components/Loader";
 
-const dataLineChart = [
-    {
-        name: "Jan",
-        inc: 45000,
-        exp: 28000,
-    },
-    {
-        name: "Feb",
-        inc: 27000,
-        exp: 30000,
-    },
-    {
-        name: "Mar",
-        inc: 45000,
-        exp: 46000,
-    },
-    {
-        name: "Apr",
-        inc: 47000,
-        exp: 30000,
-    },
-    {
-        name: "May",
-        inc: 30000,
-        exp: 26000,
-    },
-    {
-        name: "Jun",
-        inc: 43000,
-        exp: 44000,
-    },
-    {
-        name: "Jul",
-        inc: 47000,
-        exp: 42000,
-    },
-    {
-        name: "Aug",
-        inc: 27000,
-        exp: 28000,
-    },
-    {
-        name: "Sep",
-        inc: 41000,
-        exp: 20000,
-    },
-    {
-        name: "Oct",
-        inc: 40000,
-        exp: 22000,
-    },
-    {
-        name: "Nov",
-        inc: 43000,
-        exp: 38500,
-    },
-    {
-        name: "Dec",
-        inc: 60000,
-        exp: 55000,
-    },
-];
-
-interface pieChartSlice {
+export type pieChartSlice = {
     label: string;
     value: number;
-}
+};
 
 const dataPieChart: pieChartSlice[] = [
     {
@@ -116,7 +53,10 @@ export default function Dashboard() {
             inc: number;
             exp: number;
         }[] = [],
-        lineChartMaxValue: number = 0;
+        lineChartMaxValue: number = 0,
+        totalMonthIncome: number = 0,
+        monthIncomeRows = [],
+        monthExpenseRows = [];
 
     const { data: incomeData, isLoading: incomeIsLoading } = useGetIncomesByUserIdQuery(1);
     const { data: expenseCategoryData, isLoading: expenseCategoryIsLoading } =
@@ -147,9 +87,23 @@ export default function Dashboard() {
             .map((ec) => ec.expenses)
             .reduce((acc, currentValue) => acc!.concat(currentValue!), []);
 
+        const monthExpenses = allExpenses.filter(
+            (expense) =>
+                new Date(expense.date).getMonth() === currentDate.getMonth() &&
+                new Date(expense.date).getFullYear() === currentDate.getFullYear()
+        );
+
         const yearIncomes = incomeData.filter(
             (income) => new Date(income.date).getFullYear() === currentDate.getFullYear()
         );
+
+        const monthIncomes = incomeData.filter(
+            (income) =>
+                new Date(income.date).getMonth() === currentDate.getMonth() &&
+                new Date(income.date).getFullYear() === currentDate.getFullYear()
+        );
+
+        totalMonthIncome = monthIncomes.reduce((acc: number, next: incomeDto) => acc + next.amount, 0);
 
         const yearExpenses = allExpenses?.filter(
             (expense) => new Date(expense.date).getFullYear() === currentDate.getFullYear()
@@ -183,6 +137,46 @@ export default function Dashboard() {
             (preLineChartMaxValue + (1000 - (preLineChartMaxValue % 1000))) % 2000 === 0
                 ? preLineChartMaxValue + (1000 - (preLineChartMaxValue % 1000))
                 : preLineChartMaxValue + (1000 - (preLineChartMaxValue % 1000)) + 1000;
+
+        monthIncomeRows = monthIncomes
+            .sort((a, b) => new Date(a.date) - new Date(b.date))
+            .reverse()
+            .slice(0, 3)
+            .map((income: incomeDto, key) => {
+                const dateFormat = new Intl.DateTimeFormat("en-US", {
+                    day: "2-digit",
+                    weekday: "long",
+                }).formatToParts(new Date(income.date));
+                return (
+                    <div key={key} className="flex justify-between">
+                        <p>
+                            ({dateFormat.find((p) => p.type === "day")?.value}{" "}
+                            {dateFormat.find((p) => p.type === "weekday")?.value}) {income.details}
+                        </p>
+                        <p className="text-custom-accent">RD${income.amount}</p>
+                    </div>
+                );
+            });
+
+        monthExpenseRows = monthExpenses
+            .sort((a, b) => new Date(a.date) - new Date(b.date))
+            .reverse()
+            .slice(0, 3)
+            .map((expense: expenseDto, key) => {
+                const dateFormat = new Intl.DateTimeFormat("en-US", {
+                    day: "2-digit",
+                    weekday: "long",
+                }).formatToParts(new Date(expense.date));
+                return (
+                    <div key={key} className="flex justify-between">
+                        <p>
+                            ({dateFormat.find((p) => p.type === "day")?.value}{" "}
+                            {dateFormat.find((p) => p.type === "weekday")?.value}) {expense.details}
+                        </p>
+                        <p className="text-custom-accent">RD${expense.amount}</p>
+                    </div>
+                );
+            });
     }
 
     return (
@@ -194,18 +188,9 @@ export default function Dashboard() {
                     <div className="flex flex-col flex-1 gap-y-9">
                         <div className="infoContainer1">
                             <p>January Income</p>
-                            <h1 className="font-light text-5xl">RD$500000</h1>
-                            <div className="flex self-stretch justify-between border-t-2 py-3">
-                                <div>
-                                    <p>(Wednesday 31) Biweekly payroll</p>
-                                    <p>(Monday 15) Water Bill</p>
-                                    <p>(Monday 1) Valentin’s Gift</p>
-                                </div>
-                                <div className="text-end">
-                                    <p className="text-custom-accent">RD$15000</p>
-                                    <p className="text-custom-accent">RD$3500</p>
-                                    <p className="text-custom-accent">RD$5000</p>
-                                </div>
+                            <h1 className="font-light text-5xl">RD${totalMonthIncome}</h1>
+                            <div className="flex flex-col self-stretch justify-between border-t-2 py-3">
+                                {monthIncomeRows}
                             </div>
                             <MoreDots section="/income" />
                         </div>
@@ -333,17 +318,8 @@ export default function Dashboard() {
                                     highlightedItem={highlightedValue}
                                 />
                             </div>
-                            <div className="flex self-stretch justify-between border-t-2 py-3">
-                                <div>
-                                    <p>(Wednesday 31) Biweekly payroll</p>
-                                    <p>(Monday 15) Water Bill</p>
-                                    <p>(Monday 1) Valentin’s Gift</p>
-                                </div>
-                                <div className="text-end">
-                                    <p className="text-custom-accent">RD$15000</p>
-                                    <p className="text-custom-accent">RD$3500</p>
-                                    <p className="text-custom-accent">RD$5000</p>
-                                </div>
+                            <div className="flex flex-col self-stretch justify-between border-t-2 py-3">
+                                {monthExpenseRows}
                             </div>
                             <MoreDots section="/expenses" />
                         </div>
