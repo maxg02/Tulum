@@ -138,17 +138,19 @@ export default function Savings() {
             (gC: goalContributionDto) => gC.savingGoalId
         );
 
-        goalsProgressData = savingGoalData.map((sG) => {
-            const progress = goalContributionsBySavings[sG.id.toString()].reduce(
+        goalsProgressData = Object.keys(goalContributionsBySavings).map((sGKey) => {
+            const savingGoal = savingGoalData.find((sG) => sG.id === parseInt(sGKey));
+
+            const progress = goalContributionsBySavings[sGKey].reduce(
                 (acc, gC: goalContributionDto) => acc + gC.amount,
                 0
             );
 
             return {
-                label: sG.details,
-                total: sG.goal,
+                label: savingGoal!.details,
+                total: savingGoal!.goal,
                 progress: progress,
-                value: (progress * 100) / sG.goal,
+                value: (progress * 100) / savingGoal!.goal,
             };
         });
     }
