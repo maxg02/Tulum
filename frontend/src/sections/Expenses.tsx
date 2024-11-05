@@ -32,6 +32,7 @@ import CreateModal from "../components/CreateModal";
 import { AmountField, DateField, DetailsField, ListField, SelectField } from "../components/ModalsFields";
 import DetailsModal from "../components/DetailsModal";
 import { periodicityValues } from "../components/Constants";
+import { pieChartSlice } from "./Dashboard";
 
 export default function Expenses() {
     const [highlightedValue, setHighlightedValue] = useState(null);
@@ -40,11 +41,6 @@ export default function Expenses() {
     const [date, setDate] = useState<Date>(new Date());
     const [periodicity, setPeriodicity] = useState<number>(0);
     const [selectValue, setSelectValue] = useState<number>(0);
-
-    type pieChartSlice = {
-        label: string;
-        value: number;
-    };
 
     const currentDate: Date = new Date();
     const currentMonth: string = new Intl.DateTimeFormat("en-US", { month: "long" }).format(currentDate);
@@ -142,7 +138,7 @@ export default function Expenses() {
             (expense: expenseDto) => expense.expenseCategoryId
         );
 
-        monthExpensesData = Object.keys(monthExpensesByCategory).map((key) => ({
+        monthExpensesData = Object.keys(monthExpensesByCategory).map<pieChartSlice>((key) => ({
             label: categorySelectValues?.find((c) => c.id === parseInt(key))!.value,
             value: monthExpensesByCategory[key].reduce((acc, expense) => acc + expense.amount, 0),
         }));
