@@ -116,7 +116,9 @@ export default function Savings() {
         }));
 
         const monthSavings = allGoalContributions.filter(
-            (gC) => new Date(gC.date).getMonth() === currentDate.getMonth()
+            (gC) =>
+                new Date(gC.date).getMonth() === currentDate.getMonth() &&
+                new Date(gC.date).getFullYear() === currentDate.getFullYear()
         );
 
         const yearSavings = allGoalContributions.filter(

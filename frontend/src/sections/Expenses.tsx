@@ -132,7 +132,9 @@ export default function Expenses() {
             .reduce((acc, currentValue) => acc!.concat(currentValue!), []);
 
         const monthExpenses = allExpenses?.filter(
-            (expense) => new Date(expense.date).getMonth() === currentDate.getMonth()
+            (expense) =>
+                new Date(expense.date).getMonth() === currentDate.getMonth() &&
+                new Date(expense.date).getFullYear() === currentDate.getFullYear()
         );
 
         const monthExpensesByCategory: object = Object.groupBy(
