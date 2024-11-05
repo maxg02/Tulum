@@ -250,7 +250,9 @@ export default function Budget() {
         totalIncome = incomeData.reduce((acc: number, next: incomeDto) => acc + next.amount, 0);
 
         const monthIncomes = incomeData.filter(
-            (income) => new Date(income.date).getMonth() === currentDate.getMonth()
+            (income) =>
+                new Date(income.date).getMonth() === currentDate.getMonth() &&
+                new Date(income.date).getFullYear() === currentDate.getFullYear()
         );
 
         const yearIncomes = incomeData.filter(
