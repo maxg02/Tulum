@@ -10,9 +10,11 @@ import DiamondList from "../components/DiamondList";
 import CustomGauge from "../components/CustomGauge";
 import {
     expenseDto,
+    goalContributionDto,
     incomeDto,
     useGetExpenseCategoryFullByUserIdQuery,
     useGetIncomesByUserIdQuery,
+    useGetSavingGoalsByUserIdQuery,
 } from "../../api/apiSlice";
 import Loader from "../components/Loader";
 
@@ -58,11 +60,13 @@ export default function Dashboard() {
         totalMonthIncome: number = 0,
         monthIncomeRows: JSX.Element[] = [],
         monthExpenseRows: JSX.Element[] = [],
-        monthExpensesData: pieChartSlice[] = [];
+        monthExpensesData: pieChartSlice[] = [],
+        goalsProgressData: { label: string; progress: number; value: number }[] = [];
 
     const { data: incomeData, isLoading: incomeIsLoading } = useGetIncomesByUserIdQuery(1);
     const { data: expenseCategoryData, isLoading: expenseCategoryIsLoading } =
         useGetExpenseCategoryFullByUserIdQuery(1);
+    const { data: savingGoalData, isLoading: savingGoalIsLoading } = useGetSavingGoalsByUserIdQuery(1);
 
     const monthList = [
         "Jan",
@@ -83,7 +87,9 @@ export default function Dashboard() {
         !incomeIsLoading &&
         incomeData != undefined &&
         !expenseCategoryIsLoading &&
-        expenseCategoryData != undefined
+        expenseCategoryData != undefined &&
+        !savingGoalIsLoading &&
+        savingGoalData != undefined
     ) {
         const allExpenses = expenseCategoryData
             .map((ec) => ec.expenses)
@@ -189,7 +195,43 @@ export default function Dashboard() {
             label: expenseCategoryData?.find((c) => c.id === parseInt(key))!.category,
             value: monthExpensesByCategory[key].reduce((acc, expense) => acc + expense.amount, 0),
         }));
+
+        const allGoalContributions = savingGoalData
+            ?.map((sG) => sG.goalContributions)
+            .reduce((acc, currentValue) => acc!.concat(currentValue!), []);
+
+        const goalContributionsBySavings: object = Object.groupBy(
+            allGoalContributions,
+            (gC: goalContributionDto) => gC.savingGoalId
+        );
+
+        goalsProgressData = savingGoalData
+            .map((sg) => {
+                const progress = goalContributionsBySavings[sg.id.toString()]
+                    ? goalContributionsBySavings[sg.id.toString()].reduce(
+                          (acc: number, gC: goalContributionDto) => acc + gC.amount,
+                          0
+                      )
+                    : 0;
+
+                return {
+                    label: sg!.details,
+                    progress: progress,
+                    value: (progress * 100) / sg!.goal,
+                };
+            })
+            .sort((a, b) => a.value - b.value)
+            .reverse();
     }
+
+    const goalsProgressGauges = goalsProgressData.slice(0, 3).map((gp) => (
+        <div className=" h-full flex flex-col items-center w-44">
+            <div className="flex-1 w-full mb-1">
+                <CustomGauge value={gp.value} label={`${Math.round(gp.value)}%`} accent />
+            </div>
+            <p>{gp.label}</p>
+        </div>
+    ));
 
     const dataPieChart: pieChartSlice[] = monthExpensesData;
 
@@ -338,24 +380,7 @@ export default function Dashboard() {
                         <div className="infoContainer1 h-2/5">
                             <p>Saving Goals</p>
                             <div className="w-full flex-1 flex items-center justify-evenly gap-x-9">
-                                <div className=" h-full flex flex-col items-center w-44">
-                                    <div className="flex-1 w-full mb-1">
-                                        <CustomGauge value={86} label="86%" accent />
-                                    </div>
-                                    <p>House</p>
-                                </div>
-                                <div className=" h-full flex flex-col items-center w-44">
-                                    <div className="flex-1 w-full mb-1">
-                                        <CustomGauge value={25} label="25%" accent />
-                                    </div>
-                                    <p>Car</p>
-                                </div>
-                                <div className=" h-full flex flex-col items-center w-44">
-                                    <div className="flex-1 w-full mb-1">
-                                        <CustomGauge value={40} label="40%" accent />
-                                    </div>
-                                    <p>University</p>
-                                </div>
+                                {goalsProgressGauges}
                             </div>
                             <MoreDots section="/savings" />
                         </div>
