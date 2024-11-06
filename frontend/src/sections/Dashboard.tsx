@@ -48,6 +48,7 @@ export default function Dashboard() {
     const [highlightedValue, setHighlightedValue] = useState(null);
 
     const currentDate: Date = new Date();
+    const currentMonth: string = new Intl.DateTimeFormat("en-US", { month: "long" }).format(currentDate);
     let dataLineChart: {
             name: string;
             inc: number;
@@ -55,8 +56,9 @@ export default function Dashboard() {
         }[] = [],
         lineChartMaxValue: number = 0,
         totalMonthIncome: number = 0,
-        monthIncomeRows = [],
-        monthExpenseRows = [];
+        monthIncomeRows: JSX.Element[] = [],
+        monthExpenseRows: JSX.Element[] = [],
+        monthExpensesData: pieChartSlice[] = [];
 
     const { data: incomeData, isLoading: incomeIsLoading } = useGetIncomesByUserIdQuery(1);
     const { data: expenseCategoryData, isLoading: expenseCategoryIsLoading } =
@@ -177,7 +179,19 @@ export default function Dashboard() {
                     </div>
                 );
             });
+
+        const monthExpensesByCategory: object = Object.groupBy(
+            monthExpenses,
+            (expense: expenseDto) => expense.expenseCategoryId
+        );
+
+        monthExpensesData = Object.keys(monthExpensesByCategory).map<pieChartSlice>((key) => ({
+            label: expenseCategoryData?.find((c) => c.id === parseInt(key))!.category,
+            value: monthExpensesByCategory[key].reduce((acc, expense) => acc + expense.amount, 0),
+        }));
     }
+
+    const dataPieChart: pieChartSlice[] = monthExpensesData;
 
     return (
         <div className="flex flex-1 gap-8">
@@ -187,7 +201,7 @@ export default function Dashboard() {
                 <div className="flex-1 flex overflow-hidden gap-x-9">
                     <div className="flex flex-col flex-1 gap-y-9">
                         <div className="infoContainer1">
-                            <p>January Income</p>
+                            <p>{currentMonth} Income</p>
                             <h1 className="font-light text-5xl">RD${totalMonthIncome}</h1>
                             <div className="flex flex-col self-stretch justify-between border-t-2 py-3">
                                 {monthIncomeRows}
@@ -266,9 +280,9 @@ export default function Dashboard() {
                     </div>
                     <div className="flex flex-col flex-1 gap-y-9">
                         <div className="infoContainer2 flex-1">
-                            <p>January Expenses</p>
-                            <div className="w-full flex-1 flex items-center justify-center gap-x-9">
-                                <div className="w-80 h-full relative">
+                            <p>{currentMonth} Expenses</p>
+                            <div className="w-full flex-1 flex items-center justify-center gap-x-9 overflow-y-hidden">
+                                <div className="w-64 h-full relative">
                                     <PieChart
                                         colors={[
                                             gradientColors[0],
@@ -305,12 +319,10 @@ export default function Dashboard() {
                                         }}
                                     ></PieChart>
                                     <h2 className="font-light text-3xl absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                                        {`RD$${
-                                            dataPieChart.reduce((acc, currentValue) => ({
-                                                ...currentValue,
-                                                value: acc.value + currentValue.value,
-                                            })).value
-                                        }`}
+                                        {`RD$${dataPieChart.reduce(
+                                            (acc, currentValue) => (acc = acc + currentValue.value),
+                                            0
+                                        )}`}
                                     </h2>
                                 </div>
                                 <DiamondList
