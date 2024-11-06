@@ -140,21 +140,24 @@ export default function Savings() {
             (gC: goalContributionDto) => gC.savingGoalId
         );
 
-        goalsProgressData = Object.keys(goalContributionsBySavings).map((sGKey) => {
-            const savingGoal = savingGoalData.find((sG) => sG.id === parseInt(sGKey));
+        goalsProgressData = savingGoalData
+            .map((sg) => {
+                const progress = goalContributionsBySavings[sg.id.toString()]
+                    ? goalContributionsBySavings[sg.id.toString()].reduce(
+                          (acc: number, gC: goalContributionDto) => acc + gC.amount,
+                          0
+                      )
+                    : 0;
 
-            const progress = goalContributionsBySavings[sGKey].reduce(
-                (acc, gC: goalContributionDto) => acc + gC.amount,
-                0
-            );
-
-            return {
-                label: savingGoal!.details,
-                total: savingGoal!.goal,
-                progress: progress,
-                value: (progress * 100) / savingGoal!.goal,
-            };
-        });
+                return {
+                    label: sg!.details,
+                    total: sg!.goal,
+                    progress: progress,
+                    value: (progress * 100) / sg!.goal,
+                };
+            })
+            .sort((a, b) => a.value - b.value)
+            .reverse();
     }
 
     const goalsContributionsTableData: dataObject = {
