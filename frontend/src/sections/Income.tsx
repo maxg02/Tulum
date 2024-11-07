@@ -399,6 +399,7 @@ export default function Budget() {
                                         detailsFunction={(incomeId: number) =>
                                             showDetailsIncomeModal(incomeId)
                                         }
+                                        rowLimit={6}
                                     />
                                 )}
                             </div>
