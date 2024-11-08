@@ -44,14 +44,14 @@ function Table({
     const [ColumnsSort, setColumnsSort] = useState<sortValues>(data.columns.map(() => "null"));
     const [pagination, setPagination] = useState<number>(0);
 
-    const lastPage = Math.floor(data.rows.length / rowLimit);
+    const lastPage = Math.ceil(data.rows.length / rowLimit);
 
     const handlePaginationNext = () => {
-        pagination < lastPage && setPagination(pagination + 1);
+        pagination + 1 < lastPage && setPagination(pagination + 1);
     };
 
     const handlePaginationToValue = (page: number) => {
-        setPagination(page);
+        setPagination(page - 1);
     };
 
     const handlePaginationPrevious = () => {
@@ -99,13 +99,13 @@ function Table({
     const pageNumbers = () => {
         const pageNodes = [];
 
-        for (let i = 0; i <= lastPage; i++) {
+        for (let i = 1; i <= lastPage; i++) {
             pageNodes.push(
                 <button
                     onClick={() => handlePaginationToValue(i)}
-                    className={`tableButton ${i === pagination && "text-custom-accent"}`}
+                    className={`tableButton ${i === pagination + 1 && "text-custom-accent"}`}
                 >
-                    {i + 1}
+                    {i}
                 </button>
             );
         }
@@ -292,7 +292,7 @@ function Table({
                 <button className="tableButton">
                     <FontAwesomeIcon
                         icon={faAngleDoubleLeft}
-                        onClick={() => handlePaginationToValue(0)}
+                        onClick={() => handlePaginationToValue(1)}
                     />
                 </button>
                 <button className="tableButton" onClick={handlePaginationPrevious}>

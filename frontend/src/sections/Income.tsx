@@ -371,6 +371,7 @@ export default function Budget() {
                                         detailsFunction={(budgetId: number) =>
                                             showDetailsBudgetPlanningModal(budgetId)
                                         }
+                                        rowLimit={10}
                                     />
                                 )}
                             </div>
@@ -426,6 +427,7 @@ export default function Budget() {
                                         detailsFunction={(fixedIncomeId: number) =>
                                             showDetailsFixedIncomeModal(fixedIncomeId)
                                         }
+                                        rowLimit={5}
                                     />
                                 )}
                             </div>

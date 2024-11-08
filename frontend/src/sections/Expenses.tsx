@@ -429,6 +429,7 @@ export default function Expenses() {
                                             showDetailsExpenseModal(expenseId)
                                         }
                                         tablePrefix="E"
+                                        rowLimit={6}
                                     />
                                 )}
                             </div>
@@ -463,6 +464,7 @@ export default function Expenses() {
                                         }
                                         tablePrefix="E"
                                         dark
+                                        rowLimit={6}
                                     />
                                 )}
                             </div>
