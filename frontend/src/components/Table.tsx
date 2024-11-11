@@ -42,20 +42,20 @@ function Table({
 }) {
     const [FilterDropState, setFilterDropState] = useState<boolean>(false);
     const [ColumnsSort, setColumnsSort] = useState<sortValues>(data.columns.map(() => "null"));
-    const [pagination, setPagination] = useState<number>(0);
+    const [pagination, setPagination] = useState<number>(1);
 
     const lastPage = Math.ceil(data.rows.length / rowLimit);
 
     const handlePaginationNext = () => {
-        pagination + 1 < lastPage && setPagination(pagination + 1);
+        pagination < lastPage && setPagination(pagination + 1);
     };
 
     const handlePaginationToValue = (page: number) => {
-        setPagination(page - 1);
+        setPagination(page);
     };
 
     const handlePaginationPrevious = () => {
-        pagination > 0 && setPagination(pagination - 1);
+        pagination > 1 && setPagination(pagination - 1);
     };
 
     const handleSortToggle = (columnKey: number) => {
@@ -99,22 +99,106 @@ function Table({
     const pageNumbers = () => {
         const pageNodes = [];
 
-        for (let i = 1; i <= lastPage; i++) {
+        if (lastPage < 7) {
+            for (let i = 1; i <= lastPage; i++) {
+                pageNodes.push(
+                    <button
+                        onClick={() => handlePaginationToValue(i)}
+                        className={`tableButton ${i === pagination && "text-custom-accent"}`}
+                    >
+                        {i}
+                    </button>
+                );
+            }
+            return pageNodes;
+        }
+
+        if (pagination < 5) {
+            for (let i = 1; i < 6; i++) {
+                pageNodes.push(
+                    <button
+                        onClick={() => handlePaginationToValue(i)}
+                        className={`tableButton ${i === pagination && "text-custom-accent"}`}
+                    >
+                        {i}
+                    </button>
+                );
+            }
             pageNodes.push(
+                <FontAwesomeIcon icon={faEllipsis} />,
                 <button
-                    onClick={() => handlePaginationToValue(i)}
-                    className={`tableButton ${i === pagination + 1 && "text-custom-accent"}`}
+                    onClick={() => handlePaginationToValue(lastPage)}
+                    className={`tableButton ${pagination === lastPage && "text-custom-accent"}`}
                 >
-                    {i}
+                    {lastPage}
                 </button>
             );
+
+            return pageNodes;
+        }
+
+        if (pagination >= 5 && pagination <= lastPage - 6) {
+            pageNodes.push(
+                <button
+                    onClick={() => handlePaginationToValue(1)}
+                    className={`tableButton ${pagination === 1 && "text-custom-accent"}`}
+                >
+                    {1}
+                </button>,
+                <FontAwesomeIcon icon={faEllipsis} />
+            );
+
+            for (let i = pagination - 2; i <= pagination + 2; i++) {
+                pageNodes.push(
+                    <button
+                        onClick={() => handlePaginationToValue(i)}
+                        className={`tableButton ${i === pagination && "text-custom-accent"}`}
+                    >
+                        {i}
+                    </button>
+                );
+            }
+
+            pageNodes.push(
+                <FontAwesomeIcon icon={faEllipsis} />,
+                <button
+                    onClick={() => handlePaginationToValue(lastPage)}
+                    className={`tableButton ${pagination === lastPage && "text-custom-accent"}`}
+                >
+                    {lastPage}
+                </button>
+            );
+
+            return pageNodes;
+        }
+
+        if (pagination > lastPage - 6) {
+            pageNodes.push(
+                <button
+                    onClick={() => handlePaginationToValue(1)}
+                    className={`tableButton ${pagination === 1 && "text-custom-accent"}`}
+                >
+                    {1}
+                </button>,
+                <FontAwesomeIcon icon={faEllipsis} />
+            );
+            for (let i = lastPage - 5; i <= lastPage; i++) {
+                pageNodes.push(
+                    <button
+                        onClick={() => handlePaginationToValue(i)}
+                        className={`tableButton ${i === pagination && "text-custom-accent"}`}
+                    >
+                        {i}
+                    </button>
+                );
+            }
         }
 
         return pageNodes;
     };
 
     const TableRows = () =>
-        data.rows.slice(rowLimit * pagination, rowLimit * (pagination + 1)).map((item, key) => (
+        data.rows.slice(rowLimit * (pagination - 1), rowLimit * pagination).map((item, key) => (
             <tr
                 className={`tableRow ${
                     dark
