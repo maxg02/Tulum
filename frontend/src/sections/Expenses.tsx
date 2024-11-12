@@ -439,7 +439,7 @@ export default function Expenses() {
                         <div className="infoContainer2 w-5/12">
                             <p>Budget Expenses</p>
                             <div className="flex items-center flex-1 w-full">
-                                <Table dark data={budgetExpensesData} tablePrefix="BE" />
+                                <Table dark data={budgetExpensesData} tablePrefix="BE" rowLimit={5} />
                             </div>
                         </div>
                         <div className="infoContainer2 flex-1">
