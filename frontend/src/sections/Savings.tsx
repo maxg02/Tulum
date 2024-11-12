@@ -326,7 +326,15 @@ export default function Savings() {
                 <div className="flex-1 flex overflow-hidden gap-x-8">
                     <div className="infoContainer1 w-64">
                         <p>Goals Progress</p>
-                        <div className="flex-1 w-full flex flex-col gap-y-4 justify-between overflow-y-hidden">
+                        <div
+                            className="flex-1 w-full flex flex-col gap-y-4 justify-between overflow-y-hidden"
+                            onWheel={(event) =>
+                                event.deltaY > 0
+                                    ? !(goalsProgressScroll >= goalsProgress.length - 3) &&
+                                      goalProgressScrollUp()
+                                    : !(goalsProgressScroll <= 0) && goalProgressScrollDown()
+                            }
+                        >
                             <button
                                 className={`bg-transparent border-0 p-0 outline-0 ${
                                     goalsProgressScroll <= 0
@@ -401,6 +409,7 @@ export default function Savings() {
                                                 showDetailsGoalContributionModal(gCId)
                                             }
                                             dark
+                                            rowLimit={5}
                                         />
                                     )}
                                 </div>
@@ -428,6 +437,7 @@ export default function Savings() {
                                             showDetailsSavingGoalModal(sVId)
                                         }
                                         dark
+                                        rowLimit={6}
                                     />
                                 )}
                             </div>
