@@ -217,7 +217,7 @@ function Table({
                         ) : data.columns[key].type === "list" ? (
                             <p>{data.columns[key].values[content]}</p>
                         ) : (
-                            <div className="flex flex-col min-w-96">
+                            <div className="flex flex-col min-w-72">
                                 <div
                                     className={`${
                                         dark ? "bg-custom-ly1" : "bg-custom-ly2"
