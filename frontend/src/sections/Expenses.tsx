@@ -21,6 +21,16 @@ import {
     useDeleteFixedExpenseMutation,
     useUpdateFixedExpenseMutation,
     updateFixedExpenseDto,
+    updateBudgetPlanDto,
+    createBudgetPlanDto,
+    useCreateBudgetPlanMutation,
+    useDeleteBudgetPlanMutation,
+    useUpdateBudgetPlanMutation,
+    useUpdateExpenseCategoryMutation,
+    useDeleteExpenseCategoryMutation,
+    useCreateExpenseCategoryMutation,
+    createExpenseCategoryDto,
+    updateExpenseCategoryDto,
 } from "../../api/apiSlice";
 import Loader from "../components/Loader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -48,6 +58,7 @@ export default function Expenses() {
         fixedExpensesRow: tableRow[] = [];
 
     let budgetExpensesRow: tableRow[] = [],
+        expenseCategoriesRow: tableRow[] = [],
         allExpenses: expenseDto[] | undefined = [],
         allFixedExpenses: fixedExpenseDto[] | undefined = [],
         monthExpensesData: pieChartSlice[] = [],
@@ -71,11 +82,19 @@ export default function Expenses() {
     //Expense Category Fetching
     const { data: expenseCategoryData, isLoading: expenseCategoryIsLoading } =
         useGetExpenseCategoryFullByUserIdQuery(1);
+    const [createExpenseCategory] = useCreateExpenseCategoryMutation();
+    const [deleteExpenseCategory] = useDeleteExpenseCategoryMutation();
+    const [updateExpenseCategory] = useUpdateExpenseCategoryMutation();
 
     //Expense Fetching
     const [createExpense] = useCreateExpenseMutation();
     const [deleteExpense] = useDeleteExpenseMutation();
     const [updateExpense] = useUpdateExpenseMutation();
+
+    //Budget Plan Expense Fetching
+    const [createBudgetPlan] = useCreateBudgetPlanMutation();
+    const [deleteBudgetPlan] = useDeleteBudgetPlanMutation();
+    const [updateBudgetPlan] = useUpdateBudgetPlanMutation();
 
     //Fixed Expense Fetching
     const [createFixedExpense] = useCreateFixedExpenseMutation();
@@ -117,6 +136,11 @@ export default function Expenses() {
             budgetPlan: ec.budgetPlan ? true : false,
             expense: ec.expenses!.length ? true : false,
             fixedExpense: ec.expenses!.length ? true : false,
+        }));
+
+        expenseCategoriesRow = expenseCategoryData.map((expenseCategory: expenseCategoryDto) => ({
+            id: expenseCategory.id,
+            data: [expenseCategory.category],
         }));
 
         allExpenses = expenseCategoryData
@@ -168,11 +192,29 @@ export default function Expenses() {
         dispatch(showCreateModal(newState));
     };
 
+    // Show create Expense Category Modal
+    const showCreateExpenseCategoryModal = () => {
+        clearFieldValues();
+        const newState = { ...createModalState };
+        newState.expenseCategory = true;
+
+        dispatch(showCreateModal(newState));
+    };
+
     // Show create Fixed Expense Modal
     const showCreateFixedExpenseModal = () => {
         clearFieldValues();
         const newState = { ...createModalState };
         newState.fixedExpense = true;
+
+        dispatch(showCreateModal(newState));
+    };
+
+    // Show create budget planning Modal
+    const showCreateBudgetModal = () => {
+        clearFieldValues();
+        const newState = { ...createModalState };
+        newState.budgetPlanning = true;
 
         dispatch(showCreateModal(newState));
     };
@@ -209,6 +251,40 @@ export default function Expenses() {
         dispatch(showDetailsModal(newState));
     };
 
+    // Show details Budget Plan Modal
+    const showDetailsBudgetPlanningModal = (budgetId: number) => {
+        clearFieldValues();
+        const newState = { ...detailsModalState };
+        newState.id = budgetId;
+        newState.show = { ...detailsModalState.show, budgetPlanning: true };
+
+        const budgetData: expenseCategoryDto = expenseCategoryData!.filter(
+            (ec: expenseCategoryDto) => ec.budgetPlan?.id === budgetId
+        )[0];
+
+        setAmount(budgetData.budgetPlan!.amount);
+        setSelectValue(budgetData.id);
+        setPeriodicity(budgetData.budgetPlan!.periodicity);
+
+        dispatch(showDetailsModal(newState));
+    };
+
+    // Show details Expense Category Modal
+    const showDetailsExpenseCategoryModal = (expenseCategoryId: number) => {
+        clearFieldValues();
+        const newState = { ...detailsModalState };
+        newState.id = expenseCategoryId;
+        newState.show = { ...detailsModalState.show, expenseCategory: true };
+
+        const selectedExpenseCategoryData: expenseCategoryDto = expenseCategoryData!.filter(
+            (ec: expenseCategoryDto) => ec.id === expenseCategoryId
+        )[0];
+
+        setDetails(selectedExpenseCategoryData.category);
+
+        dispatch(showDetailsModal(newState));
+    };
+
     // Create expense function
     const createExpenseHandler = () => {
         const expenseData: createExpenseDto = {
@@ -231,6 +307,26 @@ export default function Expenses() {
         createFixedExpense(fixedExpenseData);
     };
 
+    // Create budget plan function
+    const createBudgetHandler = () => {
+        const budgetPlanData: createBudgetPlanDto = {
+            amount: amount,
+            expenseCategoryId: selectValue,
+            periodicity: periodicity,
+        };
+
+        createBudgetPlan(budgetPlanData);
+    };
+
+    // Create expense category function
+    const createExpenseCategoryHandler = () => {
+        const expenseCategoryData: createExpenseCategoryDto = {
+            category: details,
+        };
+
+        createExpenseCategory(expenseCategoryData);
+    };
+
     // Delete Expense Function
     const deleteExpenseHandler = () => {
         const expenseId = detailsModalState.id;
@@ -241,6 +337,18 @@ export default function Expenses() {
     const deleteFixedExpenseHandler = () => {
         const fixedExpenseId = detailsModalState.id;
         deleteFixedExpense(fixedExpenseId!);
+    };
+
+    // Delete Budget Plan Function
+    const deleteBudgetPlanHandler = () => {
+        const budgetPlanId = detailsModalState.id;
+        deleteBudgetPlan(budgetPlanId!);
+    };
+
+    // Delete Expense Category Function
+    const deleteExpenseCategoryHandler = () => {
+        const expenseCategoryId = detailsModalState.id;
+        deleteExpenseCategory(expenseCategoryId!);
     };
 
     // Update Expense Function
@@ -266,6 +374,26 @@ export default function Expenses() {
         };
 
         updateFixedExpense(fixedExpenseData);
+    };
+
+    // Update Budget Plan Function
+    const updateBudgetPlanHandler = () => {
+        const budgetPlanData: updateBudgetPlanDto = {
+            id: detailsModalState.id!,
+            data: { amount: amount, periodicity: periodicity },
+        };
+
+        updateBudgetPlan(budgetPlanData);
+    };
+
+    // Update Expense Category Function
+    const updateExpenseCategoryHandler = () => {
+        const expenseCategoryData: updateExpenseCategoryDto = {
+            id: detailsModalState.id!,
+            data: { category: details },
+        };
+
+        updateExpenseCategory(expenseCategoryData);
     };
 
     const dataPieChart: pieChartSlice[] = monthExpensesData;
@@ -300,6 +428,11 @@ export default function Expenses() {
             { name: "Category", type: "string" },
         ],
         rows: fixedExpensesRow,
+    };
+
+    const expenseCategoryTableData: dataObject = {
+        columns: [{ name: "Category", type: "string" }],
+        rows: expenseCategoriesRow,
     };
 
     return (
@@ -436,10 +569,58 @@ export default function Expenses() {
                         </div>
                     </div>
                     <div className="flex flex-1 gap-x-9">
-                        <div className="infoContainer2 w-5/12">
-                            <p>Budget Expenses</p>
+                        <div className="infoContainer2 w-[30%]">
+                            <div className="grid grid-cols-3 w-full">
+                                <p className="col-start-2 mx-auto">Budgets</p>
+                                <button
+                                    className="ml-auto tableButton flex gap-x-2 p-0 items-center opacity-55 hover:opacity-100"
+                                    onClick={showCreateBudgetModal}
+                                >
+                                    <p>New</p>
+                                    <FontAwesomeIcon icon={faPlus} />
+                                </button>
+                            </div>
                             <div className="flex items-center flex-1 w-full">
-                                <Table dark data={budgetExpensesData} tablePrefix="BE" rowLimit={5} />
+                                {expenseCategoryIsLoading ? (
+                                    <Loader />
+                                ) : (
+                                    <Table
+                                        dark
+                                        detailsFunction={(budgetId: number) =>
+                                            showDetailsBudgetPlanningModal(budgetId)
+                                        }
+                                        data={budgetExpensesData}
+                                        tablePrefix="BE"
+                                        rowLimit={5}
+                                    />
+                                )}
+                            </div>
+                        </div>
+                        <div className="infoContainer2 w-[20%]">
+                            <div className="grid grid-cols-3 w-full">
+                                <p className="col-start-2 mx-auto">Expense Categories</p>
+                                <button
+                                    className="ml-auto tableButton flex gap-x-2 p-0 items-center opacity-55 hover:opacity-100"
+                                    onClick={showCreateExpenseCategoryModal}
+                                >
+                                    <p>New</p>
+                                    <FontAwesomeIcon icon={faPlus} />
+                                </button>
+                            </div>
+                            <div className="flex items-center flex-1 w-full">
+                                {expenseCategoryIsLoading ? (
+                                    <Loader />
+                                ) : (
+                                    <Table
+                                        data={expenseCategoryTableData}
+                                        detailsFunction={(expenseCategoryId: number) =>
+                                            showDetailsExpenseCategoryModal(expenseCategoryId)
+                                        }
+                                        tablePrefix="E"
+                                        dark
+                                        rowLimit={6}
+                                    />
+                                )}
                             </div>
                         </div>
                         <div className="infoContainer2 flex-1">
@@ -514,6 +695,27 @@ export default function Expenses() {
                     values={fixedExpensesData.columns[2].values!}
                 />
             </CreateModal>
+            {/* Create Budget Modal */}
+            <CreateModal show={createModalState.budgetPlanning} createFunction={createBudgetHandler}>
+                <AmountField fieldStateHandler={setAmount} />
+                <SelectField
+                    fieldStateHandler={setSelectValue}
+                    label="Category"
+                    values={categorySelectValues?.filter((ec) => !ec.budgetPlan)}
+                />
+                <ListField
+                    fieldStateHandler={setPeriodicity}
+                    label="Periodicity"
+                    values={periodicityValues}
+                />
+            </CreateModal>
+            {/* Create Expense Category Modal */}
+            <CreateModal
+                show={createModalState.expenseCategory}
+                createFunction={createExpenseCategoryHandler}
+            >
+                <DetailsField fieldStateHandler={setDetails} />
+            </CreateModal>
             {/* Fixed Expense Details Modal */}
             <DetailsModal
                 updateFunction={updateFixedExpenseHandler}
@@ -534,6 +736,35 @@ export default function Expenses() {
                     label="Category"
                     values={categorySelectValues!}
                 />
+            </DetailsModal>
+            {/* Details Budget Planning Modal */}
+            <DetailsModal
+                updateFunction={updateBudgetPlanHandler}
+                deleteFunction={deleteBudgetPlanHandler}
+                show={detailsModalState.show.budgetPlanning}
+            >
+                <AmountField defaultValue={amount} fieldStateHandler={setAmount} />
+                <SelectField
+                    defaultValue={selectValue}
+                    fieldStateHandler={setSelectValue}
+                    label="Category"
+                    values={categorySelectValues!}
+                    disabled
+                />
+                <ListField
+                    fieldStateHandler={setPeriodicity}
+                    label="Periodicity"
+                    values={periodicityValues}
+                    defaultValue={periodicity}
+                />
+            </DetailsModal>
+            {/* Details Expense Category Modal */}
+            <DetailsModal
+                updateFunction={updateExpenseCategoryHandler}
+                deleteFunction={deleteExpenseCategoryHandler}
+                show={detailsModalState.show.expenseCategory}
+            >
+                <DetailsField defaultValue={details} fieldStateHandler={setDetails} />
             </DetailsModal>
         </div>
     );
