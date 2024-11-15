@@ -44,6 +44,9 @@ function CreateModal({ children, show, createFunction }: createModal) {
         case "goalContribution":
             title = "Goal Contribution Details";
             break;
+        case "expenseCategory":
+            title = "Expense Category Details";
+            break;
     }
 
     const handleCreate = () => {

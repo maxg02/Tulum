@@ -9,6 +9,7 @@ export type modalState = {
         fixedExpense: boolean;
         savingGoal: boolean;
         goalContribution: boolean;
+        expenseCategory: boolean;
     };
 };
 
@@ -21,6 +22,7 @@ export const initialState: modalState = {
         fixedExpense: false,
         savingGoal: false,
         goalContribution: false,
+        expenseCategory: false,
     },
 };
 
