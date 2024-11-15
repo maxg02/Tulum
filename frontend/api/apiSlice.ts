@@ -64,6 +64,13 @@ export type expenseCategoryDto = {
     expenses?: expenseDto[];
     fixedExpenses?: fixedExpenseDto[];
 };
+export type createExpenseCategoryDto = {
+    category: string;
+};
+export type updateExpenseCategoryDto = {
+    id: number;
+    data: { category: string };
+};
 
 export type savingGoalDto = {
     id: number;
@@ -172,6 +179,29 @@ export const apiSlice = createApi({
         getExpenseCategoryBudgetByUserId: builder.query<expenseCategoryDto[], number>({
             query: (userId) => `expensecategory/user/budget/${userId}`,
             providesTags: ["ExpenseCategory"],
+        }),
+        createExpenseCategory: builder.mutation({
+            query: (expenseCategoryData: createExpenseCategoryDto) => ({
+                url: "expenseCategory",
+                method: "POST",
+                body: expenseCategoryData,
+            }),
+            invalidatesTags: ["ExpenseCategory"],
+        }),
+        updateExpenseCategory: builder.mutation({
+            query: (expenseCategoryData: updateExpenseCategoryDto) => ({
+                url: `expenseCategory/${expenseCategoryData.id}`,
+                method: "PUT",
+                body: expenseCategoryData.data,
+            }),
+            invalidatesTags: ["ExpenseCategory"],
+        }),
+        deleteExpenseCategory: builder.mutation({
+            query: (Id: number) => ({
+                url: `expenseCategory/${Id}`,
+                method: "DELETE",
+            }),
+            invalidatesTags: ["ExpenseCategory"],
         }),
 
         //Budget Plan endpoints
@@ -318,6 +348,9 @@ export const {
 
     useGetExpenseCategoryFullByUserIdQuery,
     useGetExpenseCategoryBudgetByUserIdQuery,
+    useCreateExpenseCategoryMutation,
+    useDeleteExpenseCategoryMutation,
+    useUpdateExpenseCategoryMutation,
 
     useCreateBudgetPlanMutation,
     useDeleteBudgetPlanMutation,
