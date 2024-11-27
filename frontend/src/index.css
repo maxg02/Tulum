@@ -54,7 +54,7 @@ body {
         @apply font-normal font-body text-white;
     }
     p {
-        @apply font-body text-sm;
+        @apply font-body text-sm font-normal;
     }
     .infoContainer1 {
         @apply rounded-xl gap-y-4 bg-custom-ly1 px-7 py-6 flex flex-col items-center justify-between overflow-hidden;

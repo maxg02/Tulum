@@ -44,6 +44,7 @@ export default function Budget() {
     const [date, setDate] = useState<Date>(new Date());
     const [periodicity, setPeriodicity] = useState<number>(0);
     const [selectValue, setSelectValue] = useState<number>(0);
+    const [incomeToggle, setIncomeToggle] = useState<boolean>(true);
 
     const clearFieldValues = () => {
         setAmount(0), setDetails(""), setDate(new Date()), setPeriodicity(0), setSelectValue(0);
@@ -54,14 +55,14 @@ export default function Budget() {
     const detailsModalState = useAppSelector((state) => state.detailsModal);
 
     let incomesRow: tableRow[] = [],
-        fixedIncomesRow: tableRow[] = [],
-        budgetPlanningRow: tableRow[] = [];
+        fixedIncomesRow: tableRow[] = [];
     const currentDate: Date = new Date();
     const currentMonth: string = new Intl.DateTimeFormat("en-US", { month: "long" }).format(currentDate);
     const currentYear: number = currentDate.getFullYear();
     let totalIncome: number = 0;
     let totalMonthIncome: number = 0;
     let totalYearIncome: number = 0;
+    let totalFixedIncome: number = 0;
     let categorySelectValues: { id: number; value: string; budgetPlan: boolean }[] | undefined;
 
     //Income Fetching
@@ -75,13 +76,6 @@ export default function Budget() {
     const [createFixedIncome] = useCreateFixedIncomeMutation();
     const [deleteFixedIncome] = useDeleteFixedIncomeMutation();
     const [updateFixedIncome] = useUpdateFixedIncomeMutation();
-
-    //Budget Plan Fetching
-    const { data: budgetPlanningData, isLoading: budgetPlanningIsLoading } =
-        useGetExpenseCategoryBudgetByUserIdQuery(1);
-    const [createBudgetPlan] = useCreateBudgetPlanMutation();
-    const [deleteBudgetPlan] = useDeleteBudgetPlanMutation();
-    const [updateBudgetPlan] = useUpdateBudgetPlanMutation();
 
     // Show create Income Modal
     const showCreateIncomeModal = () => {
@@ -97,15 +91,6 @@ export default function Budget() {
         clearFieldValues();
         const newState = { ...createModalState };
         newState.fixedIncome = true;
-
-        dispatch(showCreateModal(newState));
-    };
-
-    // Show create budget planning Modal
-    const showCreateBudgetModal = () => {
-        clearFieldValues();
-        const newState = { ...createModalState };
-        newState.budgetPlanning = true;
 
         dispatch(showCreateModal(newState));
     };
@@ -143,24 +128,6 @@ export default function Budget() {
         dispatch(showDetailsModal(newState));
     };
 
-    // Show details Budget Plan Modal
-    const showDetailsBudgetPlanningModal = (budgetId: number) => {
-        clearFieldValues();
-        const newState = { ...detailsModalState };
-        newState.id = budgetId;
-        newState.show = { ...detailsModalState.show, budgetPlanning: true };
-
-        const budgetData: expenseCategoryDto = budgetPlanningData!.filter(
-            (ec: expenseCategoryDto) => ec.budgetPlan?.id === budgetId
-        )[0];
-
-        setAmount(budgetData.budgetPlan!.amount);
-        setSelectValue(budgetData.id);
-        setPeriodicity(budgetData.budgetPlan!.periodicity);
-
-        dispatch(showDetailsModal(newState));
-    };
-
     // Create Income Function
     const createIncomeHandler = () => {
         const incomeData: createIncomeDto = {
@@ -181,17 +148,6 @@ export default function Budget() {
         createFixedIncome(fixedIncomeData);
     };
 
-    // Create budget plan function
-    const createBudgetHandler = () => {
-        const budgetPlanData: createBudgetPlanDto = {
-            amount: amount,
-            expenseCategoryId: selectValue,
-            periodicity: periodicity,
-        };
-
-        createBudgetPlan(budgetPlanData);
-    };
-
     // Delete Income Function
     const deleteIncomeHandler = () => {
         const incomeId = detailsModalState.id;
@@ -202,12 +158,6 @@ export default function Budget() {
     const deleteFixedIncomeHandler = () => {
         const fixedIncomeId = detailsModalState.id;
         deleteFixedIncome(fixedIncomeId!);
-    };
-
-    // Delete Budget Plan Function
-    const deleteBudgetPlanHandler = () => {
-        const budgetPlanId = detailsModalState.id;
-        deleteBudgetPlan(budgetPlanId!);
     };
 
     // Update Income Function
@@ -228,16 +178,6 @@ export default function Budget() {
         };
 
         updateFixedIncome(fixedIncomeData);
-    };
-
-    // Update Budget Plan Function
-    const updateBudgetPlanHandler = () => {
-        const budgetPlanData: updateBudgetPlanDto = {
-            id: detailsModalState.id!,
-            data: { amount: amount, periodicity: periodicity },
-        };
-
-        updateBudgetPlan(budgetPlanData);
     };
 
     // Income data handling
@@ -269,26 +209,10 @@ export default function Budget() {
             id: fixedIncome.id,
             data: [fixedIncome.amount, fixedIncome.details, fixedIncome.periodicity],
         }));
-    }
-
-    //budget Planning data handling
-    if (!budgetPlanningIsLoading && budgetPlanningData != undefined) {
-        const expenseCategoriesWithBudgets = budgetPlanningData.filter((ec) => ec.budgetPlan);
-
-        budgetPlanningRow = expenseCategoriesWithBudgets.map((expenseCategory: expenseCategoryDto) => ({
-            id: expenseCategory.budgetPlan!.id,
-            data: [
-                expenseCategory.category,
-                expenseCategory.budgetPlan!.amount,
-                expenseCategory.budgetPlan!.periodicity,
-            ],
-        }));
-
-        categorySelectValues = budgetPlanningData.map((ec: expenseCategoryDto) => ({
-            id: ec.id,
-            value: ec.category,
-            budgetPlan: ec.budgetPlan ? true : false,
-        }));
+        totalFixedIncome = fixedIncomeData.reduce(
+            (acc: number, next: fixedIncomeDto) => acc + next.amount,
+            0
+        );
     }
 
     //Income table structure
@@ -315,109 +239,79 @@ export default function Budget() {
         rows: fixedIncomesRow,
     };
 
-    //Budget Planning table structure
-    const budgetPlanningTableData: dataObject = {
-        columns: [
-            { name: "Category", type: "string" },
-            { name: "Amount", type: "amount" },
-            {
-                name: "Periodicity",
-                type: "list",
-                values: periodicityValues,
-            },
-        ],
-        rows: budgetPlanningRow,
-    };
-
     return (
         <div className="flex flex-1 gap-8">
             <Sidebar currentSection="Income" />
             <SectionContent>
                 <Header currentSection="Income" />
                 <div className="flex-1 flex overflow-hidden gap-x-9">
-                    <div className="flex flex-col w-5/12 gap-y-9">
-                        <div className="infoContainer1 h-[18%]">
+                    <div className="flex flex-col w-5/12 gap-y-9 justify-items-stretch">
+                        <div className="infoContainer1 flex-1">
                             <p>Total Income</p>
                             <h1 className="font-light text-5xl my-auto">RD${totalIncome}</h1>
                         </div>
-                        <div className="flex gap-x-9 h-[18%]">
-                            <div className="infoContainer1 flex-1 bg-gradient-to-b from-custom-secondary to-custom-accent shadow-none">
-                                <p>{`${currentMonth} Income`}</p>
-                                <h1 className="font-light text-5xl my-auto">RD${totalMonthIncome}</h1>
-                            </div>
-                            <div className="infoContainer1 flex-1 bg-gradient-to-b from-custom-secondary to-custom-accent shadow-none">
-                                <p>{`${currentYear} Income`}</p>
-                                <h1 className="font-light text-5xl my-auto">RD${totalYearIncome}</h1>
-                            </div>
-                        </div>
                         <div className="infoContainer1 flex-1">
-                            <div className="grid grid-cols-3 w-full">
-                                <p className="col-start-2 mx-auto">Budget Planning</p>
-                                <button
-                                    className="ml-auto tableButton flex gap-x-2 p-0 items-center opacity-55 hover:opacity-100"
-                                    onClick={showCreateBudgetModal}
-                                >
-                                    <p>New</p>
-                                    <FontAwesomeIcon icon={faPlus} />
-                                </button>
-                            </div>
-                            <div className="flex flex-1 items-center w-full">
-                                {budgetPlanningIsLoading ? (
-                                    <Loader />
-                                ) : (
-                                    <Table
-                                        data={budgetPlanningTableData}
-                                        tablePrefix="BP"
-                                        detailsFunction={(budgetId: number) =>
-                                            showDetailsBudgetPlanningModal(budgetId)
-                                        }
-                                        rowLimit={10}
-                                    />
-                                )}
-                            </div>
+                            <p>Total Fixed Income</p>
+                            <h1 className="font-light text-5xl my-auto">RD${totalFixedIncome}</h1>
+                        </div>
+                        <div className="infoContainer1 bg-gradient-to-b from-custom-secondary to-custom-accent shadow-none flex-1">
+                            <p>{`${currentMonth} Income`}</p>
+                            <h1 className="font-light text-5xl my-auto">RD${totalMonthIncome}</h1>
+                        </div>
+                        <div className="infoContainer1 bg-gradient-to-b from-custom-secondary to-custom-accent shadow-none flex-1">
+                            <p>{`${currentYear} Income`}</p>
+                            <h1 className="font-light text-5xl my-auto">RD${totalYearIncome}</h1>
                         </div>
                     </div>
                     <div className="flex flex-col flex-1 gap-y-9">
-                        <div className="infoContainer2 h-[50%]">
+                        <div className="infoContainer2 flex-1">
                             <div className="grid grid-cols-3 w-full">
-                                <p className="col-start-2 mx-auto">Income</p>
+                                <div className="col-start-2 mx-auto flex gap-x-3">
+                                    <button
+                                        onClick={() => setIncomeToggle(true)}
+                                        className={`bg-transparent p-0 hover:border-transparent focus:outline-none ${
+                                            !incomeToggle && "opacity-40"
+                                        }`}
+                                        disabled={incomeToggle}
+                                    >
+                                        <p>Income</p>
+                                    </button>
+                                    <button
+                                        onClick={() => setIncomeToggle(false)}
+                                        className={`bg-transparent p-0 hover:border-transparent focus:outline-none ${
+                                            incomeToggle && "opacity-40"
+                                        }`}
+                                        disabled={!incomeToggle}
+                                    >
+                                        <p>Fixed Income</p>
+                                    </button>
+                                </div>
                                 <button
                                     className="ml-auto tableButton flex gap-x-2 p-0 items-center opacity-55 hover:opacity-100"
-                                    onClick={showCreateIncomeModal}
+                                    onClick={
+                                        incomeToggle ? showCreateIncomeModal : showCreateFixedIncomeModal
+                                    }
                                 >
                                     <p>New</p>
                                     <FontAwesomeIcon icon={faPlus} />
                                 </button>
                             </div>
-                            <div className="flex items-center flex-1 w-full">
-                                {incomeIsLoading ? (
-                                    <Loader />
-                                ) : (
-                                    <Table
-                                        dark
-                                        data={incomeTableData}
-                                        tablePrefix="I"
-                                        detailsFunction={(incomeId: number) =>
-                                            showDetailsIncomeModal(incomeId)
-                                        }
-                                        rowLimit={6}
-                                    />
-                                )}
-                            </div>
-                        </div>
-                        <div className="flex-1 infoContainer2">
-                            <div className="grid grid-cols-3 w-full">
-                                <p className="col-start-2 mx-auto">Fixed Income</p>
-                                <button
-                                    className="ml-auto tableButton flex gap-x-2 p-0 items-center opacity-55 hover:opacity-100"
-                                    onClick={showCreateFixedIncomeModal}
-                                >
-                                    <p>New</p>
-                                    <FontAwesomeIcon icon={faPlus} />
-                                </button>
-                            </div>
-                            <div className="flex flex-1 items-center w-full">
-                                {fixedIncomeIsLoading ? (
+                            <div className="flex items-start flex-1 w-full">
+                                {incomeToggle ? (
+                                    incomeIsLoading ? (
+                                        <Loader />
+                                    ) : (
+                                        <Table
+                                            dark
+                                            data={incomeTableData}
+                                            tablePrefix="I"
+                                            detailsFunction={(incomeId: number) =>
+                                                showDetailsIncomeModal(incomeId)
+                                            }
+                                            rowLimit={18}
+                                        />
+                                    )
+                                ) : fixedIncomeIsLoading ? (
                                     <Loader />
                                 ) : (
                                     <Table
@@ -427,7 +321,7 @@ export default function Budget() {
                                         detailsFunction={(fixedIncomeId: number) =>
                                             showDetailsFixedIncomeModal(fixedIncomeId)
                                         }
-                                        rowLimit={5}
+                                        rowLimit={18}
                                     />
                                 )}
                             </div>
@@ -449,20 +343,6 @@ export default function Budget() {
                     fieldStateHandler={setPeriodicity}
                     label="Periodicity"
                     values={fixedIncomeTableData.columns[2].values!}
-                />
-            </CreateModal>
-            {/* Create Budget Modal */}
-            <CreateModal show={createModalState.budgetPlanning} createFunction={createBudgetHandler}>
-                <AmountField fieldStateHandler={setAmount} />
-                <SelectField
-                    fieldStateHandler={setSelectValue}
-                    label="Category"
-                    values={categorySelectValues?.filter((ec) => !ec.budgetPlan)}
-                />
-                <ListField
-                    fieldStateHandler={setPeriodicity}
-                    label="Periodicity"
-                    values={budgetPlanningTableData.columns[2].values!}
                 />
             </CreateModal>
             {/* Details Income Modal */}
@@ -487,27 +367,6 @@ export default function Budget() {
                     fieldStateHandler={setPeriodicity}
                     label="Periodicity"
                     values={fixedIncomeTableData.columns[2].values!}
-                    defaultValue={periodicity}
-                />
-            </DetailsModal>
-            {/* Details Budget Planning Modal */}
-            <DetailsModal
-                updateFunction={updateBudgetPlanHandler}
-                deleteFunction={deleteBudgetPlanHandler}
-                show={detailsModalState.show.budgetPlanning}
-            >
-                <AmountField defaultValue={amount} fieldStateHandler={setAmount} />
-                <SelectField
-                    defaultValue={selectValue}
-                    fieldStateHandler={setSelectValue}
-                    label="Category"
-                    values={categorySelectValues!}
-                    disabled
-                />
-                <ListField
-                    fieldStateHandler={setPeriodicity}
-                    label="Periodicity"
-                    values={budgetPlanningTableData.columns[2].values!}
                     defaultValue={periodicity}
                 />
             </DetailsModal>

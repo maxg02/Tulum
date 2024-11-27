@@ -618,7 +618,7 @@ export default function Expenses() {
                                         }
                                         tablePrefix="E"
                                         dark
-                                        rowLimit={6}
+                                        rowLimit={5}
                                     />
                                 )}
                             </div>
