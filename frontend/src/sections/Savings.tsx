@@ -116,7 +116,9 @@ export default function Savings() {
         }));
 
         const monthSavings = allGoalContributions.filter(
-            (gC) => new Date(gC.date).getMonth() === currentDate.getMonth()
+            (gC) =>
+                new Date(gC.date).getMonth() === currentDate.getMonth() &&
+                new Date(gC.date).getFullYear() === currentDate.getFullYear()
         );
 
         const yearSavings = allGoalContributions.filter(
@@ -138,21 +140,24 @@ export default function Savings() {
             (gC: goalContributionDto) => gC.savingGoalId
         );
 
-        goalsProgressData = Object.keys(goalContributionsBySavings).map((sGKey) => {
-            const savingGoal = savingGoalData.find((sG) => sG.id === parseInt(sGKey));
+        goalsProgressData = savingGoalData
+            .map((sg) => {
+                const progress = goalContributionsBySavings[sg.id.toString()]
+                    ? goalContributionsBySavings[sg.id.toString()].reduce(
+                          (acc: number, gC: goalContributionDto) => acc + gC.amount,
+                          0
+                      )
+                    : 0;
 
-            const progress = goalContributionsBySavings[sGKey].reduce(
-                (acc, gC: goalContributionDto) => acc + gC.amount,
-                0
-            );
-
-            return {
-                label: savingGoal!.details,
-                total: savingGoal!.goal,
-                progress: progress,
-                value: (progress * 100) / savingGoal!.goal,
-            };
-        });
+                return {
+                    label: sg!.details,
+                    total: sg!.goal,
+                    progress: progress,
+                    value: (progress * 100) / sg!.goal,
+                };
+            })
+            .sort((a, b) => a.value - b.value)
+            .reverse();
     }
 
     const goalsContributionsTableData: dataObject = {
@@ -321,7 +326,15 @@ export default function Savings() {
                 <div className="flex-1 flex overflow-hidden gap-x-8">
                     <div className="infoContainer1 w-64">
                         <p>Goals Progress</p>
-                        <div className="flex-1 w-full flex flex-col gap-y-4 justify-between overflow-y-hidden">
+                        <div
+                            className="flex-1 w-full flex flex-col gap-y-4 justify-between overflow-y-hidden"
+                            onWheel={(event) =>
+                                event.deltaY > 0
+                                    ? !(goalsProgressScroll >= goalsProgress.length - 3) &&
+                                      goalProgressScrollUp()
+                                    : !(goalsProgressScroll <= 0) && goalProgressScrollDown()
+                            }
+                        >
                             <button
                                 className={`bg-transparent border-0 p-0 outline-0 ${
                                     goalsProgressScroll <= 0
@@ -396,6 +409,7 @@ export default function Savings() {
                                                 showDetailsGoalContributionModal(gCId)
                                             }
                                             dark
+                                            rowLimit={5}
                                         />
                                     )}
                                 </div>
@@ -423,6 +437,7 @@ export default function Savings() {
                                             showDetailsSavingGoalModal(sVId)
                                         }
                                         dark
+                                        rowLimit={6}
                                     />
                                 )}
                             </div>

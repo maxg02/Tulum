@@ -12,8 +12,6 @@ import {
     faSortDown,
     faSortUp,
 } from "@fortawesome/free-solid-svg-icons";
-import { useAppDispatch } from "../hooks";
-import { showModal } from "../reducers/detailsModalReducers";
 
 type sortValues = ("asc" | "desc" | "null")[];
 export type tableRow = {
@@ -34,14 +32,31 @@ function Table({
     dark = false,
     tablePrefix,
     detailsFunction,
+    rowLimit,
 }: {
     data: dataObject;
     dark?: boolean;
     tablePrefix: string;
     detailsFunction?: (itemId: number) => void;
+    rowLimit: number;
 }) {
     const [FilterDropState, setFilterDropState] = useState<boolean>(false);
     const [ColumnsSort, setColumnsSort] = useState<sortValues>(data.columns.map(() => "null"));
+    const [pagination, setPagination] = useState<number>(1);
+
+    const lastPage = Math.ceil(data.rows.length / rowLimit);
+
+    const handlePaginationNext = () => {
+        pagination < lastPage && setPagination(pagination + 1);
+    };
+
+    const handlePaginationToValue = (page: number) => {
+        setPagination(page);
+    };
+
+    const handlePaginationPrevious = () => {
+        pagination > 1 && setPagination(pagination - 1);
+    };
 
     const handleSortToggle = (columnKey: number) => {
         const sortState = ColumnsSort;
@@ -81,8 +96,109 @@ function Table({
             </th>
         ));
 
+    const pageNumbers = () => {
+        const pageNodes = [];
+
+        if (lastPage < 7) {
+            for (let i = 1; i <= lastPage; i++) {
+                pageNodes.push(
+                    <button
+                        onClick={() => handlePaginationToValue(i)}
+                        className={`tableButton ${i === pagination && "text-custom-accent"}`}
+                    >
+                        {i}
+                    </button>
+                );
+            }
+            return pageNodes;
+        }
+
+        if (pagination < 5) {
+            for (let i = 1; i < 6; i++) {
+                pageNodes.push(
+                    <button
+                        onClick={() => handlePaginationToValue(i)}
+                        className={`tableButton ${i === pagination && "text-custom-accent"}`}
+                    >
+                        {i}
+                    </button>
+                );
+            }
+            pageNodes.push(
+                <FontAwesomeIcon icon={faEllipsis} />,
+                <button
+                    onClick={() => handlePaginationToValue(lastPage)}
+                    className={`tableButton ${pagination === lastPage && "text-custom-accent"}`}
+                >
+                    {lastPage}
+                </button>
+            );
+
+            return pageNodes;
+        }
+
+        if (pagination >= 5 && pagination <= lastPage - 6) {
+            pageNodes.push(
+                <button
+                    onClick={() => handlePaginationToValue(1)}
+                    className={`tableButton ${pagination === 1 && "text-custom-accent"}`}
+                >
+                    {1}
+                </button>,
+                <FontAwesomeIcon icon={faEllipsis} />
+            );
+
+            for (let i = pagination - 2; i <= pagination + 2; i++) {
+                pageNodes.push(
+                    <button
+                        onClick={() => handlePaginationToValue(i)}
+                        className={`tableButton ${i === pagination && "text-custom-accent"}`}
+                    >
+                        {i}
+                    </button>
+                );
+            }
+
+            pageNodes.push(
+                <FontAwesomeIcon icon={faEllipsis} />,
+                <button
+                    onClick={() => handlePaginationToValue(lastPage)}
+                    className={`tableButton ${pagination === lastPage && "text-custom-accent"}`}
+                >
+                    {lastPage}
+                </button>
+            );
+
+            return pageNodes;
+        }
+
+        if (pagination > lastPage - 6) {
+            pageNodes.push(
+                <button
+                    onClick={() => handlePaginationToValue(1)}
+                    className={`tableButton ${pagination === 1 && "text-custom-accent"}`}
+                >
+                    {1}
+                </button>,
+                <FontAwesomeIcon icon={faEllipsis} />
+            );
+            for (let i = lastPage - 5; i <= lastPage; i++) {
+                pageNodes.push(
+                    <button
+                        onClick={() => handlePaginationToValue(i)}
+                        className={`tableButton ${i === pagination && "text-custom-accent"}`}
+                    >
+                        {i}
+                    </button>
+                );
+            }
+        }
+
+        return pageNodes;
+    };
+
     const TableRows = () =>
-        data.rows.map((item, key) => (
+        data.rows.slice(rowLimit * (pagination - 1), rowLimit * pagination).map((item, key) => (
             <tr
                 className={`tableRow ${
                     dark
@@ -101,7 +217,7 @@ function Table({
                         ) : data.columns[key].type === "list" ? (
                             <p>{data.columns[key].values[content]}</p>
                         ) : (
-                            <div className="flex flex-col min-w-96">
+                            <div className="flex flex-col min-w-72">
                                 <div
                                     className={`${
                                         dark ? "bg-custom-ly1" : "bg-custom-ly2"
@@ -243,22 +359,6 @@ function Table({
                         </form>
                     </div>
                 </div>
-                <div
-                    className={`${
-                        dark ? "bg-custom-ly1" : "bg-custom-ly2"
-                    } px-3 py-1 rounded-md bg-opacity-70 flex items-center gap-x-2`}
-                >
-                    <div className="flex gap-x-1">
-                        <p className="font-medium">Amount</p>
-                        <p className="opacity-70"> Between </p>
-                        <p className="font-medium">RD$3000</p>
-                        <p className="opacity-70"> and </p>
-                        <p className="font-medium">RD$4000</p>
-                    </div>
-                    <button className="tableButton p-0">
-                        <FontAwesomeIcon icon={faXmark} className="text-custom-bg" />
-                    </button>
-                </div>
             </div>
             {/* Table Section */}
             <table className="table-fixed">
@@ -274,23 +374,19 @@ function Table({
             {/* Pagination Section */}
             <div className="flex justify-center py-2 border-t border-custom-accent">
                 <button className="tableButton">
-                    <FontAwesomeIcon icon={faAngleDoubleLeft} />
+                    <FontAwesomeIcon
+                        icon={faAngleDoubleLeft}
+                        onClick={() => handlePaginationToValue(1)}
+                    />
                 </button>
-                <button className="tableButton">
+                <button className="tableButton" onClick={handlePaginationPrevious}>
                     <FontAwesomeIcon icon={faAngleLeft} />
                 </button>
-                <button className="tableButton text-custom-accent">1</button>
-                <button className="tableButton">2</button>
-                <button className="tableButton">3</button>
-                <button className="tableButton">4</button>
-                <button className="tableButton">
-                    <FontAwesomeIcon icon={faEllipsis} />
-                </button>
-                <button className="tableButton">10</button>
-                <button className="tableButton">
+                {pageNumbers()}
+                <button className="tableButton" onClick={handlePaginationNext}>
                     <FontAwesomeIcon icon={faAngleRight} />
                 </button>
-                <button className="tableButton">
+                <button className="tableButton" onClick={() => handlePaginationToValue(lastPage)}>
                     <FontAwesomeIcon icon={faAngleDoubleRight} />
                 </button>
             </div>
