@@ -48,8 +48,12 @@ class UserAdmin(BaseUserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
 
-    list_display = ["email", "created_at", "first_name", "last_name"]
+    # fields displayed on users list
+    list_display = ["email", "first_name", "last_name", "created_at"]
+
+    # Field to filter by
     list_filter = ["is_admin"]
+
     fieldsets = [
         (None, {"fields": ["email", "password"]}),
         ("Personal Info", {"fields": ["first_name", "last_name"]}),
@@ -64,7 +68,7 @@ class UserAdmin(BaseUserAdmin):
     ]
 
     search_fields = ["email"]
-    ordering = ["email"]
+    ordering = ["email", "created_at"]
     filter_horizontal = []
 
 
