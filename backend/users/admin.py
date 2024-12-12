@@ -54,6 +54,7 @@ class UserAdmin(BaseUserAdmin):
     # Field to filter by
     list_filter = ["is_admin"]
 
+    # Fields to display on change user form
     fieldsets = [
         (None, {"fields": ["email", "password"]}),
         ("Personal Info", {"fields": ["first_name", "last_name"]}),
