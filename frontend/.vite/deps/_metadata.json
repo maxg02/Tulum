@@ -1,0 +1,94 @@
+{
+  "hash": "b0a9fce3",
+  "configHash": "6778146a",
+  "lockfileHash": "e3b0c442",
+  "browserHash": "aba5ba2a",
+  "optimized": {
+    "@fortawesome/free-solid-svg-icons": {
+      "src": "../../node_modules/@fortawesome/free-solid-svg-icons/index.mjs",
+      "file": "@fortawesome_free-solid-svg-icons.js",
+      "fileHash": "0d5444d1",
+      "needsInterop": false
+    },
+    "@fortawesome/react-fontawesome": {
+      "src": "../../node_modules/@fortawesome/react-fontawesome/index.es.js",
+      "file": "@fortawesome_react-fontawesome.js",
+      "fileHash": "2dbd0ea6",
+      "needsInterop": false
+    },
+    "@mui/x-charts/Gauge": {
+      "src": "../../node_modules/@mui/x-charts/esm/Gauge/index.js",
+      "file": "@mui_x-charts_Gauge.js",
+      "fileHash": "4593c915",
+      "needsInterop": false
+    },
+    "@mui/x-charts/LineChart": {
+      "src": "../../node_modules/@mui/x-charts/esm/LineChart/index.js",
+      "file": "@mui_x-charts_LineChart.js",
+      "fileHash": "59e1467f",
+      "needsInterop": false
+    },
+    "@mui/x-charts/PieChart": {
+      "src": "../../node_modules/@mui/x-charts/esm/PieChart/index.js",
+      "file": "@mui_x-charts_PieChart.js",
+      "fileHash": "88257787",
+      "needsInterop": false
+    },
+    "@reduxjs/toolkit": {
+      "src": "../../node_modules/@reduxjs/toolkit/dist/redux-toolkit.modern.mjs",
+      "file": "@reduxjs_toolkit.js",
+      "fileHash": "d866c21d",
+      "needsInterop": false
+    },
+    "react": {
+      "src": "../../node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "c31d108b",
+      "needsInterop": true
+    },
+    "react-dom/client": {
+      "src": "../../node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "b4305014",
+      "needsInterop": true
+    },
+    "react-redux": {
+      "src": "../../node_modules/react-redux/dist/react-redux.mjs",
+      "file": "react-redux.js",
+      "fileHash": "742ab554",
+      "needsInterop": false
+    },
+    "react-router-dom": {
+      "src": "../../node_modules/react-router-dom/dist/index.js",
+      "file": "react-router-dom.js",
+      "fileHash": "2a31e818",
+      "needsInterop": false
+    },
+    "uuid": {
+      "src": "../../node_modules/uuid/dist/esm-browser/index.js",
+      "file": "uuid.js",
+      "fileHash": "c90ce050",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "chunk-YMANLX6N": {
+      "file": "chunk-YMANLX6N.js"
+    },
+    "chunk-U4XWPRBY": {
+      "file": "chunk-U4XWPRBY.js"
+    },
+    "chunk-WV6XQKQQ": {
+      "file": "chunk-WV6XQKQQ.js"
+    },
+    "chunk-4ZSTBHIF": {
+      "file": "chunk-4ZSTBHIF.js"
+    },
+    "chunk-HAZNF34R": {
+      "file": "chunk-HAZNF34R.js"
+    },
+    "chunk-WXXH56N5": {
+      "file": "chunk-WXXH56N5.js"
+    }
+  }
+}
