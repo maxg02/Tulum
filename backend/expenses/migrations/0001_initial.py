@@ -17,38 +17,46 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ExpenseCategory',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('category', models.CharField(max_length=25, unique=True)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ('user', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
         migrations.CreateModel(
             name='Expense',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('amount', models.IntegerField()),
                 ('details', models.CharField(max_length=50)),
                 ('date', models.DateTimeField()),
-                ('category', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='expense.expensecategory')),
+                ('category', models.ForeignKey(
+                    null=True, on_delete=django.db.models.deletion.SET_NULL, to='expenses.expensecategory')),
             ],
         ),
         migrations.CreateModel(
             name='BudgetPlan',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('amount', models.IntegerField()),
                 ('periodicity', models.IntegerField()),
-                ('category', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='expense.expensecategory')),
+                ('category', models.OneToOneField(
+                    on_delete=django.db.models.deletion.CASCADE, to='expenses.expensecategory')),
             ],
         ),
         migrations.CreateModel(
             name='FixedExpense',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('amount', models.IntegerField()),
                 ('details', models.CharField(max_length=50)),
                 ('periodicity', models.IntegerField()),
-                ('category', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='expense.expensecategory')),
+                ('category', models.ForeignKey(
+                    null=True, on_delete=django.db.models.deletion.SET_NULL, to='expenses.expensecategory')),
             ],
         ),
     ]
