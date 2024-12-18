@@ -109,13 +109,28 @@ export type updateGoalContributionDto = {
 
 export const apiSlice = createApi({
     baseQuery: fetchBaseQuery({
-        baseUrl: "http://localhost:5085/api/",
+        baseUrl: "http://127.0.0.1:8000/",
+        prepareHeaders: (headers) => {
+            headers.set(
+                "Authorization",
+                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM0NTM0NjQwLCJpYXQiOjE3MzQ1MzQzNDAsImp0aSI6ImYzZDgyODVmMjJkZTRjMGM4ZDY0NDA0ZWQ5N2JmZDllIiwidXNlcl9pZCI6MX0.Qb7iWjNsE405Z_QBkwM1cBnVnDQ1gGqArxfoB2--K_g"
+            );
+        },
     }),
     tagTypes: ["Income", "FixedIncome", "ExpenseCategory", "SavingGoal"],
     endpoints: (builder) => ({
+        //User endpoints
+        getUser: builder.mutation({
+            query: (userData: { email: string; password: string }) => ({
+                url: "token/",
+                method: "Post",
+                body: userData,
+            }),
+        }),
+
         //Income endpoints
-        getIncomesByUserId: builder.query<incomeDto[], number>({
-            query: (userId) => `income/user/${userId}`,
+        getIncomesByUserId: builder.query<incomeDto[], void>({
+            query: () => "incomes",
             providesTags: ["Income"],
         }),
         createIncome: builder.mutation({
@@ -336,6 +351,8 @@ export const apiSlice = createApi({
 });
 
 export const {
+    useGetUserMutation,
+
     useGetIncomesByUserIdQuery,
     useCreateIncomeMutation,
     useUpdateIncomeMutation,
