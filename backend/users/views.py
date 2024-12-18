@@ -10,15 +10,14 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 class UsersList(APIView):
-    permission_classes = [permissions.IsAuthenticated]
 
-    def post(request):
+    def post(self, request):
         serializer = UserSerializer(data=request.data)
-        if serializer.is_valid:
+        if serializer.is_valid():
             serializer.save()
-            Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
-            Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UsersDetails(APIView):
