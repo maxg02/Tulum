@@ -5,6 +5,7 @@ import Dashboard from "./sections/Dashboard";
 import Income from "./sections/Income";
 import Expenses from "./sections/Expenses";
 import Savings from "./sections/Savings";
+import Login from "./sections/Login";
 
 function App() {
     const router = createBrowserRouter([
@@ -27,6 +28,10 @@ function App() {
                 {
                     path: "/savings",
                     element: <Savings />,
+                },
+                {
+                    path: "/login",
+                    element: <Login />,
                 },
             ],
         },
