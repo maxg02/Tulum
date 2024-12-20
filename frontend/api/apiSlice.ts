@@ -110,11 +110,14 @@ export type updateGoalContributionDto = {
 export const apiSlice = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: "http://127.0.0.1:8000/",
-        prepareHeaders: (headers) => {
-            headers.set(
-                "Authorization",
-                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM0NTM0NjQwLCJpYXQiOjE3MzQ1MzQzNDAsImp0aSI6ImYzZDgyODVmMjJkZTRjMGM4ZDY0NDA0ZWQ5N2JmZDllIiwidXNlcl9pZCI6MX0.Qb7iWjNsE405Z_QBkwM1cBnVnDQ1gGqArxfoB2--K_g"
-            );
+        prepareHeaders: (headers, { getState }) => {
+            const token = getState().user.tokens?.access;
+
+            if (token) {
+                headers.set("Authorization", `Bearer ${token}`);
+            }
+
+            return headers;
         },
     }),
     tagTypes: ["Income", "FixedIncome", "ExpenseCategory", "SavingGoal"],
