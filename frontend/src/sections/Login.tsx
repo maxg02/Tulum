@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import { useGetUserMutation } from "../../api/apiSlice";
 import { decodeToken } from "react-jwt";
 import { setUserInfo } from "../reducers/userReducers";
-import { useAppDispatch } from "../hooks";
-import { userInfo } from "../reducers/userReducers";
+
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
@@ -12,23 +11,11 @@ export default function Login() {
     const [error, setError] = useState<string[] | null>(null);
 
     const [logUser] = useGetUserMutation();
-    const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
     const handleLogin = async () => {
         try {
             const tokens = await logUser({ email, password }).unwrap();
-            const tokenInfo = decodeToken(tokens.access);
-            const userInfo: userInfo = {
-                userInfo: {
-                    fullName: tokenInfo.full_name,
-                },
-                tokens: {
-                    access: tokens.access,
-                    refresh: tokens.refresh,
-                },
-            };
-            dispatch(setUserInfo(userInfo));
             navigate("/");
         } catch (error) {
             setError(error.data.detail);

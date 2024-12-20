@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from "@reduxjs/toolkit/query";
 
 export type incomeDto = { id: number; amount: number; details: string; date: Date };
 export type createIncomeDto = { amount: number; details: string; date: Date };
@@ -107,24 +108,45 @@ export type updateGoalContributionDto = {
     data: { amount: number; date: Date; savingGoalId: number };
 };
 
+const baseQuery = fetchBaseQuery({
+    baseUrl: "http://127.0.0.1:8000/",
+    prepareHeaders: (headers, { getState }) => {
+        const token = getState().user.tokens?.access;
+
+        if (token) {
+            headers.set("Authorization", `Bearer ${token}`);
+        }
+
+        return headers;
+    },
+});
+
+// const BaseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (
+//     args,
+//     api,
+//     extraOptions
+// ) => {
+//     let result = await baseQuery(args, api, extraOptions);
+
+//     if (result)
+
+//     return result;
+// };
+
 export const apiSlice = createApi({
-    baseQuery: fetchBaseQuery({
-        baseUrl: "http://127.0.0.1:8000/",
-        prepareHeaders: (headers, { getState }) => {
-            const token = getState().user.tokens?.access;
-
-            if (token) {
-                headers.set("Authorization", `Bearer ${token}`);
-            }
-
-            return headers;
-        },
-    }),
+    baseQuery: baseQuery,
     tagTypes: ["Income", "FixedIncome", "ExpenseCategory", "SavingGoal"],
     endpoints: (builder) => ({
         //User endpoints
         getUser: builder.mutation({
             query: (userData: { email: string; password: string }) => ({
+                url: "token/",
+                method: "Post",
+                body: userData,
+            }),
+        }),
+        getUserRefreshToken: builder.mutation({
+            query: (accessToken: string) => ({
                 url: "token/",
                 method: "Post",
                 body: userData,
