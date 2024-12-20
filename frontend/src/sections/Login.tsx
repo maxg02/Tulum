@@ -4,6 +4,7 @@ import { decodeToken } from "react-jwt";
 import { setUserInfo } from "../reducers/userReducers";
 import { useAppDispatch } from "../hooks";
 import { userInfo } from "../reducers/userReducers";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
     const [email, setEmail] = useState<string>("");
@@ -12,6 +13,7 @@ export default function Login() {
 
     const [logUser] = useGetUserMutation();
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
 
     const handleLogin = async () => {
         try {
@@ -27,6 +29,7 @@ export default function Login() {
                 },
             };
             dispatch(setUserInfo(userInfo));
+            navigate("/");
         } catch (error) {
             setError(error.data.detail);
         }
