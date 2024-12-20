@@ -9,7 +9,7 @@ class UserWithTokenSerializer(TokenObtainPairSerializer):
         token = super().get_token(user)
 
         token['email'] = user.email
-        token['full name'] = user.get_full_name()
+        token['full_name'] = user.get_full_name()
 
         return token
 
