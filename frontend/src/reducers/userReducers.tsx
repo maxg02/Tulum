@@ -1,29 +1,24 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-export type user = {
+export type userInfo = {
     userInfo: {
-        firstName: string | undefined;
-        lastName: string | undefined;
-        fullName: string | undefined;
-    };
-    tokens: { access: string | undefined; refresh: string | undefined };
+        fullName: string;
+    } | null;
+    tokens: { access: string; refresh: string } | null;
 };
 
-const initialState: user = {
-    userInfo: {
-        firstName: undefined,
-        lastName: undefined,
-        fullName: undefined,
-    },
-    tokens: { access: undefined, refresh: undefined },
+const initialState: userInfo = {
+    userInfo: null,
+    tokens: null,
 };
 
 export const userSlice = createSlice({
     name: "user",
     initialState,
     reducers: {
-        setUserInfo: (state, action: PayloadAction<user>) => {
-            state = action.payload;
+        setUserInfo: (state, action: PayloadAction<userInfo>) => {
+            state.tokens = action.payload.tokens;
+            state.userInfo = action.payload.userInfo;
         },
     },
 });
