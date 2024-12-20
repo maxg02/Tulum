@@ -1,21 +1,30 @@
 import React, { useState } from "react";
 import { useGetUserMutation } from "../../api/apiSlice";
-import { useJwt } from "react-jwt";
+import { decodeToken } from "react-jwt";
+import { setUserInfo } from "../reducers/userReducers";
+import { useAppDispatch } from "../hooks";
+import { userInfo } from "../reducers/userReducers";
 
 export default function Login() {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
-    const [token, setToken] = useState<string>("");
 
-    const { decodedToken, isExpired } = useJwt(token);
-
-    const [logUser, result] = useGetUserMutation();
+    const [logUser] = useGetUserMutation();
+    const dispatch = useAppDispatch();
 
     const handleLogin = async () => {
-        await logUser({ email, password });
-        setToken(result.data.access);
-
-        console.log(decodedToken);
+        const tokens = await logUser({ email, password }).unwrap();
+        const tokenInfo = decodeToken(tokens.access);
+        const userInfo: userInfo = {
+            userInfo: {
+                fullName: tokenInfo.full_name,
+            },
+            tokens: {
+                access: tokens.access,
+                refresh: tokens.refresh,
+            },
+        };
+        dispatch(setUserInfo(userInfo));
     };
 
     return (
