@@ -8,29 +8,34 @@ import { userInfo } from "../reducers/userReducers";
 export default function Login() {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
+    const [error, setError] = useState<string[] | null>(null);
 
     const [logUser] = useGetUserMutation();
     const dispatch = useAppDispatch();
 
     const handleLogin = async () => {
-        const tokens = await logUser({ email, password }).unwrap();
-        const tokenInfo = decodeToken(tokens.access);
-        const userInfo: userInfo = {
-            userInfo: {
-                fullName: tokenInfo.full_name,
-            },
-            tokens: {
-                access: tokens.access,
-                refresh: tokens.refresh,
-            },
-        };
-        dispatch(setUserInfo(userInfo));
+        try {
+            const tokens = await logUser({ email, password }).unwrap();
+            const tokenInfo = decodeToken(tokens.access);
+            const userInfo: userInfo = {
+                userInfo: {
+                    fullName: tokenInfo.full_name,
+                },
+                tokens: {
+                    access: tokens.access,
+                    refresh: tokens.refresh,
+                },
+            };
+            dispatch(setUserInfo(userInfo));
+        } catch (error) {
+            setError(error.data.detail);
+        }
     };
 
     return (
-        <div className="m-auto infoContainer1">
+        <div className="m-auto infoContainer1 w-3/12">
             <p>Login</p>
-            <form onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-y-3">
+            <form onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-y-3 w-full">
                 <div className="flex flex-col gap-y-1">
                     <label htmlFor="email">
                         <p>Email</p>
@@ -41,6 +46,7 @@ export default function Login() {
                         type="text"
                         className="formInput"
                         onChange={(e) => setEmail(e.target.value)}
+                        required
                     />
                 </div>
                 <div className="flex flex-col gap-y-1">
@@ -53,9 +59,12 @@ export default function Login() {
                         type="password"
                         className="formInput"
                         onChange={(e) => setPassword(e.target.value)}
+                        required
                     />
                 </div>
+
                 <span className="formDivider"></span>
+                {error && <p className="text-red-400">{error}</p>}
                 <button className="formButton" onClick={() => handleLogin()}>
                     <p>Log In</p>
                 </button>
