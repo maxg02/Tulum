@@ -4,6 +4,8 @@ import { decodeToken } from "react-jwt";
 export type userInfo = {
     userInfo: {
         fullName: string;
+        email: string;
+        profileImage: string;
     } | null;
     tokens: { access: string; refresh: string } | null;
 };
@@ -20,10 +22,13 @@ export const userSlice = createSlice({
         setUserInfo: (state, action: PayloadAction<{ access: string; refresh: string }>) => {
             const tokens = action.payload;
             const tokenInfo = decodeToken(tokens.access);
+            console.log(tokenInfo);
 
             const userInfo: userInfo = {
                 userInfo: {
                     fullName: tokenInfo.full_name,
+                    email: tokenInfo.email,
+                    profileImage: tokenInfo.profile_image,
                 },
                 tokens: {
                     access: tokens.access,

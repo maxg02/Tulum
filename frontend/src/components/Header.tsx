@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from "../hooks";
 import { logOut } from "../reducers/userReducers";
 
 export default function Header({ currentSection }: { currentSection: SectionType }) {
-    const [dropdownShow, setDropdownShow] = useState<boolean>(true);
+    const [dropdownShow, setDropdownShow] = useState<boolean>(false);
 
     const dispatch = useAppDispatch();
     const userInfo = useAppSelector((state) => state.user.userInfo);
@@ -18,7 +18,11 @@ export default function Header({ currentSection }: { currentSection: SectionType
                     className="h-full p-0 rounded-xl overflow-hidden border-0 focus:outline-none"
                     onClick={() => (dropdownShow ? setDropdownShow(false) : setDropdownShow(true))}
                 >
-                    <img className="h-full w-auto " src="/profilePic.jpeg" alt="Profile Pic" />
+                    <img
+                        className="h-full w-auto aspect-square object-fill"
+                        src={`http://127.0.0.1:8000/${userInfo?.profileImage}`}
+                        alt="Profile Pic"
+                    />
                 </button>
             </div>
             {dropdownShow && (
