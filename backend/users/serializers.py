@@ -1,6 +1,7 @@
 from users.models import AppUser
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.conf import settings
 
 
 class UserWithTokenSerializer(TokenObtainPairSerializer):
@@ -10,6 +11,9 @@ class UserWithTokenSerializer(TokenObtainPairSerializer):
 
         token['email'] = user.email
         token['full_name'] = user.get_full_name()
+        print(user.profile_image)
+        token['profile_image'] = str(
+            settings.MEDIA_URL) + str(user.profile_image)
 
         return token
 
@@ -21,7 +25,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = AppUser
         fields = ["id", "email", "first_name",
-                  "last_name", "full_name", "password"]
+                  "last_name", "full_name", "password", "profile_image"]
         extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data):
