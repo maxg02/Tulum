@@ -16,7 +16,7 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = AppUser
-        fields = ["email", "first_name", "last_name"]
+        fields = ["email", "first_name", "last_name", "profile_image"]
 
     # clean_<field_name> are called automatically to validate data
     def clean_password2(self):
@@ -57,7 +57,8 @@ class UserAdmin(BaseUserAdmin):
     # Fields to display on change user form
     fieldsets = [
         (None, {"fields": ["email", "password"]}),
-        ("Personal Info", {"fields": ["first_name", "last_name"]}),
+        ("Personal Info", {"fields": [
+         "first_name", "last_name", "profile_image"]}),
         ("Permissions", {"fields": ["is_admin"]})
     ]
 
@@ -65,7 +66,7 @@ class UserAdmin(BaseUserAdmin):
     add_fieldsets = [
         (None,
          {"classes": ["wide"],
-          "fields": ["email", "first_name", "last_name", "password1", "password2"]})
+          "fields": ["email", "first_name", "last_name", "profile_image", "password1", "password2"]})
     ]
 
     search_fields = ["email"]

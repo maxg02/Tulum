@@ -5,12 +5,12 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseU
 
 
 class AppUserManager(BaseUserManager):
-    def create_user(self, email, first_name, last_name, password=None):
+    def create_user(self, email, first_name, last_name, profile_image, password=None):
         if not email:
             raise ValueError("User must have an email address")
 
         user = self.model(email=email, first_name=first_name,
-                          last_name=last_name)
+                          last_name=last_name, profile_image=profile_image)
 
         user.set_password(password)
         user.save(using=self.db)
@@ -33,6 +33,8 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    profile_image = models.ImageField(
+        upload_to="profile_images", default="profile_images/default_user.jpg")
 
     objects = AppUserManager()
 
