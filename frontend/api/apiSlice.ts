@@ -111,6 +111,7 @@ export type updateGoalContributionDto = {
 const baseQuery = fetchBaseQuery({
     baseUrl: "http://127.0.0.1:8000/",
     prepareHeaders: (headers, { getState }) => {
+        headers.set("Content-Type", "application/json");
         const token = getState().user.tokens?.access;
 
         if (token) {
@@ -121,20 +122,39 @@ const baseQuery = fetchBaseQuery({
     },
 });
 
-// const BaseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (
-//     args,
-//     api,
-//     extraOptions
-// ) => {
-//     let result = await baseQuery(args, api, extraOptions);
+const BaseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (
+    args,
+    api,
+    extraOptions
+) => {
+    let result = await baseQuery(args, api, extraOptions);
+    if (result.error && result.error.status === 401) {
+        console.log("token invalid");
+        const refreshToken = api.getState().user.tokens?.refresh;
+        //try to get new token
+        console.log("refresh token:", refreshToken);
+        console.log("getting new token");
+        const refreshResult = await baseQuery(
+            { url: "/token/refresh/", method: "POST", body: { refresh: refreshToken } },
+            api,
+            extraOptions
+        );
+        console.log("new tokens", refreshResult);
+        if (refreshResult.data) {
+            // store new token
+            api.dispatch(refreshUserToken(refreshResult.data));
+            result = await baseQuery(args, api, extraOptions);
+        } else {
+            console.log("failed");
+            api.dispatch(logOut());
+        }
+    }
 
-//     if (result)
-
-//     return result;
-// };
+    return result;
+};
 
 export const apiSlice = createApi({
-    baseQuery: baseQuery,
+    baseQuery: BaseQueryWithReauth,
     tagTypes: ["Income", "FixedIncome", "ExpenseCategory", "SavingGoal"],
     endpoints: (builder) => ({
         //User endpoints
