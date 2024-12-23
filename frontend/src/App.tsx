@@ -29,11 +29,11 @@ function App() {
                     path: "/savings",
                     element: <Savings />,
                 },
-                {
-                    path: "/login",
-                    element: <Login />,
-                },
             ],
+        },
+        {
+            path: "/login",
+            element: <Login />,
         },
     ]);
 
