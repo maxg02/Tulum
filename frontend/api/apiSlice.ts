@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import { logOut, refreshUserToken } from "../src/reducers/userReducers";
 
 export type incomeDto = { id: number; amount: number; details: string; date: Date };
 export type createIncomeDto = { amount: number; details: string; date: Date };
@@ -166,10 +167,10 @@ export const apiSlice = createApi({
             }),
         }),
         getUserRefreshToken: builder.mutation({
-            query: (accessToken: string) => ({
+            query: (refreshToken: string) => ({
                 url: "token/",
                 method: "Post",
-                body: userData,
+                body: refreshToken,
             }),
         }),
 
