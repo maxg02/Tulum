@@ -130,23 +130,18 @@ const BaseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
 ) => {
     let result = await baseQuery(args, api, extraOptions);
     if (result.error && result.error.status === 401) {
-        console.log("token invalid");
         const refreshToken = api.getState().user.tokens?.refresh;
         //try to get new token
-        console.log("refresh token:", refreshToken);
-        console.log("getting new token");
         const refreshResult = await baseQuery(
             { url: "/token/refresh/", method: "POST", body: { refresh: refreshToken } },
             api,
             extraOptions
         );
-        console.log("new tokens", refreshResult);
         if (refreshResult.data) {
             // store new token
             api.dispatch(refreshUserToken(refreshResult.data));
             result = await baseQuery(args, api, extraOptions);
         } else {
-            console.log("failed");
             api.dispatch(logOut());
         }
     }

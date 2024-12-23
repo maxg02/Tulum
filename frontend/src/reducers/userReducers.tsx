@@ -42,7 +42,6 @@ export const userSlice = createSlice({
             localStorage.setItem("userInfo", JSON.stringify(userInStorage));
         },
         logOut: (state) => {
-            debugger;
             state.tokens = null;
             state.userInfo = null;
             localStorage.removeItem("userInfo");
