@@ -62,6 +62,8 @@ export function DateField({
     defaultValue,
     customLabel,
 }: modalField & { defaultValue?: Date }) {
+    const defaultDate = defaultValue ? defaultValue.toString().substring(0, 16) : null;
+
     return (
         <div className="flex flex-col gap-y-1">
             <label htmlFor="date">{customLabel ?? "Date"}</label>
@@ -71,7 +73,7 @@ export function DateField({
                 name="date"
                 className="formInput w-full"
                 placeholder="Date"
-                value={defaultValue ?? undefined}
+                value={defaultDate ?? undefined}
                 onChange={(e) => fieldStateHandler(e.target.value)}
             ></input>
         </div>
