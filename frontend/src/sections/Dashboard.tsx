@@ -13,7 +13,7 @@ import {
     goalContributionDto,
     incomeDto,
     useGetExpenseCategoryFullByUserIdQuery,
-    useGetIncomesByUserIdQuery,
+    useGetUserIncomesQuery,
     useGetSavingGoalsByUserIdQuery,
 } from "../../api/apiSlice";
 import Loader from "../components/Loader";
@@ -63,7 +63,7 @@ export default function Dashboard() {
         monthExpensesData: pieChartSlice[] = [],
         goalsProgressData: { label: string; progress: number; value: number }[] = [];
 
-    const { data: incomeData, isLoading: incomeIsLoading } = useGetIncomesByUserIdQuery(1);
+    const { data: incomeData, isLoading: incomeIsLoading } = useGetUserIncomesQuery();
     const { data: expenseCategoryData, isLoading: expenseCategoryIsLoading } =
         useGetExpenseCategoryFullByUserIdQuery(1);
     const { data: savingGoalData, isLoading: savingGoalIsLoading } = useGetSavingGoalsByUserIdQuery(1);

@@ -170,13 +170,13 @@ export const apiSlice = createApi({
         }),
 
         //Income endpoints
-        getIncomesByUserId: builder.query<incomeDto[], void>({
+        getUserIncomes: builder.query<incomeDto[], void>({
             query: () => "incomes",
             providesTags: ["Income"],
         }),
         createIncome: builder.mutation({
             query: (incomeData: createIncomeDto) => ({
-                url: "income",
+                url: "incomes/",
                 method: "POST",
                 body: incomeData,
             }),
@@ -184,7 +184,7 @@ export const apiSlice = createApi({
         }),
         updateIncome: builder.mutation({
             query: (incomeData: updateIncomeDto) => ({
-                url: `income/${incomeData.id}`,
+                url: `incomes/${incomeData.id}`,
                 method: "PUT",
                 body: incomeData.data,
             }),
@@ -192,7 +192,7 @@ export const apiSlice = createApi({
         }),
         deleteIncome: builder.mutation({
             query: (Id: number) => ({
-                url: `income/${Id}`,
+                url: `incomes/${Id}`,
                 method: "DELETE",
             }),
             invalidatesTags: ["Income"],
@@ -394,7 +394,7 @@ export const apiSlice = createApi({
 export const {
     useGetUserMutation,
 
-    useGetIncomesByUserIdQuery,
+    useGetUserIncomesQuery,
     useCreateIncomeMutation,
     useUpdateIncomeMutation,
     useDeleteIncomeMutation,

@@ -5,7 +5,7 @@ import SectionContent from "../components/SectionContent";
 import Table, { tableRow } from "../components/Table";
 import { dataObject } from "../components/Table";
 import {
-    useGetIncomesByUserIdQuery,
+    useGetUserIncomesQuery,
     useCreateIncomeMutation,
     useDeleteIncomeMutation,
     useUpdateIncomeMutation,
@@ -19,13 +19,6 @@ import {
     fixedIncomeDto,
     updateFixedIncomeDto,
     createFixedIncomeDto,
-    useGetExpenseCategoryBudgetByUserIdQuery,
-    expenseCategoryDto,
-    createBudgetPlanDto,
-    updateBudgetPlanDto,
-    useCreateBudgetPlanMutation,
-    useDeleteBudgetPlanMutation,
-    useUpdateBudgetPlanMutation,
 } from "../../api/apiSlice";
 import { periodicityValues } from "../components/Constants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -35,7 +28,7 @@ import DetailsModal from "../components/DetailsModal";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { showModal as showCreateModal } from "../reducers/createModalReducers";
 import { showModal as showDetailsModal } from "../reducers/detailsModalReducers";
-import { AmountField, DateField, DetailsField, ListField, SelectField } from "../components/ModalsFields";
+import { AmountField, DateField, DetailsField, ListField } from "../components/ModalsFields";
 import Loader from "../components/Loader";
 
 export default function Budget() {
@@ -43,11 +36,10 @@ export default function Budget() {
     const [details, setDetails] = useState<string>("");
     const [date, setDate] = useState<Date>(new Date());
     const [periodicity, setPeriodicity] = useState<number>(0);
-    const [selectValue, setSelectValue] = useState<number>(0);
     const [incomeToggle, setIncomeToggle] = useState<boolean>(true);
 
     const clearFieldValues = () => {
-        setAmount(0), setDetails(""), setDate(new Date()), setPeriodicity(0), setSelectValue(0);
+        setAmount(0), setDetails(""), setDate(new Date()), setPeriodicity(0);
     };
 
     const dispatch = useAppDispatch();
@@ -63,10 +55,9 @@ export default function Budget() {
     let totalMonthIncome: number = 0;
     let totalYearIncome: number = 0;
     let totalFixedIncome: number = 0;
-    let categorySelectValues: { id: number; value: string; budgetPlan: boolean }[] | undefined;
 
     //Income Fetching
-    const { data: incomeData, isLoading: incomeIsLoading } = useGetIncomesByUserIdQuery(1);
+    const { data: incomeData, isLoading: incomeIsLoading } = useGetUserIncomesQuery();
     const [createIncome] = useCreateIncomeMutation();
     const [deleteIncome] = useDeleteIncomeMutation();
     const [updateIncome] = useUpdateIncomeMutation();
