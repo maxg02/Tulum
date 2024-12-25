@@ -16,9 +16,9 @@ class IncomeList(APIView):
         serializer = IncomeSerializer(incomes, many=True)
         return Response(serializer.data)
 
-    def post(self):
-        user = self.request.user
-        serializer = IncomeSerializer(data=self.request.data)
+    def post(self, request):
+        user = request.user
+        serializer = IncomeSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(user=user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
