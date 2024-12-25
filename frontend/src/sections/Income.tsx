@@ -12,7 +12,7 @@ import {
     incomeDto,
     updateIncomeDto,
     createIncomeDto,
-    useGetFixedIncomesByUserIdQuery,
+    useGetUserFixedIncomesQuery,
     useCreateFixedIncomeMutation,
     useDeleteFixedIncomeMutation,
     useUpdateFixedIncomeMutation,
@@ -63,7 +63,7 @@ export default function Budget() {
     const [updateIncome] = useUpdateIncomeMutation();
 
     //Fixed Income Fetching
-    const { data: fixedIncomeData, isLoading: fixedIncomeIsLoading } = useGetFixedIncomesByUserIdQuery(1);
+    const { data: fixedIncomeData, isLoading: fixedIncomeIsLoading } = useGetUserFixedIncomesQuery();
     const [createFixedIncome] = useCreateFixedIncomeMutation();
     const [deleteFixedIncome] = useDeleteFixedIncomeMutation();
     const [updateFixedIncome] = useUpdateFixedIncomeMutation();

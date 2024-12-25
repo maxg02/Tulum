@@ -199,13 +199,13 @@ export const apiSlice = createApi({
         }),
 
         //Fixed Income endpoints
-        getFixedIncomesByUserId: builder.query<fixedIncomeDto[], number>({
-            query: (userId) => `fixedincome/user/${userId}`,
+        getUserFixedIncomes: builder.query<fixedIncomeDto[], void>({
+            query: () => `fixedincomes`,
             providesTags: ["FixedIncome"],
         }),
         createFixedIncome: builder.mutation({
             query: (fixedIncomeData: createFixedIncomeDto) => ({
-                url: "fixedincome",
+                url: "fixedincomes/",
                 method: "POST",
                 body: fixedIncomeData,
             }),
@@ -213,7 +213,7 @@ export const apiSlice = createApi({
         }),
         updateFixedIncome: builder.mutation({
             query: (fixedIncomeData: updateFixedIncomeDto) => ({
-                url: `fixedincome/${fixedIncomeData.id}`,
+                url: `fixedincomes/${fixedIncomeData.id}`,
                 method: "PUT",
                 body: fixedIncomeData.data,
             }),
@@ -221,7 +221,7 @@ export const apiSlice = createApi({
         }),
         deleteFixedIncome: builder.mutation({
             query: (Id: number) => ({
-                url: `fixedincome/${Id}`,
+                url: `fixedincomes/${Id}`,
                 method: "DELETE",
             }),
             invalidatesTags: ["FixedIncome"],
@@ -399,7 +399,7 @@ export const {
     useUpdateIncomeMutation,
     useDeleteIncomeMutation,
 
-    useGetFixedIncomesByUserIdQuery,
+    useGetUserFixedIncomesQuery,
     useCreateFixedIncomeMutation,
     useUpdateFixedIncomeMutation,
     useDeleteFixedIncomeMutation,
