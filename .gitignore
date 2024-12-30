@@ -301,4 +301,8 @@ __pycache__/
 
 db.sqlite3
 
+#profile_images
+
+./backend/media/profile_images/*
+
 # End of https://www.toptal.com/developers/gitignore/api/aspnetcore
