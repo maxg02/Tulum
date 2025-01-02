@@ -28,6 +28,8 @@ urlpatterns = [
     path('users/', include('users.urls')),
     path('incomes/', include('incomes.urls.income_urls')),
     path('fixedincomes/', include('incomes.urls.fixed_income_urls')),
+    path('expenses/', include('expenses.urls.expense_urls')),
+    path('expensecategories/', include('expenses.urls.expense_category_urls')),
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
