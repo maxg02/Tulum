@@ -28,12 +28,11 @@ class ExpenseDetails(APIView):
 
     def get_object(self, pk):
         try:
-            expense = Expense.objects.get(id=pk)
-            return Response(expense)
-        except:
+            return Expense.objects.get(id=pk)
+        except Expense.DoesNotExist:
             return Response("Expense doesn't exist", status=status.HTTP_404_NOT_FOUND)
 
-    def put(self, pk, request):
+    def put(self, request, pk):
         expense = self.get_object(pk)
         serializer = ExpenseSerializer(expense, request.data)
         if serializer.is_valid():
@@ -42,7 +41,7 @@ class ExpenseDetails(APIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, pk):
+    def delete(self, request, pk):
         expense = self.get_object(pk)
         expense.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

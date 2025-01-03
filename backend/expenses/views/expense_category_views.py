@@ -29,12 +29,11 @@ class ExpenseCategoryDetails(APIView):
 
     def get_object(self, pk):
         try:
-            expense_category = ExpenseCategory.objects.get(id=pk)
-            return Response(expense_category)
-        except:
+            return ExpenseCategory.objects.get(id=pk)
+        except ExpenseCategory.DoesNotExist:
             return Response("Expense Category doesn't exist", status=status.HTTP_404_NOT_FOUND)
 
-    def put(self, pk, request):
+    def put(self, request, pk):
         expense_category = self.get_object(pk)
         serializer = ExpenseCategorySerializer(expense_category, request.data)
         if serializer.is_valid():
@@ -43,7 +42,7 @@ class ExpenseCategoryDetails(APIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, pk):
+    def delete(self, request, pk):
         expense_category = self.get_object(pk)
         expense_category.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
