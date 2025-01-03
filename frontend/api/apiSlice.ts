@@ -28,17 +28,17 @@ export type expenseDto = {
     amount: number;
     details: string;
     date: Date;
-    expenseCategoryId: number;
+    category: number;
 };
 export type createExpenseDto = {
     amount: number;
     details: string;
     date: Date;
-    expenseCategoryId: number;
+    category: number;
 };
 export type updateExpenseDto = {
     id: number;
-    data: { amount: number; details: string; date: Date; expenseCategoryId: number };
+    data: { amount: number; details: string; date: Date; category: number };
 };
 
 export type fixedExpenseDto = {
@@ -46,25 +46,22 @@ export type fixedExpenseDto = {
     amount: number;
     details: string;
     periodicity: number;
-    expenseCategoryId: number;
+    category: number;
 };
 export type createFixedExpenseDto = {
     amount: number;
     details: string;
     periodicity: number;
-    expenseCategoryId: number;
+    category: number;
 };
 export type updateFixedExpenseDto = {
     id: number;
-    data: { amount: number; details: string; periodicity: number; expenseCategoryId: number };
+    data: { amount: number; details: string; periodicity: number; category: number };
 };
 
 export type expenseCategoryDto = {
     id: number;
     category: string;
-    budgetPlan?: { id: number; amount: number; expenseCategoryId: number; periodicity: number };
-    expenses?: expenseDto[];
-    fixedExpenses?: fixedExpenseDto[];
 };
 export type createExpenseCategoryDto = {
     category: string;
@@ -311,9 +308,13 @@ export const apiSlice = createApi({
         }),
 
         //Fixed Expense endpoints
+        getUserFixedExpenses: builder.query<fixedExpenseDto[], void>({
+            query: () => `fixedexpenses/`,
+            providesTags: ["ExpenseCategory"],
+        }),
         createFixedExpense: builder.mutation({
             query: (fixedExpenseData: createFixedExpenseDto) => ({
-                url: "fixedexpense/",
+                url: "fixedexpenses/",
                 method: "POST",
                 body: fixedExpenseData,
             }),
@@ -321,7 +322,7 @@ export const apiSlice = createApi({
         }),
         updateFixedExpense: builder.mutation({
             query: (fixedExpenseData: updateFixedExpenseDto) => ({
-                url: `fixedexpense/${fixedExpenseData.id}`,
+                url: `fixedexpenses/${fixedExpenseData.id}`,
                 method: "PUT",
                 body: fixedExpenseData.data,
             }),
@@ -329,7 +330,7 @@ export const apiSlice = createApi({
         }),
         deleteFixedExpense: builder.mutation({
             query: (Id: number) => ({
-                url: `fixedexpense/${Id}`,
+                url: `fixedexpenses/${Id}`,
                 method: "DELETE",
             }),
             invalidatesTags: ["ExpenseCategory"],
@@ -418,6 +419,7 @@ export const {
     useUpdateExpenseMutation,
     useDeleteExpenseMutation,
 
+    useGetUserFixedExpensesQuery,
     useCreateFixedExpenseMutation,
     useUpdateFixedExpenseMutation,
     useDeleteFixedExpenseMutation,
