@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status, permissions
-from expenses.models import Expense, ExpenseCategory
+from expenses.models import Expense
 from expenses.serializers import ExpenseSerializer
 
 
