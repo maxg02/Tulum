@@ -12,7 +12,7 @@ import {
     expenseDto,
     goalContributionDto,
     incomeDto,
-    useGetExpenseCategoryFullByUserIdQuery,
+    useGetUserExpenseCategoriesQuery,
     useGetUserIncomesQuery,
     useGetSavingGoalsByUserIdQuery,
 } from "../../api/apiSlice";
@@ -65,7 +65,7 @@ export default function Dashboard() {
 
     const { data: incomeData, isLoading: incomeIsLoading } = useGetUserIncomesQuery();
     const { data: expenseCategoryData, isLoading: expenseCategoryIsLoading } =
-        useGetExpenseCategoryFullByUserIdQuery(1);
+        useGetUserExpenseCategoriesQuery(1);
     const { data: savingGoalData, isLoading: savingGoalIsLoading } = useGetSavingGoalsByUserIdQuery(1);
 
     const monthList = [

@@ -11,9 +11,10 @@ import {
     createExpenseDto,
     expenseCategoryDto,
     updateExpenseDto,
+    useGetUserExpensesQuery,
     useCreateExpenseMutation,
     useDeleteExpenseMutation,
-    useGetExpenseCategoryFullByUserIdQuery,
+    useGetUserExpenseCategoriesQuery,
     useUpdateExpenseMutation,
     fixedExpenseDto,
     createFixedExpenseDto,
@@ -54,7 +55,7 @@ export default function Expenses() {
 
     const currentDate: Date = new Date();
     const currentMonth: string = new Intl.DateTimeFormat("en-US", { month: "long" }).format(currentDate);
-    const expensesRow: tableRow[] = [],
+    let expensesRow: tableRow[] = [],
         fixedExpensesRow: tableRow[] = [];
 
     let budgetExpensesRow: tableRow[] = [],
@@ -81,12 +82,13 @@ export default function Expenses() {
 
     //Expense Category Fetching
     const { data: expenseCategoryData, isLoading: expenseCategoryIsLoading } =
-        useGetExpenseCategoryFullByUserIdQuery(1);
+        useGetUserExpenseCategoriesQuery();
     const [createExpenseCategory] = useCreateExpenseCategoryMutation();
     const [deleteExpenseCategory] = useDeleteExpenseCategoryMutation();
     const [updateExpenseCategory] = useUpdateExpenseCategoryMutation();
 
     //Expense Fetching
+    const { data: expenseData, isLoading: expenseIsLoading } = useGetUserExpensesQuery();
     const [createExpense] = useCreateExpenseMutation();
     const [deleteExpense] = useDeleteExpenseMutation();
     const [updateExpense] = useUpdateExpenseMutation();
@@ -102,40 +104,36 @@ export default function Expenses() {
     const [updateFixedExpense] = useUpdateFixedExpenseMutation();
 
     // Expenses Category Data handling
-    if (!expenseCategoryIsLoading && expenseCategoryData != undefined) {
-        expenseCategoryData
-            .filter((eC: expenseCategoryDto) => eC.expenses!.length)
-            .map((eC: expenseCategoryDto) =>
-                eC.expenses!.map((e) => {
-                    expensesRow.push({
-                        id: e.id,
-                        data: [
-                            e.amount,
-                            e.details,
-                            new Date(e.date).toLocaleDateString("en-US"),
-                            eC.category,
-                        ],
-                    });
-                })
-            );
+    if (
+        !expenseCategoryIsLoading &&
+        expenseCategoryData != undefined &&
+        !expenseIsLoading &&
+        expenseData != undefined
+    ) {
+        expensesRow = expenseData.map((expense: expenseDto) => ({
+            id: expense.id,
+            data: [
+                expense.amount,
+                expense.details,
+                new Date(expense.date).toLocaleDateString("en-US"),
+                expenseCategoryData.find((ec) => ec.id === expense.category)!.category,
+            ],
+        }));
 
-        expenseCategoryData
-            .filter((eC: expenseCategoryDto) => eC.fixedExpenses!.length)
-            .map((eC: expenseCategoryDto) =>
-                eC.fixedExpenses!.map((fe) => {
-                    fixedExpensesRow.push({
-                        id: fe.id,
-                        data: [fe.amount, fe.details, fe.periodicity, eC.category],
-                    });
-                })
-            );
+        // expenseCategoryData
+        //     .filter((eC: expenseCategoryDto) => eC.fixedExpenses!.length)
+        //     .map((eC: expenseCategoryDto) =>
+        //         eC.fixedExpenses!.map((fe) => {
+        //             fixedExpensesRow.push({
+        //                 id: fe.id,
+        //                 data: [fe.amount, fe.details, fe.periodicity, eC.category],
+        //             });
+        //         })
+        //     );
 
         categorySelectValues = expenseCategoryData.map((ec: expenseCategoryDto) => ({
             id: ec.id,
             value: ec.category,
-            budgetPlan: ec.budgetPlan ? true : false,
-            expense: ec.expenses!.length ? true : false,
-            fixedExpense: ec.expenses!.length ? true : false,
         }));
 
         expenseCategoriesRow = expenseCategoryData.map((expenseCategory: expenseCategoryDto) => ({
@@ -143,44 +141,44 @@ export default function Expenses() {
             data: [expenseCategory.category],
         }));
 
-        allExpenses = expenseCategoryData
-            ?.map((ec) => ec.expenses)
-            .reduce((acc, currentValue) => acc!.concat(currentValue!), []);
+        // allExpenses = expenseCategoryData
+        //     ?.map((ec) => ec.expenses)
+        //     .reduce((acc, currentValue) => acc!.concat(currentValue!), []);
 
-        allFixedExpenses = expenseCategoryData
-            ?.map((ec) => ec.fixedExpenses)
-            .reduce((acc, currentValue) => acc!.concat(currentValue!), []);
+        // allFixedExpenses = expenseCategoryData
+        //     ?.map((ec) => ec.fixedExpenses)
+        //     .reduce((acc, currentValue) => acc!.concat(currentValue!), []);
 
-        const monthExpenses = allExpenses?.filter(
-            (expense) =>
-                new Date(expense.date).getMonth() === currentDate.getMonth() &&
-                new Date(expense.date).getFullYear() === currentDate.getFullYear()
-        );
+        // const monthExpenses = allExpenses?.filter(
+        //     (expense) =>
+        //         new Date(expense.date).getMonth() === currentDate.getMonth() &&
+        //         new Date(expense.date).getFullYear() === currentDate.getFullYear()
+        // );
 
-        const monthExpensesByCategory: object = Object.groupBy(
-            monthExpenses,
-            (expense: expenseDto) => expense.expenseCategoryId
-        );
+        // const monthExpensesByCategory: object = Object.groupBy(
+        //     monthExpenses,
+        //     (expense: expenseDto) => expense.expenseCategoryId
+        // );
 
-        monthExpensesData = Object.keys(monthExpensesByCategory).map<pieChartSlice>((key) => ({
-            label: categorySelectValues?.find((c) => c.id === parseInt(key))!.value,
-            value: monthExpensesByCategory[key].reduce((acc, expense) => acc + expense.amount, 0),
-        }));
+        // monthExpensesData = Object.keys(monthExpensesByCategory).map<pieChartSlice>((key) => ({
+        //     label: categorySelectValues?.find((c) => c.id === parseInt(key))!.value,
+        //     value: monthExpensesByCategory[key].reduce((acc, expense) => acc + expense.amount, 0),
+        // }));
 
-        budgetExpensesRow = expenseCategoryData
-            .filter((ec) => ec.budgetPlan)
-            .map((expenseCategory: expenseCategoryDto) => ({
-                id: expenseCategory.budgetPlan!.id,
-                data: [
-                    expenseCategory.category,
-                    {
-                        value:
-                            monthExpensesData.find((ec) => ec.label === expenseCategory.category)
-                                ?.value ?? 0,
-                        total: expenseCategory.budgetPlan!.amount,
-                    },
-                ],
-            }));
+        // budgetExpensesRow = expenseCategoryData
+        //     .filter((ec) => ec.budgetPlan)
+        //     .map((expenseCategory: expenseCategoryDto) => ({
+        //         id: expenseCategory.budgetPlan!.id,
+        //         data: [
+        //             expenseCategory.category,
+        //             {
+        //                 value:
+        //                     monthExpensesData.find((ec) => ec.label === expenseCategory.category)
+        //                         ?.value ?? 0,
+        //                 total: expenseCategory.budgetPlan!.amount,
+        //             },
+        //         ],
+        //     }));
     }
 
     // Show create Expense Modal
@@ -226,12 +224,12 @@ export default function Expenses() {
         newState.id = expenseId;
         newState.show = { ...detailsModalState.show, expense: true };
 
-        const selectedExpenseData = allExpenses!.find((exp) => exp.id === expenseId);
+        const selectedExpenseData = expenseData!.find((exp) => exp.id === expenseId);
 
         setAmount(selectedExpenseData!.amount);
         setDetails(selectedExpenseData!.details);
         setDate(selectedExpenseData!.date);
-        setSelectValue(selectedExpenseData!.expenseCategoryId);
+        setSelectValue(selectedExpenseData!.category);
         dispatch(showDetailsModal(newState));
     };
 
@@ -291,7 +289,7 @@ export default function Expenses() {
             amount: amount,
             details: details,
             date: date,
-            expenseCategoryId: selectValue,
+            category: selectValue,
         };
         createExpense(expenseData);
     };
@@ -355,7 +353,7 @@ export default function Expenses() {
     const updateExpenseHandler = () => {
         const expenseData: updateExpenseDto = {
             id: detailsModalState.id!,
-            data: { amount: amount, details: details, date: date, expenseCategoryId: selectValue },
+            data: { amount: amount, details: details, date: date, category: selectValue },
         };
 
         updateExpense(expenseData);
