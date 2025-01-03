@@ -18,6 +18,7 @@ import {
     useUpdateExpenseMutation,
     fixedExpenseDto,
     createFixedExpenseDto,
+    useGetUserFixedExpensesQuery,
     useCreateFixedExpenseMutation,
     useDeleteFixedExpenseMutation,
     useUpdateFixedExpenseMutation,
@@ -99,6 +100,7 @@ export default function Expenses() {
     const [updateBudgetPlan] = useUpdateBudgetPlanMutation();
 
     //Fixed Expense Fetching
+    const { data: fixedExpenseData, isLoading: fixedExpenseIsLoading } = useGetUserFixedExpensesQuery();
     const [createFixedExpense] = useCreateFixedExpenseMutation();
     const [deleteFixedExpense] = useDeleteFixedExpenseMutation();
     const [updateFixedExpense] = useUpdateFixedExpenseMutation();
@@ -108,7 +110,9 @@ export default function Expenses() {
         !expenseCategoryIsLoading &&
         expenseCategoryData != undefined &&
         !expenseIsLoading &&
-        expenseData != undefined
+        expenseData != undefined &&
+        !fixedExpenseIsLoading &&
+        fixedExpenseData != undefined
     ) {
         expensesRow = expenseData.map((expense: expenseDto) => ({
             id: expense.id,
@@ -120,16 +124,15 @@ export default function Expenses() {
             ],
         }));
 
-        // expenseCategoryData
-        //     .filter((eC: expenseCategoryDto) => eC.fixedExpenses!.length)
-        //     .map((eC: expenseCategoryDto) =>
-        //         eC.fixedExpenses!.map((fe) => {
-        //             fixedExpensesRow.push({
-        //                 id: fe.id,
-        //                 data: [fe.amount, fe.details, fe.periodicity, eC.category],
-        //             });
-        //         })
-        //     );
+        fixedExpensesRow = fixedExpenseData.map((fixedExpense: fixedExpenseDto) => ({
+            id: fixedExpense.id,
+            data: [
+                fixedExpense.amount,
+                fixedExpense.details,
+                fixedExpense.periodicity,
+                expenseCategoryData.find((ec) => ec.id === fixedExpense.category)!.category,
+            ],
+        }));
 
         categorySelectValues = expenseCategoryData.map((ec: expenseCategoryDto) => ({
             id: ec.id,
@@ -236,16 +239,17 @@ export default function Expenses() {
     //Show details Fixed Expense Modal
     const showDetailsFixedExpenseModal = (fixedExpenseId: number) => {
         clearFieldValues();
+        debugger;
         const newState = { ...detailsModalState };
         newState.id = fixedExpenseId;
         newState.show = { ...detailsModalState.show, fixedExpense: true };
 
-        const selectedFixedExpenseData = allFixedExpenses!.find((fExp) => fExp.id === fixedExpenseId);
+        const selectedFixedExpenseData = fixedExpenseData!.find((fExp) => fExp.id === fixedExpenseId);
 
         setAmount(selectedFixedExpenseData!.amount);
         setDetails(selectedFixedExpenseData!.details);
         setPeriodicity(selectedFixedExpenseData!.periodicity);
-        setSelectValue(selectedFixedExpenseData!.expenseCategoryId);
+        setSelectValue(selectedFixedExpenseData!.category);
         dispatch(showDetailsModal(newState));
     };
 
@@ -300,7 +304,7 @@ export default function Expenses() {
             amount: amount,
             details: details,
             periodicity: periodicity,
-            expenseCategoryId: selectValue,
+            category: selectValue,
         };
         createFixedExpense(fixedExpenseData);
     };
@@ -309,7 +313,7 @@ export default function Expenses() {
     const createBudgetHandler = () => {
         const budgetPlanData: createBudgetPlanDto = {
             amount: amount,
-            expenseCategoryId: selectValue,
+            category: selectValue,
             periodicity: periodicity,
         };
 
@@ -367,7 +371,7 @@ export default function Expenses() {
                 amount: amount,
                 details: details,
                 periodicity: periodicity,
-                expenseCategoryId: selectValue,
+                category: selectValue,
             },
         };
 
