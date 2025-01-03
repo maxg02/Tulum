@@ -228,17 +228,13 @@ export const apiSlice = createApi({
         }),
 
         //Expense Category endpoints
-        getExpenseCategoryFullByUserId: builder.query<expenseCategoryDto[], number>({
-            query: (userId) => `expensecategory/user/full/${userId}`,
-            providesTags: ["ExpenseCategory"],
-        }),
-        getExpenseCategoryBudgetByUserId: builder.query<expenseCategoryDto[], number>({
-            query: (userId) => `expensecategory/user/budget/${userId}`,
+        getUserExpenseCategories: builder.query<expenseCategoryDto[], void>({
+            query: () => `expensecategories/`,
             providesTags: ["ExpenseCategory"],
         }),
         createExpenseCategory: builder.mutation({
             query: (expenseCategoryData: createExpenseCategoryDto) => ({
-                url: "expenseCategory",
+                url: "expensecategories/",
                 method: "POST",
                 body: expenseCategoryData,
             }),
@@ -246,7 +242,7 @@ export const apiSlice = createApi({
         }),
         updateExpenseCategory: builder.mutation({
             query: (expenseCategoryData: updateExpenseCategoryDto) => ({
-                url: `expenseCategory/${expenseCategoryData.id}`,
+                url: `expensecategories/${expenseCategoryData.id}`,
                 method: "PUT",
                 body: expenseCategoryData.data,
             }),
@@ -254,7 +250,7 @@ export const apiSlice = createApi({
         }),
         deleteExpenseCategory: builder.mutation({
             query: (Id: number) => ({
-                url: `expenseCategory/${Id}`,
+                url: `expensecategories/${Id}`,
                 method: "DELETE",
             }),
             invalidatesTags: ["ExpenseCategory"],
@@ -286,9 +282,13 @@ export const apiSlice = createApi({
         }),
 
         //Expense endpoints
+        getUserExpenses: builder.query<expenseDto[], void>({
+            query: () => `expenses/`,
+            providesTags: ["ExpenseCategory"],
+        }),
         createExpense: builder.mutation({
             query: (expenseData: createExpenseDto) => ({
-                url: "expense",
+                url: "expenses/",
                 method: "POST",
                 body: expenseData,
             }),
@@ -296,7 +296,7 @@ export const apiSlice = createApi({
         }),
         updateExpense: builder.mutation({
             query: (expenseData: updateExpenseDto) => ({
-                url: `expense/${expenseData.id}`,
+                url: `expenses/${expenseData.id}`,
                 method: "PUT",
                 body: expenseData.data,
             }),
@@ -304,7 +304,7 @@ export const apiSlice = createApi({
         }),
         deleteExpense: builder.mutation({
             query: (Id: number) => ({
-                url: `expense/${Id}`,
+                url: `expenses/${Id}`,
                 method: "DELETE",
             }),
             invalidatesTags: ["ExpenseCategory"],
@@ -313,7 +313,7 @@ export const apiSlice = createApi({
         //Fixed Expense endpoints
         createFixedExpense: builder.mutation({
             query: (fixedExpenseData: createFixedExpenseDto) => ({
-                url: "fixedexpense",
+                url: "fixedexpense/",
                 method: "POST",
                 body: fixedExpenseData,
             }),
@@ -404,8 +404,7 @@ export const {
     useUpdateFixedIncomeMutation,
     useDeleteFixedIncomeMutation,
 
-    useGetExpenseCategoryFullByUserIdQuery,
-    useGetExpenseCategoryBudgetByUserIdQuery,
+    useGetUserExpenseCategoriesQuery,
     useCreateExpenseCategoryMutation,
     useDeleteExpenseCategoryMutation,
     useUpdateExpenseCategoryMutation,
@@ -414,6 +413,7 @@ export const {
     useDeleteBudgetPlanMutation,
     useUpdateBudgetPlanMutation,
 
+    useGetUserExpensesQuery,
     useCreateExpenseMutation,
     useUpdateExpenseMutation,
     useDeleteExpenseMutation,
