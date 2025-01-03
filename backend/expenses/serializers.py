@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from expenses.models import Expense, ExpenseCategory
+from expenses.models import Expense, ExpenseCategory, FixedExpense
 
 
 class ExpenseSerializer(serializers.ModelSerializer):
@@ -15,3 +15,12 @@ class ExpenseCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = ExpenseCategory
         exclude = ['user']
+
+
+class FixedExpenseSerializer(serializers.ModelSerializer):
+    category = serializers.PrimaryKeyRelatedField(
+        many=False, queryset=ExpenseCategory.objects.all(), read_only=False)
+
+    class Meta:
+        model = FixedExpense
+        fields = ['id', 'amount', 'details', 'periodicity', 'category']
