@@ -25,6 +25,7 @@ import {
     updateFixedExpenseDto,
     updateBudgetPlanDto,
     createBudgetPlanDto,
+    useGetUserBudgetPlansQuery,
     useCreateBudgetPlanMutation,
     useDeleteBudgetPlanMutation,
     useUpdateBudgetPlanMutation,
@@ -95,6 +96,7 @@ export default function Expenses() {
     const [updateExpense] = useUpdateExpenseMutation();
 
     //Budget Plan Expense Fetching
+    const { data: budgetPlanData, isLoading: budgetPlanIsLoading } = useGetUserBudgetPlansQuery();
     const [createBudgetPlan] = useCreateBudgetPlanMutation();
     const [deleteBudgetPlan] = useDeleteBudgetPlanMutation();
     const [updateBudgetPlan] = useUpdateBudgetPlanMutation();
@@ -112,7 +114,9 @@ export default function Expenses() {
         !expenseIsLoading &&
         expenseData != undefined &&
         !fixedExpenseIsLoading &&
-        fixedExpenseData != undefined
+        fixedExpenseData != undefined &&
+        !budgetPlanIsLoading &&
+        budgetPlanData != undefined
     ) {
         expensesRow = expenseData.map((expense: expenseDto) => ({
             id: expense.id,
@@ -122,6 +126,29 @@ export default function Expenses() {
                 new Date(expense.date).toLocaleDateString("en-US"),
                 expenseCategoryData.find((ec) => ec.id === expense.category)!.category,
             ],
+        }));
+
+        // TODO: REFACTOR MONTH EXPENSES
+
+        const monthExpenses = expenseData?.filter(
+            (expense) =>
+                new Date(expense.date).getMonth() === currentDate.getMonth() &&
+                new Date(expense.date).getFullYear() === currentDate.getFullYear()
+        );
+
+        const monthExpensesByCategory: object = Object.groupBy(
+            monthExpenses,
+            (expense: expenseDto) => expense.category
+        );
+
+        monthExpensesData = Object.keys(monthExpensesByCategory).map<pieChartSlice>((key) => ({
+            label: categorySelectValues?.find((c) => c.id === parseInt(key))!.value,
+            value: monthExpensesByCategory[key].reduce((acc, expense) => acc + expense.amount, 0),
+        }));
+
+        expenseCategoriesRow = expenseCategoryData.map((expenseCategory: expenseCategoryDto) => ({
+            id: expenseCategory.id,
+            data: [expenseCategory.category],
         }));
 
         fixedExpensesRow = fixedExpenseData.map((fixedExpense: fixedExpenseDto) => ({
@@ -139,11 +166,6 @@ export default function Expenses() {
             value: ec.category,
         }));
 
-        expenseCategoriesRow = expenseCategoryData.map((expenseCategory: expenseCategoryDto) => ({
-            id: expenseCategory.id,
-            data: [expenseCategory.category],
-        }));
-
         // allExpenses = expenseCategoryData
         //     ?.map((ec) => ec.expenses)
         //     .reduce((acc, currentValue) => acc!.concat(currentValue!), []);
@@ -152,36 +174,22 @@ export default function Expenses() {
         //     ?.map((ec) => ec.fixedExpenses)
         //     .reduce((acc, currentValue) => acc!.concat(currentValue!), []);
 
-        // const monthExpenses = allExpenses?.filter(
-        //     (expense) =>
-        //         new Date(expense.date).getMonth() === currentDate.getMonth() &&
-        //         new Date(expense.date).getFullYear() === currentDate.getFullYear()
-        // );
+        // TODO: Create budget plan DTO
+        budgetExpensesRow = budgetPlanData.map((bp) => {
+            const bpCategory = expenseCategoryData.find((ec) => ec.id === bp.category);
 
-        // const monthExpensesByCategory: object = Object.groupBy(
-        //     monthExpenses,
-        //     (expense: expenseDto) => expense.expenseCategoryId
-        // );
-
-        // monthExpensesData = Object.keys(monthExpensesByCategory).map<pieChartSlice>((key) => ({
-        //     label: categorySelectValues?.find((c) => c.id === parseInt(key))!.value,
-        //     value: monthExpensesByCategory[key].reduce((acc, expense) => acc + expense.amount, 0),
-        // }));
-
-        // budgetExpensesRow = expenseCategoryData
-        //     .filter((ec) => ec.budgetPlan)
-        //     .map((expenseCategory: expenseCategoryDto) => ({
-        //         id: expenseCategory.budgetPlan!.id,
-        //         data: [
-        //             expenseCategory.category,
-        //             {
-        //                 value:
-        //                     monthExpensesData.find((ec) => ec.label === expenseCategory.category)
-        //                         ?.value ?? 0,
-        //                 total: expenseCategory.budgetPlan!.amount,
-        //             },
-        //         ],
-        //     }));
+            return {
+                id: bp.id,
+                data: [
+                    bpCategory!.category,
+                    {
+                        value:
+                            monthExpensesData.find((ec) => ec.label === bpCategory!.category)?.value ?? 0,
+                        total: bp.amount,
+                    },
+                ],
+            };
+        });
     }
 
     // Show create Expense Modal
@@ -239,7 +247,6 @@ export default function Expenses() {
     //Show details Fixed Expense Modal
     const showDetailsFixedExpenseModal = (fixedExpenseId: number) => {
         clearFieldValues();
-        debugger;
         const newState = { ...detailsModalState };
         newState.id = fixedExpenseId;
         newState.show = { ...detailsModalState.show, fixedExpense: true };
@@ -260,13 +267,13 @@ export default function Expenses() {
         newState.id = budgetId;
         newState.show = { ...detailsModalState.show, budgetPlanning: true };
 
-        const budgetData: expenseCategoryDto = expenseCategoryData!.filter(
-            (ec: expenseCategoryDto) => ec.budgetPlan?.id === budgetId
-        )[0];
+        //TODO: add budgetplandto
 
-        setAmount(budgetData.budgetPlan!.amount);
-        setSelectValue(budgetData.id);
-        setPeriodicity(budgetData.budgetPlan!.periodicity);
+        const selectedBudgetPlan = budgetPlanData!.find((bp) => bp.id === budgetId);
+
+        setAmount(selectedBudgetPlan.amount);
+        setSelectValue(selectedBudgetPlan.id);
+        setPeriodicity(selectedBudgetPlan.periodicity);
 
         dispatch(showDetailsModal(newState));
     };
@@ -746,6 +753,7 @@ export default function Expenses() {
                 show={detailsModalState.show.budgetPlanning}
             >
                 <AmountField defaultValue={amount} fieldStateHandler={setAmount} />
+                {/*TODO: Fix This */}
                 <SelectField
                     defaultValue={selectValue}
                     fieldStateHandler={setSelectValue}
