@@ -1,9 +1,9 @@
-﻿using backend.Data;
-using backend.Dtos.Income;
+﻿using backend.Dtos.Income;
 using backend.Mappers;
 using backend.Repositories.Interfaces;
+using backend.Utilities.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 
 namespace backend.Controllers
@@ -13,15 +13,21 @@ namespace backend.Controllers
     public class IncomeController : ControllerBase
     {
         private readonly IIncomeRepo _incomeRepo;
+        private readonly IHttpContextAccessor _httpContext;
+        private readonly IClaimsAccess _claimsAccess;
 
-        public IncomeController(IIncomeRepo incomeRepo) 
+        public IncomeController(IIncomeRepo incomeRepo, IHttpContextAccessor httpContext, IClaimsAccess claimsAccess) 
         {
             _incomeRepo = incomeRepo;
-        } 
+            _httpContext = httpContext;
+            _claimsAccess = claimsAccess;
+        }
 
-        [HttpGet("user/{userId}")]
-        public async Task<IActionResult> GetUserIncome([FromRoute] int userId)
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetUserIncome()
         {
+            int userId = _claimsAccess.GetUserIdFromClaims(_httpContext.HttpContext!);
             var incomes = await _incomeRepo.GetByUserIdAsync(userId);
 
             var incomeDto = incomes.Select(s => s.ToIncomeDto());
@@ -29,6 +35,7 @@ namespace backend.Controllers
             return Ok(incomeDto);
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetIncome([FromRoute] int id)
         {
@@ -41,16 +48,19 @@ namespace backend.Controllers
             return Ok(income.ToIncomeDto());
         }
 
+        [Authorize]
         [HttpPost]
-        public async Task<IActionResult> CreateIncome([FromBody] CreateIncomeRequestDto incomeDto)
+        public async Task<IActionResult> CreateIncome([FromBody] IncomeRequestDto incomeDto)
         {
-            var incomeModel = await _incomeRepo.CreateAsync(incomeDto.ToIncomeFromCreateDto());
+            int userId = _claimsAccess.GetUserIdFromClaims(_httpContext.HttpContext!);
+            var incomeModel = await _incomeRepo.CreateAsync(incomeDto.ToIncomeFromCreateDto(userId));
             
             return CreatedAtAction(nameof(GetIncome), new { id = incomeModel.Id }, incomeModel.ToIncomeDto());
         }
 
+        [Authorize]
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateIncome([FromRoute] int id, [FromBody] UpdateIncomeRequestDto incomeDto)
+        public async Task<IActionResult> UpdateIncome([FromRoute] int id, [FromBody] IncomeRequestDto incomeDto)
         {
             var incomeModel = await _incomeRepo.UpdateAsync(id, incomeDto);
 
@@ -62,6 +72,7 @@ namespace backend.Controllers
             return Ok(incomeModel.ToIncomeDto());
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteIncome([FromRoute] int id)
         {

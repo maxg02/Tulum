@@ -1,6 +1,6 @@
 ﻿namespace backend.Dtos.SavingGoal
 {
-    public class UpdateSavingGoalRequestDto
+    public class SavingGoalRequestDto
     {
         public string Details { get; set; } = String.Empty;
         public int Goal { get; set; }

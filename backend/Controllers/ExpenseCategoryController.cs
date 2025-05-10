@@ -1,6 +1,8 @@
 ﻿using backend.Dtos.ExpenseCategory;
 using backend.Mappers;
 using backend.Repositories.Interfaces;
+using backend.Utilities.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
@@ -10,33 +12,30 @@ namespace backend.Controllers
     public class ExpenseCategoryController : ControllerBase
     {
         private readonly IExpenseCategoryRepo _expenseCategoryRepo;
+        private readonly IHttpContextAccessor _httpContext;
+        private readonly IClaimsAccess _claimsAccess;
 
-        public ExpenseCategoryController(IExpenseCategoryRepo expenseCategoryRepo)
+        public ExpenseCategoryController(IExpenseCategoryRepo expenseCategoryRepo, IHttpContextAccessor httpContext, IClaimsAccess claimsAccess)
         {
             _expenseCategoryRepo = expenseCategoryRepo;
+            _httpContext = httpContext;
+            _claimsAccess = claimsAccess;
         }
 
-        [HttpGet("user/full/{userId}")]
-        public async Task<IActionResult> GetUserExpenseCategoryFull([FromRoute] int userId)
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> GetUserExpenseCategory()
         {
-            var expenseCategories = await _expenseCategoryRepo.GetByUserIdFullAsync(userId);
+            int userId = _claimsAccess.GetUserIdFromClaims(_httpContext.HttpContext!);
+            var expenseCategories = await _expenseCategoryRepo.GetByUserIdAsync(userId);
 
-            var expenseCategoriesFullDto = expenseCategories.Select(ec => ec.ToExpenseCategoryFullDto());
+            var expenseCategoriesDto = expenseCategories.Select(ec => ec.ToExpenseCategoryDto());
 
-            return Ok(expenseCategoriesFullDto);
+            return Ok(expenseCategoriesDto);
         }
-
-        [HttpGet("user/budget/{userId}")]
-        public async Task<IActionResult> GetUserExpenseCategoryWithBudget([FromRoute] int userId)
-        {
-            var expenseCategories = await _expenseCategoryRepo.GetByUserIdFullAsync(userId);
-
-            var expenseCategoriesFullDto = expenseCategories.Select(ec => ec.ToExpenseCategoryWithBudgetDto());
-
-            return Ok(expenseCategoriesFullDto);
-        }
-
+        
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> GetExpenseCategory([FromRoute] int id)
         {
             var expenseCategory = await _expenseCategoryRepo.GetByIdAsync(id);
@@ -50,15 +49,18 @@ namespace backend.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateExpenseCategory([FromBody] CreateExpenseCategoryRequestDto expenseCategoryDto)
+        [Authorize]
+        public async Task<IActionResult> CreateExpenseCategory([FromBody] ExpenseCategoryRequestDto expenseCategoryDto)
         {
-            var expenseCategory = await _expenseCategoryRepo.CreateAsync(expenseCategoryDto.ToExpenseCategoryFromCreateDto());
+            int userId = _claimsAccess.GetUserIdFromClaims(_httpContext.HttpContext!);
+            var expenseCategory = await _expenseCategoryRepo.CreateAsync(expenseCategoryDto.ToExpenseCategoryFromCreateDto(userId));
 
-            return CreatedAtAction(nameof(GetExpenseCategory), new { id = expenseCategory.Id }, expenseCategory.ToExpenseCategoryFullDto());
+            return CreatedAtAction(nameof(GetExpenseCategory), new { id = expenseCategory.Id }, expenseCategory.ToExpenseCategoryDto());
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateExpenseCategory([FromRoute] int id, [FromBody] UpdateExpenseCategoryRequestDto expenseCategoryDto)
+        [Authorize]
+        public async Task<IActionResult> UpdateExpenseCategory([FromRoute] int id, [FromBody] ExpenseCategoryRequestDto expenseCategoryDto)
         {
             var expenseCategory = await _expenseCategoryRepo.UpdateAsync(id, expenseCategoryDto);
 
@@ -67,10 +69,11 @@ namespace backend.Controllers
                 return NotFound();
             }
 
-            return Ok(expenseCategory.ToExpenseCategoryFullDto());
+            return Ok(expenseCategory.ToExpenseCategoryDto());
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteExpenseCategory([FromRoute] int id)
         {
             var expenseCategory = await _expenseCategoryRepo.DeleteAsync(id);

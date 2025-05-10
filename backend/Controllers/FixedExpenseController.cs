@@ -1,6 +1,7 @@
 ﻿using backend.Dtos.FixedExpense;
 using backend.Mappers;
 using backend.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
@@ -14,6 +15,7 @@ namespace backend.Controllers
         public FixedExpenseController(IFixedExpenseRepo fixedExpenseRepo) => _fixedExpenseRepo = fixedExpenseRepo;
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> CreateFixedExpense([FromBody] CUFixedExpenseRequestDto fixedExpenseDto)
         {
             var fixedExpense = await _fixedExpenseRepo.CreateAsync(fixedExpenseDto.ToFixedExpenseFromCreateDto());
@@ -22,6 +24,7 @@ namespace backend.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> UpdateFixedExpense([FromRoute] int id, [FromBody] CUFixedExpenseRequestDto fixedExpenseDto)
         {
             var fixedExpense = await _fixedExpenseRepo.UpdateAsync(id, fixedExpenseDto);
@@ -35,6 +38,7 @@ namespace backend.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteFixedExpense([FromRoute] int id)
         {
             var fixedExpense = await _fixedExpenseRepo.DeleteAsync(id);

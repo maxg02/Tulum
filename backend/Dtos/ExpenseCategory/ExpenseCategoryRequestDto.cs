@@ -1,8 +1,7 @@
 ﻿namespace backend.Dtos.ExpenseCategory
 {
-    public class CreateExpenseCategoryRequestDto
+    public class ExpenseCategoryRequestDto
     {
         public string Category { get; set; } = String.Empty;
-        public int UserId { get; set; }
     }
 }

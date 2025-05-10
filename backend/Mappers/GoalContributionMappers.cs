@@ -5,7 +5,7 @@ namespace backend.Mappers
 {
     public static class GoalContributionMappers
     {
-        public static GoalContribution ToGoalContributionFromCreateDto(this CUGoalContributionRequestDto goalContributionDto)
+        public static GoalContribution ToGoalContributionFromCreateDto(this GoalContributionRequestDto goalContributionDto)
         {
             return new GoalContribution
             {

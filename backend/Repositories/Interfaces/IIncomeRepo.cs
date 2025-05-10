@@ -8,7 +8,7 @@ namespace backend.Repositories.Interfaces
         Task<List<Income>> GetByUserIdAsync(int userId);
         Task<Income?> GetByIdAsync(int id);
         Task<Income> CreateAsync(Income incomeModel);
-        Task<Income?> UpdateAsync(int id, UpdateIncomeRequestDto incomeDto);
+        Task<Income?> UpdateAsync(int id, IncomeRequestDto incomeDto);
         Task<Income?> DeleteAsync(int id);
 
 

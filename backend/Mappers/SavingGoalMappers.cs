@@ -17,7 +17,7 @@ namespace backend.Mappers
                 Periodicity = savingGoalModel.Periodicity,
             };
         }
-        public static SavingGoal ToSavingGoalFromCreateDto(this CreateSavingGoalRequestDto savingGoalDto)
+        public static SavingGoal ToSavingGoalFromCreateDto(this SavingGoalRequestDto savingGoalDto, int userId)
         {
             return new SavingGoal
             {
@@ -25,7 +25,7 @@ namespace backend.Mappers
                 Details = savingGoalDto.Details,
                 FixedContribution = savingGoalDto.FixedContribution,
                 Periodicity = savingGoalDto.Periodicity,
-                UserId = 1
+                UserId = userId
             };
         }
     }

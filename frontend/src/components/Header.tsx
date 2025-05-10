@@ -20,7 +20,7 @@ export default function Header({ currentSection }: { currentSection: SectionType
                 >
                     <img
                         className="h-full w-auto aspect-square object-fill"
-                        src={`http://127.0.0.1:8000/${userInfo?.profileImage}`}
+                        src={`${userInfo?.profileImage}`}
                         alt="Profile Pic"
                     />
                 </button>

@@ -2,6 +2,7 @@
 using backend.Mappers;
 using backend.Models;
 using backend.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,14 +20,16 @@ namespace backend.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> CreateBudgetPlan([FromBody] CreateBudgetPlanRequestDto budgetPlanDto)
         {
             var budgetPlan = await _budgetPlanRepo.CreateAsync(budgetPlanDto.ToBudgetPlanFromCreateDto());
 
-            return Ok(budgetPlan);
+            return Created();
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> UpdateBudgetPlan([FromRoute] int id, [FromBody] UpdateBudgetPlanRequestDto budgetPlanDto)
         {
             var budgetPlan = await _budgetPlanRepo.UpdateAsync(id, budgetPlanDto);
@@ -36,10 +39,11 @@ namespace backend.Controllers
                 return NotFound();
             }
 
-            return Ok(budgetPlan);
+            return Ok();
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteBudgetPlan([FromRoute] int id)
         {
             var budgetPlan = await _budgetPlanRepo.DeleteAsync(id);

@@ -6,7 +6,7 @@ namespace backend.Repositories.Interfaces
     public interface IGoalContributionRepo
     {
         Task<GoalContribution> CreateAsync(GoalContribution goalContribution);
-        Task<GoalContribution?> UpdateAsync(int id, CUGoalContributionRequestDto goalContributionDto);
+        Task<GoalContribution?> UpdateAsync(int id, GoalContributionRequestDto goalContributionDto);
         Task<GoalContribution?> DeleteAsync(int id);
     }
 }

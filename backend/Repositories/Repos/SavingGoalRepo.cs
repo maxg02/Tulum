@@ -52,7 +52,7 @@ namespace backend.Repositories.Repos
             return savingGoal;
         }
 
-        public async Task<SavingGoal?> UpdateAsync(int id, UpdateSavingGoalRequestDto savingGoalDto)
+        public async Task<SavingGoal?> UpdateAsync(int id, SavingGoalRequestDto savingGoalDto)
         {
             var savingGoal = await GetByIdAsync(id);
 

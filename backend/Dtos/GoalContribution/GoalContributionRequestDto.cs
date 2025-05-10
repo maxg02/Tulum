@@ -1,6 +1,6 @@
 ﻿namespace backend.Dtos.GoalContribution
 {
-    public class CUGoalContributionRequestDto
+    public class GoalContributionRequestDto
     {
         public int Amount { get; set; }
         public DateTime Date { get; set; } = DateTime.Now;

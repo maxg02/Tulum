@@ -17,7 +17,7 @@ namespace backend.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.7")
+                .HasAnnotation("ProductVersion", "9.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -65,12 +65,17 @@ namespace backend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ExpenseCategoryId")
+                    b.Property<int?>("ExpenseCategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ExpenseCategoryId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Expenses");
                 });
@@ -249,13 +254,26 @@ namespace backend.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("RefreshTokenExpireDate")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });
@@ -273,7 +291,11 @@ namespace backend.Migrations
                 {
                     b.HasOne("backend.Models.ExpenseCategory", null)
                         .WithMany("Expenses")
-                        .HasForeignKey("ExpenseCategoryId")
+                        .HasForeignKey("ExpenseCategoryId");
+
+                    b.HasOne("backend.Models.User", null)
+                        .WithMany("Expenses")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -357,6 +379,8 @@ namespace backend.Migrations
             modelBuilder.Entity("backend.Models.User", b =>
                 {
                     b.Navigation("Expense_Categories");
+
+                    b.Navigation("Expenses");
 
                     b.Navigation("FixedIncomes");
 

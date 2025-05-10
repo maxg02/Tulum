@@ -1,6 +1,5 @@
 ﻿using backend.Dtos.FixedIncome;
 using backend.Models;
-using backend.Enums;
 
 namespace backend.Mappers
 {

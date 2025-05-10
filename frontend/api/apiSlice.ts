@@ -2,6 +2,11 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { logOut, refreshUserToken } from "../src/reducers/userReducers";
 
+export type tokenDto = {
+    accessToken: string;
+    refreshToken: string;
+};
+
 export type incomeDto = { id: number; amount: number; details: string; date: Date };
 export type createIncomeDto = { amount: number; details: string; date: Date };
 export type updateIncomeDto = { id: number; data: { amount: number; details: string; date: Date } };
@@ -28,13 +33,13 @@ export type expenseDto = {
     amount: number;
     details: string;
     date: Date;
-    category: number;
+    expenseCategoryId: number;
 };
 export type createExpenseDto = {
     amount: number;
     details: string;
     date: Date;
-    category: number;
+    expenseCategoryId: number;
 };
 export type updateExpenseDto = {
     id: number;
@@ -59,10 +64,19 @@ export type updateFixedExpenseDto = {
     data: { amount: number; details: string; periodicity: number; category: number };
 };
 
+export type budgetPlanDto = {
+    id: number;
+    amount: number;
+    expenseCategoryId: number;
+    periodicity: number;
+};
+
 export type expenseCategoryDto = {
     id: number;
     category: string;
+    budgetPlan: budgetPlanDto | null;
 };
+
 export type createExpenseCategoryDto = {
     category: string;
 };
@@ -107,10 +121,10 @@ export type updateGoalContributionDto = {
 };
 
 const baseQuery = fetchBaseQuery({
-    baseUrl: "http://127.0.0.1:8000/",
+    baseUrl: "http://127.0.0.1:5085/api",
     prepareHeaders: (headers, { getState }) => {
         headers.set("Content-Type", "application/json");
-        const token = getState().user.tokens?.access;
+        const token = getState().user.tokens?.accessToken;
 
         if (token) {
             headers.set("Authorization", `Bearer ${token}`);
@@ -127,15 +141,17 @@ const BaseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
 ) => {
     let result = await baseQuery(args, api, extraOptions);
     if (result.error && result.error.status === 401) {
-        const refreshToken = api.getState().user.tokens?.refresh;
+        const refreshToken = api.getState().user.tokens?.refreshToken;
+        console.log("refrescando");
         //try to get new token
         const refreshResult = await baseQuery(
-            { url: "/token/refresh/", method: "POST", body: { refresh: refreshToken } },
+            { url: "/auth/refreshaccesstoken/", method: "POST", body: { refreshToken: refreshToken } },
             api,
             extraOptions
         );
         if (refreshResult.data) {
             // store new token
+            console.log("refrescado", refreshResult.data);
             api.dispatch(refreshUserToken(refreshResult.data));
             result = await baseQuery(args, api, extraOptions);
         } else {
@@ -151,9 +167,9 @@ export const apiSlice = createApi({
     tagTypes: ["Income", "FixedIncome", "ExpenseCategory", "SavingGoal"],
     endpoints: (builder) => ({
         //User endpoints
-        getUser: builder.mutation({
-            query: (userData: { email: string; password: string }) => ({
-                url: "token/",
+        getUser: builder.mutation<tokenDto, { email: string; password: string }>({
+            query: (userData) => ({
+                url: "auth/login",
                 method: "Post",
                 body: userData,
             }),
@@ -168,12 +184,12 @@ export const apiSlice = createApi({
 
         //Income endpoints
         getUserIncomes: builder.query<incomeDto[], void>({
-            query: () => "incomes",
+            query: () => "income",
             providesTags: ["Income"],
         }),
         createIncome: builder.mutation({
             query: (incomeData: createIncomeDto) => ({
-                url: "incomes/",
+                url: "income",
                 method: "POST",
                 body: incomeData,
             }),
@@ -181,7 +197,7 @@ export const apiSlice = createApi({
         }),
         updateIncome: builder.mutation({
             query: (incomeData: updateIncomeDto) => ({
-                url: `incomes/${incomeData.id}`,
+                url: `income/${incomeData.id}`,
                 method: "PUT",
                 body: incomeData.data,
             }),
@@ -189,7 +205,7 @@ export const apiSlice = createApi({
         }),
         deleteIncome: builder.mutation({
             query: (Id: number) => ({
-                url: `incomes/${Id}`,
+                url: `income/${Id}`,
                 method: "DELETE",
             }),
             invalidatesTags: ["Income"],
@@ -226,12 +242,12 @@ export const apiSlice = createApi({
 
         //Expense Category endpoints
         getUserExpenseCategories: builder.query<expenseCategoryDto[], void>({
-            query: () => `expensecategories/`,
+            query: () => `expensecategory/`,
             providesTags: ["ExpenseCategory"],
         }),
         createExpenseCategory: builder.mutation({
             query: (expenseCategoryData: createExpenseCategoryDto) => ({
-                url: "expensecategories/",
+                url: "expensecategory/",
                 method: "POST",
                 body: expenseCategoryData,
             }),
@@ -239,7 +255,7 @@ export const apiSlice = createApi({
         }),
         updateExpenseCategory: builder.mutation({
             query: (expenseCategoryData: updateExpenseCategoryDto) => ({
-                url: `expensecategories/${expenseCategoryData.id}`,
+                url: `expensecategory/${expenseCategoryData.id}`,
                 method: "PUT",
                 body: expenseCategoryData.data,
             }),
@@ -247,20 +263,16 @@ export const apiSlice = createApi({
         }),
         deleteExpenseCategory: builder.mutation({
             query: (Id: number) => ({
-                url: `expensecategories/${Id}`,
+                url: `expensecategory/${Id}`,
                 method: "DELETE",
             }),
             invalidatesTags: ["ExpenseCategory"],
         }),
 
         //Budget Plan endpoints
-        getUserBudgetPlans: builder.query<budgetPlanDto[], void>({
-            query: () => `budgetplans/`,
-            providesTags: ["ExpenseCategory"],
-        }),
         createBudgetPlan: builder.mutation({
             query: (budgetPlanData: createBudgetPlanDto) => ({
-                url: "budgetplans/",
+                url: "budgetplan/",
                 method: "POST",
                 body: budgetPlanData,
             }),
@@ -268,7 +280,7 @@ export const apiSlice = createApi({
         }),
         updateBudgetPlan: builder.mutation({
             query: (budgetPlanData: updateBudgetPlanDto) => ({
-                url: `budgetplans/${budgetPlanData.id}`,
+                url: `budgetplan/${budgetPlanData.id}`,
                 method: "PUT",
                 body: budgetPlanData.data,
             }),
@@ -276,7 +288,7 @@ export const apiSlice = createApi({
         }),
         deleteBudgetPlan: builder.mutation({
             query: (Id: number) => ({
-                url: `budgetplans/${Id}`,
+                url: `budgetplan/${Id}`,
                 method: "DELETE",
             }),
             invalidatesTags: ["ExpenseCategory"],
@@ -284,12 +296,12 @@ export const apiSlice = createApi({
 
         //Expense endpoints
         getUserExpenses: builder.query<expenseDto[], void>({
-            query: () => `expenses/`,
+            query: () => `expense/`,
             providesTags: ["ExpenseCategory"],
         }),
         createExpense: builder.mutation({
             query: (expenseData: createExpenseDto) => ({
-                url: "expenses/",
+                url: "expense/",
                 method: "POST",
                 body: expenseData,
             }),
@@ -297,7 +309,7 @@ export const apiSlice = createApi({
         }),
         updateExpense: builder.mutation({
             query: (expenseData: updateExpenseDto) => ({
-                url: `expenses/${expenseData.id}`,
+                url: `expense/${expenseData.id}`,
                 method: "PUT",
                 body: expenseData.data,
             }),
@@ -305,7 +317,7 @@ export const apiSlice = createApi({
         }),
         deleteExpense: builder.mutation({
             query: (Id: number) => ({
-                url: `expenses/${Id}`,
+                url: `expense/${Id}`,
                 method: "DELETE",
             }),
             invalidatesTags: ["ExpenseCategory"],
@@ -342,7 +354,7 @@ export const apiSlice = createApi({
 
         //Saving Goal endpoints
         getSavingGoalsByUserId: builder.query<savingGoalDto[], number>({
-            query: (userId) => `savinggoal/user/${userId}`,
+            query: () => `savinggoal`,
             providesTags: ["SavingGoal"],
         }),
         createSavingGoal: builder.mutation({
@@ -414,7 +426,6 @@ export const {
     useDeleteExpenseCategoryMutation,
     useUpdateExpenseCategoryMutation,
 
-    useGetUserBudgetPlansQuery,
     useCreateBudgetPlanMutation,
     useDeleteBudgetPlanMutation,
     useUpdateBudgetPlanMutation,

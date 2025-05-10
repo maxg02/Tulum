@@ -1,4 +1,4 @@
-﻿namespace backend.Enums
+﻿namespace backend.Constants
 {
     public enum Periodicity
     {

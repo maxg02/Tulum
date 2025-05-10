@@ -1,8 +1,8 @@
-﻿using backend.Data;
-using backend.Dtos.Expense;
+﻿using backend.Dtos.Expense;
 using backend.Mappers;
 using backend.Repositories.Interfaces;
-using Microsoft.AspNetCore.Http;
+using backend.Utilities.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
@@ -12,19 +12,41 @@ namespace backend.Controllers
     public class ExpenseController : ControllerBase
     {
         private readonly IExpenseRepo _expenseRepo;
+        private readonly IHttpContextAccessor _httpContext;
+        private readonly IClaimsAccess _claimsAccess;
 
-        public ExpenseController(IExpenseRepo expenseRepo) => _expenseRepo = expenseRepo;
-
-        [HttpPost]
-        public async Task<IActionResult> CreateExpense([FromBody] CUExpenseRequestDto expenseDto)
+        public ExpenseController(IExpenseRepo expenseRepo, IHttpContextAccessor httpContext, IClaimsAccess claimsAccess)
         {
-            var expense = await _expenseRepo.CreateAsync(expenseDto.ToExpenseFromCreateDto());
-
-            return Ok(expense);
+            _expenseRepo = expenseRepo;
+            _httpContext = httpContext;
+            _claimsAccess = claimsAccess;
         }
 
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetUserExpense()
+        {
+            int userId = _claimsAccess.GetUserIdFromClaims(_httpContext.HttpContext!);
+            var expenses = await _expenseRepo.GetByUserIdAsync(userId);
+
+            var expenseDto = expenses.Select(s => s.ToExpenseDto());
+
+            return Ok(expenseDto);
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> CreateExpense([FromBody] ExpenseRequestDto expenseDto)
+        {
+            int userId = _claimsAccess.GetUserIdFromClaims(_httpContext.HttpContext!);
+            var expense = await _expenseRepo.CreateAsync(expenseDto.ToExpenseFromCreateDto(userId));
+
+            return Ok(expense.ToExpenseDto());
+        }
+
+        [Authorize]
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateExpense([FromRoute] int id, [FromBody] CUExpenseRequestDto expenseDto)
+        public async Task<IActionResult> UpdateExpense([FromRoute] int id, [FromBody] ExpenseRequestDto expenseDto)
         {
             var expense = await _expenseRepo.UpdateAsync(id, expenseDto);
 
@@ -33,9 +55,10 @@ namespace backend.Controllers
                 return NotFound();
             }
 
-            return Ok(expense);
+            return Ok(expense.ToExpenseDto());
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteExpense([FromRoute] int id)
         {

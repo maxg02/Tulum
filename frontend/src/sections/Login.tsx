@@ -8,7 +8,7 @@ import { useAppDispatch } from "../hooks";
 export default function Login() {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
-    const [error, setError] = useState<string[] | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     const dispatch = useAppDispatch();
 
@@ -21,7 +21,7 @@ export default function Login() {
             dispatch(setUserInfo(tokens));
             navigate("/");
         } catch (error) {
-            setError(error.data.detail);
+            setError(error.data.error);
         }
     };
 

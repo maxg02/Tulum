@@ -5,32 +5,21 @@ namespace backend.Mappers
 {
     public static class ExpenseCategoryMappers
     {
-        public static ExpenseCategoryFullDto ToExpenseCategoryFullDto(this ExpenseCategory ExpenseCategoryModel)
+        public static ExpenseCategoryDto ToExpenseCategoryDto(this ExpenseCategory ExpenseCategoryModel)
         {
-            return new ExpenseCategoryFullDto
+            return new ExpenseCategoryDto
             {
                 Id = ExpenseCategoryModel.Id,
                 Category = ExpenseCategoryModel.Category,
-                Expenses = ExpenseCategoryModel.Expenses,
-                FixedExpenses = ExpenseCategoryModel.FixedExpenses,
-                BudgetPlan = ExpenseCategoryModel.BudgetPlan,
+                BudgetPlan = ExpenseCategoryModel.BudgetPlan
             };
-        }
-        public static ExpenseCategoryWithBudgetDto ToExpenseCategoryWithBudgetDto(this ExpenseCategory ExpenseCategoryModel)
-        {
-            return new ExpenseCategoryWithBudgetDto
-            {
-                Id = ExpenseCategoryModel.Id,
-                Category = ExpenseCategoryModel.Category,
-                BudgetPlan = ExpenseCategoryModel.BudgetPlan,
-            };
-        }
-        public static ExpenseCategory ToExpenseCategoryFromCreateDto(this CreateExpenseCategoryRequestDto ExpenseCategoryDto)
+        }        
+        public static ExpenseCategory ToExpenseCategoryFromCreateDto(this ExpenseCategoryRequestDto ExpenseCategoryDto, int userId)
         {
             return new ExpenseCategory
             {
                 Category = ExpenseCategoryDto.Category,
-                UserId = 1
+                UserId = userId
             };
         }
     }

@@ -1,7 +1,4 @@
-﻿using backend.Models;
-using backend.Enums;
-
-namespace backend.Dtos.FixedIncome
+﻿namespace backend.Dtos.FixedIncome
 {
     public class FixedIncomeDto
     {

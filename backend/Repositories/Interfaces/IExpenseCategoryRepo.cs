@@ -5,11 +5,10 @@ namespace backend.Repositories.Interfaces
 {
     public interface IExpenseCategoryRepo
     {
-        Task<List<ExpenseCategory>> GetByUserIdFullAsync(int userId);
-        Task<List<ExpenseCategory>> GetByUserIdWithBudgetAsync(int userId);
+        Task<List<ExpenseCategory>> GetByUserIdAsync(int userId);
         Task<ExpenseCategory?> GetByIdAsync(int id);
         Task<ExpenseCategory> CreateAsync(ExpenseCategory expenseCategory);
-        Task<ExpenseCategory?> UpdateAsync(int id, UpdateExpenseCategoryRequestDto expenseCategoryDto);
+        Task<ExpenseCategory?> UpdateAsync(int id, ExpenseCategoryRequestDto expenseCategoryDto);
         Task<ExpenseCategory?> DeleteAsync(int id);
 
     }

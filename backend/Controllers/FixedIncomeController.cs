@@ -2,6 +2,7 @@
 using backend.Mappers;
 using Microsoft.AspNetCore.Mvc;
 using backend.Dtos.FixedIncome;
+using Microsoft.AspNetCore.Authorization;
 
 namespace backend.Controllers
 {
@@ -17,6 +18,7 @@ namespace backend.Controllers
         }
 
         [HttpGet("user/{userId}")]
+        [Authorize]
         public async Task<IActionResult> GetUserFixedIncome([FromRoute] int userId)
         {
             var fixedIncome = await _fixedIncomeRepo.GetByUserIdAsync(userId);
@@ -27,6 +29,7 @@ namespace backend.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> GetFixedIncome([FromRoute] int id)
         {
             var fixedIncome = await _fixedIncomeRepo.GetByIdAsync(id);
@@ -40,6 +43,7 @@ namespace backend.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> CreateFixedIncome([FromBody] CreateFixedIncomeRequestDto fixedIncomeDto)
         {
             var fixedIncome = await _fixedIncomeRepo.CreateAsync(fixedIncomeDto.ToFixedIncomeFromCreateDto());
@@ -48,6 +52,7 @@ namespace backend.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> UpdateFixedIncome([FromRoute] int id, [FromBody] UpdateFixedIncomeRequestDto fixedIncomeDto)
         {
             var fixedIncome = await _fixedIncomeRepo.UpdateAsync(id, fixedIncomeDto);
@@ -61,6 +66,7 @@ namespace backend.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteFixedIncome([FromRoute] int id)
         {
             var fixedIncome = await _fixedIncomeRepo.DeleteAsync(id);

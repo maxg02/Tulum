@@ -11,7 +11,14 @@ namespace backend.Repositories.Repos
         private readonly ApplicationDBContext _context;
 
         public ExpenseRepo(ApplicationDBContext context) => _context = context;
+        public async Task<List<Expense>> GetByUserIdAsync(int userId)
+        {
+            var expenses = await _context.Expenses
+                .Where(i => i.UserId == userId)
+                .ToListAsync();
 
+            return expenses;
+        }
         public async Task<Expense> CreateAsync(Expense expense)
         {
             await _context.Expenses.AddAsync(expense);
@@ -20,7 +27,7 @@ namespace backend.Repositories.Repos
             return expense;
         }
 
-        public async Task<Expense?> UpdateAsync(int id, CUExpenseRequestDto expenseDto)
+        public async Task<Expense?> UpdateAsync(int id, ExpenseRequestDto expenseDto)
         {
             var expense = await _context.Expenses.FirstOrDefaultAsync(x => x.Id == id);
 

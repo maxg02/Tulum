@@ -117,7 +117,7 @@ export function SelectField({
 }: selectModalField & {
     defaultValue?: number;
     disabled?: boolean;
-    values: { id: number; value: string; [x: string]: boolean }[] | undefined;
+    values: { id: number; value: string }[] | undefined;
 }) {
     return (
         <div className="flex flex-col gap-y-1">

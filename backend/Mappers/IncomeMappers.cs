@@ -15,14 +15,14 @@ namespace backend.Mappers
                 Date = incomeModel.Date,
             };
         }
-        public static Income ToIncomeFromCreateDto(this CreateIncomeRequestDto incomeDto)
+        public static Income ToIncomeFromCreateDto(this IncomeRequestDto incomeDto, int userId)
         {
             return new Income
             {
                 Amount = incomeDto.Amount,
                 Details = incomeDto.Details,
                 Date = incomeDto.Date,
-                UserId = 1
+                UserId = userId
             };
         }
     }

@@ -1,6 +1,7 @@
 ﻿using backend.Dtos.GoalContribution;
 using backend.Mappers;
 using backend.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
@@ -14,15 +15,17 @@ namespace backend.Controllers
         public GoalContributionController(IGoalContributionRepo goalContributionRepo) => _goalContributionRepo = goalContributionRepo;
 
         [HttpPost]
-        public async Task<IActionResult> CreateGoalContribution([FromBody] CUGoalContributionRequestDto goalContributionDto)
+        [Authorize]
+        public async Task<IActionResult> CreateGoalContribution([FromBody] GoalContributionRequestDto goalContributionDto)
         {
             var goalContribution = await _goalContributionRepo.CreateAsync(goalContributionDto.ToGoalContributionFromCreateDto());
 
-            return Ok(goalContribution);
+            return Created();
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateGoalContribution([FromRoute] int id, [FromBody] CUGoalContributionRequestDto goalContributionDto)
+        [Authorize]
+        public async Task<IActionResult> UpdateGoalContribution([FromRoute] int id, [FromBody] GoalContributionRequestDto goalContributionDto)
         {
             var goalContribution = await _goalContributionRepo.UpdateAsync(id, goalContributionDto);
 
@@ -31,10 +34,11 @@ namespace backend.Controllers
                 return NotFound();
             }
 
-            return Ok(goalContribution);
+            return Ok();
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteGoalContribution([FromRoute] int id)
         {
             var goalContribution = await _goalContributionRepo.DeleteAsync(id);

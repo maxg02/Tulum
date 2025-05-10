@@ -8,7 +8,7 @@ namespace backend.Repositories.Interfaces
         Task<List<SavingGoal>> GetByUserIdAsync(int userId);
         Task<SavingGoal?> GetByIdAsync(int id);
         Task<SavingGoal> CreateAsync(SavingGoal savingGoal);
-        Task<SavingGoal?> UpdateAsync(int id, UpdateSavingGoalRequestDto savingGoalDto);
+        Task<SavingGoal?> UpdateAsync(int id, SavingGoalRequestDto savingGoalDto);
         Task<SavingGoal?> DeleteAsync(int id);
 
     }

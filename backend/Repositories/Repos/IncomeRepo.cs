@@ -37,7 +37,7 @@ namespace backend.Repositories.Repos
 
             return income;
         }
-        public async Task<Income?> UpdateAsync(int id, UpdateIncomeRequestDto incomeDto)
+        public async Task<Income?> UpdateAsync(int id, IncomeRequestDto incomeDto)
         {
             var income = await GetByIdAsync(id);
 

@@ -15,6 +15,7 @@ import {
     useGetUserExpenseCategoriesQuery,
     useGetUserIncomesQuery,
     useGetSavingGoalsByUserIdQuery,
+    useGetUserExpensesQuery,
 } from "../../api/apiSlice";
 import Loader from "../components/Loader";
 
@@ -65,7 +66,8 @@ export default function Dashboard() {
 
     const { data: incomeData, isLoading: incomeIsLoading } = useGetUserIncomesQuery();
     const { data: expenseCategoryData, isLoading: expenseCategoryIsLoading } =
-        useGetUserExpenseCategoriesQuery(1);
+        useGetUserExpenseCategoriesQuery();
+    const { data: expenseData, isLoading: expenseIsLoading } = useGetUserExpensesQuery();
     const { data: savingGoalData, isLoading: savingGoalIsLoading } = useGetSavingGoalsByUserIdQuery(1);
 
     const monthList = [
@@ -89,13 +91,11 @@ export default function Dashboard() {
         !expenseCategoryIsLoading &&
         expenseCategoryData != undefined &&
         !savingGoalIsLoading &&
-        savingGoalData != undefined
+        savingGoalData != undefined &&
+        !expenseIsLoading &&
+        expenseData != undefined
     ) {
-        const allExpenses = expenseCategoryData
-            .map((ec) => ec.expenses)
-            .reduce((acc, currentValue) => acc!.concat(currentValue!), []);
-
-        const monthExpenses = allExpenses.filter(
+        const monthExpenses = expenseData?.filter(
             (expense) =>
                 new Date(expense.date).getMonth() === currentDate.getMonth() &&
                 new Date(expense.date).getFullYear() === currentDate.getFullYear()
@@ -113,7 +113,7 @@ export default function Dashboard() {
 
         totalMonthIncome = monthIncomes.reduce((acc: number, next: incomeDto) => acc + next.amount, 0);
 
-        const yearExpenses = allExpenses?.filter(
+        const yearExpenses = expenseData?.filter(
             (expense) => new Date(expense.date).getFullYear() === currentDate.getFullYear()
         );
 
@@ -192,7 +192,10 @@ export default function Dashboard() {
         );
 
         monthExpensesData = Object.keys(monthExpensesByCategory).map<pieChartSlice>((key) => ({
-            label: expenseCategoryData?.find((c) => c.id === parseInt(key))!.category,
+            label:
+                key != "null"
+                    ? expenseCategoryData?.find((c) => c.id === parseInt(key))!.category
+                    : "Otros",
             value: monthExpensesByCategory[key].reduce((acc, expense) => acc + expense.amount, 0),
         }));
 

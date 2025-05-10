@@ -20,7 +20,7 @@ namespace backend.Repositories.Repos
             return goalContribution;
         }
 
-        public async Task<GoalContribution?> UpdateAsync(int id, CUGoalContributionRequestDto goalContributionDto)
+        public async Task<GoalContribution?> UpdateAsync(int id, GoalContributionRequestDto goalContributionDto)
         {
             var goalContribution = await _context.GoalContributions.FirstOrDefaultAsync(x => x.Id == id);
 
