@@ -18,34 +18,15 @@ import {
     useGetUserExpensesQuery,
 } from "../../api/apiSlice";
 import Loader from "../components/Loader";
+import { DiamondIcon, Invoice02Icon, MoneyReceiveSquareIcon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { axisClasses } from "@mui/x-charts/ChartsAxis/axisClasses";
+import { chartsAxisHighlightClasses } from "@mui/x-charts/ChartsAxisHighlight";
 
 export type pieChartSlice = {
     label: string;
     value: number;
 };
-
-const dataPieChart: pieChartSlice[] = [
-    {
-        label: "Food",
-        value: 20000,
-    },
-    {
-        label: "Transport",
-        value: 2000,
-    },
-    {
-        label: "House/Utilities",
-        value: 14000,
-    },
-    {
-        label: "Personal/Medical",
-        value: 12000,
-    },
-    {
-        label: "Others",
-        value: 2500,
-    },
-];
 
 export default function Dashboard() {
     const [highlightedValue, setHighlightedValue] = useState(null);
@@ -228,9 +209,9 @@ export default function Dashboard() {
     }
 
     const goalsProgressGauges = goalsProgressData.slice(0, 3).map((gp) => (
-        <div className=" h-full flex flex-col items-center w-44">
-            <div className="flex-1 w-full mb-1">
-                <CustomGauge value={gp.value} label={`${Math.round(gp.value)}%`} accent />
+        <div className="flex flex-col items-center basis-1/3 md:basis-1/4">
+            <div className="w-full aspect-square mb-1">
+                <CustomGauge value={gp.value} label={`${Math.round(gp.value)}%`} />
             </div>
             <p>{gp.label}</p>
         </div>
@@ -239,167 +220,201 @@ export default function Dashboard() {
     const dataPieChart: pieChartSlice[] = monthExpensesData;
 
     return (
-        <div className="flex flex-1 gap-8">
-            <Sidebar currentSection="Dashboard" />
-            <SectionContent>
-                <Header currentSection="Dashboard" />
-                <div className="flex-1 flex overflow-hidden gap-x-9">
-                    <div className="flex flex-col flex-1 gap-y-9">
-                        <div className="infoContainer1">
-                            <p>{currentMonth} Income</p>
-                            <h1 className="font-light text-5xl">RD${totalMonthIncome}</h1>
-                            <div className="flex flex-col self-stretch justify-between border-t-2 py-3">
-                                {monthIncomeRows}
-                            </div>
-                            <MoreDots section="/income" />
+        <SectionContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-11 gap-8 overflow-x-hidden overflow-y-auto auto-rows-auto 2xl:grid-rows-11 2xl:flex-1 max-h-[1200px]">
+                <div className="flex flex-col gap-6 border-b-2 md:hidden">
+                    <p className="self-center">{currentMonth} Balance</p>
+                    <div className="flex gap-9 px-4 mb-8">
+                        <div className="flex justify-center items-center bg-custom-ly1 containerShadow rounded-2xl flex-1 py-5">
+                            <HugeiconsIcon className={"me-2"} icon={MoneyReceiveSquareIcon} size={30} />
+                            <h1 className="font-light text-xl">RD$50000</h1>
                         </div>
-                        <div className="infoContainer2 flex-1">
-                            <p>{currentDate.getFullYear()} Summary</p>
-                            <div className="w-full flex-1 flex items-center py-7">
-                                {incomeIsLoading || expenseCategoryIsLoading ? (
-                                    <Loader />
-                                ) : (
-                                    <LineChart
-                                        margin={{ left: 50, right: 11, top: 25 }}
-                                        xAxis={[
-                                            {
-                                                dataKey: "name",
-                                                scaleType: "point",
-                                            },
-                                        ]}
-                                        yAxis={[
-                                            {
-                                                min: 0,
-                                                max: lineChartMaxValue,
-                                            },
-                                        ]}
-                                        series={[
-                                            {
-                                                dataKey: "inc",
-                                                label: "Income",
-                                                color: "#78d2b5",
-                                                curve: "linear",
-                                                stackOrder: "appearance",
-                                            },
-                                            {
-                                                dataKey: "exp",
-                                                label: "Expenses",
-                                                color: "#d96533",
-                                                curve: "linear",
-                                            },
-                                        ]}
-                                        dataset={dataLineChart}
-                                        grid={{ vertical: true, horizontal: true }}
-                                        slotProps={{ legend: { hidden: true } }}
-                                        sx={{
-                                            [`& .${markElementClasses.root}`]: {
-                                                scale: "0.9",
-                                                fill: "#394942",
-                                                strokeWidth: 2,
-                                            },
-                                            "& .MuiChartsAxisHighlight-root": {
-                                                stroke: "white",
-                                                strokeDasharray: 0,
-                                                strokeOpacity: 0.6,
-                                            },
-                                        }}
-                                    />
-                                )}
-                            </div>
-                            <div className="flex gap-6">
-                                <div className="flex flex-col items-center gap-1">
-                                    <div
-                                        className={` w-2 h-2 rounded-full border-2 border-[#78d2b5]`}
-                                    ></div>
-                                    <p>Income</p>
-                                </div>
-
-                                <div className="flex flex-col items-center gap-1">
-                                    <div
-                                        className={` w-2 h-2 rounded-full border-2 border-[#d96533]`}
-                                    ></div>
-                                    <p>Expenses</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="flex flex-col flex-1 gap-y-9">
-                        <div className="infoContainer2 flex-1">
-                            <p>{currentMonth} Expenses</p>
-                            <div className="w-full flex-1 flex items-center justify-center gap-x-9 overflow-y-hidden">
-                                <div className="w-64 h-full relative">
-                                    {expenseCategoryIsLoading ? (
-                                        <Loader />
-                                    ) : (
-                                        <>
-                                            <PieChart
-                                                colors={[
-                                                    gradientColors[0],
-                                                    gradientColors[1],
-                                                    gradientColors[2],
-                                                    gradientColors[3],
-                                                    gradientColors[4],
-                                                ]}
-                                                margin={{ left: 0, right: 0 }}
-                                                series={[
-                                                    {
-                                                        data: dataPieChart,
-                                                        id: "A",
-                                                        innerRadius: "65%",
-                                                        paddingAngle: 2,
-                                                        cornerRadius: 3,
-                                                        highlightScope: {
-                                                            fade: "global",
-                                                            highlight: "item",
-                                                        },
-                                                        faded: { color: "gray", additionalRadius: -5 },
-                                                        valueFormatter: (value) => `RD$${value.value}`,
-                                                    },
-                                                ]}
-                                                onHighlightChange={setHighlightedValue}
-                                                slotProps={{ legend: { hidden: true } }}
-                                                sx={{
-                                                    "& .MuiPieArc-root": { strokeWidth: 0 },
-                                                }}
-                                                tooltip={{
-                                                    trigger: "item",
-                                                    classes: {
-                                                        labelCell: "hidden",
-                                                        valueCell: "ml-3 p-3",
-                                                        markCell: "pl-3 pr-0",
-                                                    },
-                                                }}
-                                            ></PieChart>
-                                            <h2 className="font-light text-3xl absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                                                {`RD$${dataPieChart.reduce(
-                                                    (acc, currentValue) =>
-                                                        (acc = acc + currentValue.value),
-                                                    0
-                                                )}`}
-                                            </h2>
-                                        </>
-                                    )}
-                                </div>
-                                <DiamondList
-                                    items={dataPieChart.map((x) => x.label)}
-                                    highlightedItem={highlightedValue}
-                                />
-                            </div>
-                            <div className="flex flex-col self-stretch justify-between border-t-2 py-3">
-                                {monthExpenseRows}
-                            </div>
-                            <MoreDots section="/expenses" />
-                        </div>
-                        <div className="infoContainer1 h-2/5">
-                            <p>Saving Goals</p>
-                            <div className="w-full flex-1 flex items-center justify-evenly gap-x-9">
-                                {savingGoalIsLoading ? <Loader /> : goalsProgressGauges}
-                            </div>
-                            <MoreDots section="/savings" />
+                        <div className="flex justify-center items-center bg-custom-ly2 rounded-2xl flex-1">
+                            <HugeiconsIcon className={"me-2"} icon={Invoice02Icon} size={30} />
+                            <h1 className="font-light text-xl">RD${totalMonthIncome}</h1>
                         </div>
                     </div>
                 </div>
-            </SectionContent>
-        </div>
+
+                <div className="infoContainer1 hidden md:flex 2xl:row-span-5 2xl:col-span-5">
+                    <div className="grid grid-cols-3 w-full">
+                        <p className="col-start-2 mx-auto">{currentMonth} Income</p>
+                        <div className="ml-auto">
+                            <MoreDots section="/income" />
+                        </div>
+                    </div>
+                    <h1 className="font-light text-5xl my-auto">RD${totalMonthIncome}</h1>
+                    <div className="2xl:flex flex-col self-stretch justify-between border-t-2 py-3 hidden">
+                        {monthIncomeRows}
+                    </div>
+                </div>
+
+                <div className="infoContainer2 flex-1 hidden md:flex 2xl:row-span-6 2xl:col-span-6">
+                    <div className="grid grid-cols-3 w-full">
+                        <p className="col-start-2 mx-auto">{currentMonth} Expenses</p>
+                        <div className="ml-auto">
+                            <MoreDots section="/expenses" />
+                        </div>
+                    </div>
+                    <div className="w-full flex-1 flex items-center justify-center gap-x-8 xl:justify-evenly xl:gap-x-0 overflow-y-hidden">
+                        <div className="w-full xl:w-[45%] 2xl:w-auto 2xl:h-full aspect-square relative">
+                            {expenseCategoryIsLoading ? (
+                                <Loader />
+                            ) : (
+                                <>
+                                    <PieChart
+                                        colors={[
+                                            gradientColors[0],
+                                            gradientColors[1],
+                                            gradientColors[2],
+                                            gradientColors[3],
+                                            gradientColors[4],
+                                        ]}
+                                        margin={{ left: 0, right: 0 }}
+                                        series={[
+                                            {
+                                                data:
+                                                    dataPieChart.length > 0
+                                                        ? dataPieChart
+                                                        : [{ label: "No Data", value: 1 }],
+                                                id: "A",
+                                                innerRadius: "65%",
+                                                paddingAngle: 2,
+                                                cornerRadius: 3,
+                                                highlightScope: {
+                                                    fade: "global",
+                                                    highlight: dataPieChart.length > 0 ? "item" : "none",
+                                                },
+                                                faded: { color: "gray", additionalRadius: -5 },
+                                                valueFormatter: (value) => `RD$${value.value}`,
+                                            },
+                                        ]}
+                                        onHighlightChange={setHighlightedValue}
+                                        slotProps={{ legend: { hidden: true } }}
+                                        sx={{
+                                            "& .MuiPieArc-root": { strokeWidth: 0 },
+                                        }}
+                                        tooltip={{
+                                            trigger: dataPieChart.length > 0 ? "item" : "none",
+                                            classes: {
+                                                labelCell: "hidden",
+                                                valueCell: "ml-3 p-3",
+                                                markCell: "pl-3 pr-0",
+                                            },
+                                        }}
+                                    ></PieChart>
+                                    <h2 className="font-light text-xl absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                                        {`RD$${dataPieChart.reduce(
+                                            (acc, currentValue) => (acc = acc + currentValue.value),
+                                            0
+                                        )}`}
+                                    </h2>
+                                </>
+                            )}
+                        </div>
+                        {dataPieChart.length > 0 && (
+                            <DiamondList
+                                items={dataPieChart.map((x) => x.label)}
+                                highlightedItem={highlightedValue}
+                            />
+                        )}
+                    </div>
+                    <div className="2xl:flex flex-col self-stretch justify-between border-t-2 py-3 hidden">
+                        {monthExpenseRows}
+                    </div>
+                </div>
+
+                <div className="infoContainer2 md:col-span-2 2xl:row-span-6 2xl:col-span-5">
+                    <p>{currentDate.getFullYear()} Summary</p>
+                    <div className="w-full h-40 md:h-52 2xl:h-4/6">
+                        {incomeIsLoading || expenseCategoryIsLoading ? (
+                            <Loader />
+                        ) : (
+                            <LineChart
+                                margin={{ left: 35, right: 10, top: 15, bottom: 20 }}
+                                xAxis={[
+                                    {
+                                        dataKey: "name",
+                                        scaleType: "point",
+                                    },
+                                ]}
+                                yAxis={[
+                                    {
+                                        min: 0,
+                                        domainLimit: "nice",
+                                        valueFormatter: (value) =>
+                                            value < 1000 ? value : `${value / 1000}K`,
+                                    },
+                                ]}
+                                series={[
+                                    {
+                                        dataKey: "inc",
+                                        label: "Income",
+                                        color: "#78d2b5",
+                                        curve: "linear",
+                                        stackOrder: "appearance",
+                                    },
+                                    {
+                                        dataKey: "exp",
+                                        label: "Expenses",
+                                        color: "#d96533",
+                                        curve: "linear",
+                                    },
+                                ]}
+                                dataset={dataLineChart}
+                                grid={{ vertical: true, horizontal: true }}
+                                slotProps={{ legend: { hidden: true } }}
+                                sx={{
+                                    [`& .${markElementClasses.root}`]: {
+                                        scale: "0.9",
+                                        fill: "#394942",
+                                        strokeWidth: 2,
+                                    },
+                                    [`.${axisClasses.root}`]: {
+                                        [`.${axisClasses.tick}, .${axisClasses.line}`]: {
+                                            stroke: "white",
+                                            strokeWidth: 2,
+                                            opacity: 0.3,
+                                        },
+                                        [`.${axisClasses.tickLabel}`]: {
+                                            fill: "white",
+                                            opacity: 0.5,
+                                        },
+                                    },
+                                    [`.${chartsAxisHighlightClasses.root}`]: {
+                                        fill: "white",
+                                        stroke: "white",
+                                        opacity: 0.5,
+                                    },
+                                }}
+                            />
+                        )}
+                    </div>
+                    <div className="flex gap-6">
+                        <div className="flex flex-col items-center gap-1">
+                            <HugeiconsIcon icon={DiamondIcon} size={15} strokeWidth={3} color="#78d2b5" />
+                            <p>Income</p>
+                        </div>
+
+                        <div className="flex flex-col items-center gap-1">
+                            <HugeiconsIcon icon={DiamondIcon} size={15} strokeWidth={3} color="#d96533" />
+                            <p>Expenses</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="infoContainer1 md:col-span-2 2xl:row-span-5 2xl:col-span-6">
+                    <div className="grid grid-cols-3 w-full">
+                        <p className="col-start-2 mx-auto">Saving Goals</p>
+                        <div className="ml-auto">
+                            <MoreDots section="/savings" />
+                        </div>
+                    </div>
+                    <div className="w-full flex-1 flex items-center justify-evenly flex-wrap">
+                        {savingGoalIsLoading ? <Loader /> : goalsProgressGauges}
+                    </div>
+                </div>
+            </div>
+        </SectionContent>
     );
 }

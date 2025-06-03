@@ -1,7 +1,10 @@
 import React, { useState } from "react";
-import { SectionType } from "./Sidebar";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { logOut } from "../reducers/userReducers";
+import { toggleSidebar } from "../reducers/utilitiesReducers";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Menu01Icon } from "@hugeicons/core-free-icons";
+import { SectionType } from "./Sidebar";
 
 export default function Header({ currentSection }: { currentSection: SectionType }) {
     const [dropdownShow, setDropdownShow] = useState<boolean>(false);
@@ -11,15 +14,21 @@ export default function Header({ currentSection }: { currentSection: SectionType
 
     return (
         <div className="flex items-center justify-between h-14 relative">
-            <h1 className="text-5xl">{currentSection}</h1>
+            <div className="flex">
+                <button className="me-3 xl:hidden" onClick={() => dispatch(toggleSidebar())}>
+                    <HugeiconsIcon size={30} icon={Menu01Icon} />
+                </button>
+                <h1 className="text-3xl">{currentSection}</h1>
+            </div>
+
             <div className="h-full flex items-center gap-5">
-                <p>{userInfo?.fullName}</p>
+                <p className="hidden">{userInfo?.fullName}</p>
                 <button
-                    className="h-full p-0 rounded-xl overflow-hidden border-0 focus:outline-none"
+                    className="h-full p-0 rounded-xl overflow-hidden aspect-square"
                     onClick={() => (dropdownShow ? setDropdownShow(false) : setDropdownShow(true))}
                 >
                     <img
-                        className="h-full w-auto aspect-square object-fill"
+                        className="h-full w-auto object-cover"
                         src={`${userInfo?.profileImage}`}
                         alt="Profile Pic"
                     />

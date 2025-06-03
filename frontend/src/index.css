@@ -112,16 +112,7 @@ body {
     scrollbar-color: #394942 transparent;
 }
 
-.MuiChartsTooltip-root {
-    opacity: 0.9;
-}
-
-.MuiChartsAxis-tickLabel {
-    fill: #daceaf !important;
-    font-family: "karla" !important;
-}
-
-.infoContainer1 {
+.containerShadow {
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.433);
 }
 
@@ -129,23 +120,4 @@ body {
     top: 0;
     transition: top 1s;
     transition-timing-function: ease-in-out;
-}
-
-button {
-    border-radius: 8px;
-    border: 1px solid transparent;
-    padding: 0.6em 1.2em;
-    font-size: 1em;
-    font-weight: 500;
-    font-family: inherit;
-    background-color: #1a1a1a;
-    cursor: pointer;
-    transition: border-color 0.25s;
-}
-button:hover {
-    border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-    outline: 4px auto -webkit-focus-ring-color;
 }

@@ -1,5 +1,3 @@
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 
 type modalBody = {
@@ -21,7 +19,7 @@ function ModalContainer({ closingHandler, children, title }: modalBody) {
                         className="ml-auto tableButton flex gap-x-2 p-0 items-center opacity-55 hover:opacity-100"
                         onClick={closingHandler}
                     >
-                        <FontAwesomeIcon icon={faXmark} />
+                        . . .
                     </button>
                 </div>
                 <form onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-y-3 w-full">

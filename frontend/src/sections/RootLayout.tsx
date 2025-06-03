@@ -2,6 +2,7 @@ import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { setUserInfo } from "../reducers/userReducers";
+import Sidebar from "../components/Sidebar";
 
 export default function RootLayout() {
     const dispatch = useAppDispatch();
@@ -20,7 +21,8 @@ export default function RootLayout() {
     }
 
     return (
-        <div className="bg-custom-bg flex w-screen h-screen px-8">
+        <div className="bg-custom-bg flex w-screen h-dvh relative overflow-x-hidden overflow-y-auto">
+            <Sidebar />
             <Outlet />
         </div>
     );

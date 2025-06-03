@@ -2,7 +2,7 @@ import { Gauge, useGaugeState } from "@mui/x-charts/Gauge";
 import { v4 as id } from "uuid";
 import { basicColors } from "../components/Colors";
 
-function CustomGauge({ value, label, accent }: { value: number; label: string; accent?: boolean }) {
+function CustomGauge({ value, label }: { value: number; label: string }) {
     const gradientClipId = id();
     const maskClipId = id();
 
@@ -34,7 +34,7 @@ function CustomGauge({ value, label, accent }: { value: number; label: string; a
                     y={cy - maxRadius}
                     width={maxRadius * 2}
                     height={maxRadius * 2}
-                    clip-path={`url(#${gradientClipId})`}
+                    clipPath={`url(#${gradientClipId})`}
                 >
                     <div
                         className="h-full w-full bg-red-500 rounded-full"
@@ -85,11 +85,7 @@ function CustomGauge({ value, label, accent }: { value: number; label: string; a
                 <GaugeGradient />
                 <GaugeInnerBorder />
             </Gauge>
-            <p
-                className={`${
-                    accent ? "text-custom-accent" : ""
-                } text-sm absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2`}
-            >
+            <p className="text-sm absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-90">
                 {label}
             </p>
         </div>

@@ -1,49 +1,118 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHouse, faWallet, faReceipt, faPiggyBank } from "@fortawesome/free-solid-svg-icons";
-import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
+import { HugeiconsIcon, IconSvgElement } from "@hugeicons/react";
+import {
+    ArrowLeft01Icon,
+    DashboardSpeed01Icon,
+    Invoice02Icon,
+    MoneySavingJarIcon,
+    Github01FreeIcons,
+    Linkedin01FreeIcons,
+    MoneyReceiveSquareIcon,
+} from "@hugeicons/core-free-icons";
+
 import type { ReactNode } from "react";
+import { useAppDispatch, useAppSelector } from "../hooks";
+import { toggleSidebar } from "../reducers/utilitiesReducers";
+
+enum routes {
+    "/",
+    "income",
+    "expenses",
+    "savings",
+}
 
 export type SectionType = "Dashboard" | "Income" | "Expenses" | "Savings";
 
-const sidebarButton = (active: boolean, section: string, icon: IconDefinition): ReactNode => (
-    <button
-        className={`${
-            active ? "bg-custom-secondary" : "opacity-50 bg-transparent hover:bg-custom-secondary"
-        } w-full flex items-center gap-3 border-0 px-3 py-1 rounded-none text-white`}
-    >
-        <div className="w-6 text-custom-accent text-xl flex items-center justify-center">
-            <FontAwesomeIcon icon={icon} />
-        </div>
-        <h3 className="text-2xl">{section}</h3>
-    </button>
-);
+type sidebarButtonProps = {
+    icon: IconSvgElement;
+    children: ReactNode;
+    route: number;
+};
 
-export default function Sidebar({ currentSection }: { currentSection: SectionType }) {
+export default function Sidebar() {
+    const [activeSection, setActiveSection] = useState<number>(0);
+
+    const sidebarOpen = useAppSelector((state) => state.utilities.sidebarOpen);
+    const dispatch = useAppDispatch();
+
+    const SidebarButton = ({ icon, children, route }: sidebarButtonProps) => (
+        <Link
+            to={routes[route]}
+            onClick={() => setActiveSection(route)}
+            className={`w-full flex items-center gap-2 border-0 py-1 text-white transition-all duration-300
+        ${
+            activeSection === route
+                ? "border-r-custom-accent ps-6 border-r-[3px]"
+                : "opacity-50 ps-3 bg-transparent hover:text-custom-accent hover:ps-6"
+        }`}
+        >
+            <HugeiconsIcon size={23} icon={icon} />
+            <h3 className="text-2xl xl:text-xl text-inherit">{children}</h3>
+        </Link>
+    );
+
     return (
-        <div className="bg-custom-ly1 w-52 py-5">
-            <div className="flex flex-col items-center mb-9">
-                <img className="w-28" src="/appLogo.png" alt="App Logo" />
-                <h2 className="text-4xl">AppName</h2>
-            </div>
+        <div
+            className={`fixed h-full xl:sticky xl:top-0 xl:left-0 overflow-hidden xl:visible w-dvw xl:w-fit xl:h-fit bg-black bg-opacity-65 xl:bg-opacity-50 z-50 ${
+                sidebarOpen ? "visible" : "invisible"
+            }`}
+        >
+            <div
+                className={`bg-custom-ly1 py-5 xl:w-64 h-dvh relative transition-all duration-300 flex flex-col ${
+                    sidebarOpen ? "w-5/6 md:w-2/5 lg:w-1/3" : "w-0"
+                }`}
+            >
+                <button
+                    onClick={() => dispatch(toggleSidebar())}
+                    className="h-12 p-0 w-12 right-0 translate-x-1/2 top-1/2 translate-y-[-50%] rounded-md bg-custom-accent flex items-center justify-center absolute text-white xl:hidden"
+                >
+                    <HugeiconsIcon size={35} icon={ArrowLeft01Icon} />
+                </button>
+                <div className="flex flex-col items-center mb-9 overflow-hidden">
+                    <img className="w-28 max-w-none" src="/appLogo.png" alt="App Logo" />
+                    <h2 className="text-4xl">AppName</h2>
+                </div>
 
-            <div className="flex flex-col gap-2">
-                <Link to={"/"}>
-                    {sidebarButton(currentSection === "Dashboard" ? true : false, "Dashboard", faHouse)}
-                </Link>
+                <div className="flex flex-col gap-2 px-3 overflow-hidden">
+                    <SidebarButton route={0} icon={DashboardSpeed01Icon}>
+                        Dashboard
+                    </SidebarButton>
 
-                <Link to={"/income"}>
-                    {sidebarButton(currentSection === "Income" ? true : false, "Income", faWallet)}
-                </Link>
+                    <SidebarButton route={1} icon={MoneyReceiveSquareIcon}>
+                        Income
+                    </SidebarButton>
 
-                <Link to={"/expenses"}>
-                    {sidebarButton(currentSection === "Expenses" ? true : false, "Expenses", faReceipt)}
-                </Link>
+                    <SidebarButton route={2} icon={Invoice02Icon}>
+                        Expenses
+                    </SidebarButton>
 
-                <Link to={"/savings"}>
-                    {sidebarButton(currentSection === "Savings" ? true : false, "Savings", faPiggyBank)}
-                </Link>
+                    <SidebarButton route={3} icon={MoneySavingJarIcon}>
+                        Savings
+                    </SidebarButton>
+                </div>
+
+                <div className="mt-auto px-6">
+                    <div className="border-t-2 border-white py-2 overflow-hidden">
+                        <p className="mb-2 text-base">Design and made by Max García</p>
+                        <div className="flex gap-x-2">
+                            <a
+                                href="https://www.github.com/maxg02"
+                                className="flex text-custom-accent"
+                                target="_blank"
+                            >
+                                <HugeiconsIcon size={30} icon={Github01FreeIcons} />
+                            </a>
+                            <a
+                                href="https://www.linkedin.com/in/max-daniel-garcia-sanchez-b9658a224/"
+                                className="flex text-custom-accent"
+                                target="_blank"
+                            >
+                                <HugeiconsIcon size={30} icon={Linkedin01FreeIcons} />
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );

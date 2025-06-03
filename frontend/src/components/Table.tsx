@@ -1,17 +1,4 @@
 import { useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-    faAngleRight,
-    faAngleLeft,
-    faAngleDoubleRight,
-    faAngleDoubleLeft,
-    faEllipsis,
-    faPlus,
-    faXmark,
-    faSort,
-    faSortDown,
-    faSortUp,
-} from "@fortawesome/free-solid-svg-icons";
 
 type sortValues = ("asc" | "desc" | "null")[];
 export type tableRow = {
@@ -78,16 +65,7 @@ function Table({
                     <p>{item.name}</p>
                     {item.type !== "list" && item.type !== "progress" ? (
                         <button className="tableButton p-0" onClick={() => handleSortToggle(key)}>
-                            <FontAwesomeIcon
-                                icon={
-                                    ColumnsSort[key] === "null"
-                                        ? faSort
-                                        : ColumnsSort[key] === "asc"
-                                        ? faSortUp
-                                        : faSortDown
-                                }
-                                className="text-xs"
-                            />
+                            . . .
                         </button>
                     ) : (
                         ""
@@ -125,7 +103,7 @@ function Table({
                 );
             }
             pageNodes.push(
-                <FontAwesomeIcon icon={faEllipsis} />,
+                ". . .",
                 <button
                     onClick={() => handlePaginationToValue(lastPage)}
                     className={`tableButton ${pagination === lastPage && "text-custom-accent"}`}
@@ -145,7 +123,7 @@ function Table({
                 >
                     {1}
                 </button>,
-                <FontAwesomeIcon icon={faEllipsis} />
+                ". . ."
             );
 
             for (let i = pagination - 2; i <= pagination + 2; i++) {
@@ -160,7 +138,7 @@ function Table({
             }
 
             pageNodes.push(
-                <FontAwesomeIcon icon={faEllipsis} />,
+                ". . .",
                 <button
                     onClick={() => handlePaginationToValue(lastPage)}
                     className={`tableButton ${pagination === lastPage && "text-custom-accent"}`}
@@ -180,7 +158,7 @@ function Table({
                 >
                     {1}
                 </button>,
-                <FontAwesomeIcon icon={faEllipsis} />
+                ". . ."
             );
             for (let i = lastPage - 5; i <= lastPage; i++) {
                 pageNodes.push(
@@ -332,8 +310,7 @@ function Table({
                         className="tableButton flex gap-x-2 p-0 items-center opacity-55 hover:opacity-100"
                         onClick={handleFilterDrop}
                     >
-                        <FontAwesomeIcon icon={faPlus} />
-                        <p>Add Filter</p>
+                        . . .<p>Add Filter</p>
                     </button>
                     <div
                         className={`absolute border border-custom-ly2 border-opacity-80 bg-custom-ly1 ${
@@ -373,21 +350,16 @@ function Table({
             </table>
             {/* Pagination Section */}
             <div className="flex justify-center py-2 border-t border-custom-accent">
-                <button className="tableButton">
-                    <FontAwesomeIcon
-                        icon={faAngleDoubleLeft}
-                        onClick={() => handlePaginationToValue(1)}
-                    />
-                </button>
+                <button className="tableButton">. . .</button>
                 <button className="tableButton" onClick={handlePaginationPrevious}>
-                    <FontAwesomeIcon icon={faAngleLeft} />
+                    . . .
                 </button>
                 {pageNumbers()}
                 <button className="tableButton" onClick={handlePaginationNext}>
-                    <FontAwesomeIcon icon={faAngleRight} />
+                    . . .
                 </button>
                 <button className="tableButton" onClick={() => handlePaginationToValue(lastPage)}>
-                    <FontAwesomeIcon icon={faAngleDoubleRight} />
+                    . . .
                 </button>
             </div>
         </div>

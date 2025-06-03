@@ -1,6 +1,6 @@
+import { DiamondIcon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDiamond } from "@fortawesome/free-solid-svg-icons";
 
 const textColorClasses = [
     "text-gradient-1",
@@ -20,11 +20,13 @@ function DiamondList({
     const ListItems = () =>
         items.map((item, key) => (
             <li className={`flex gap-x-3 items-center mb-2 last:mb-0 text-lg`}>
-                <FontAwesomeIcon
+                <HugeiconsIcon
                     className={`${
                         key === highlightedItem?.dataIndex ? "text-custom-accent" : textColorClasses[key]
-                    } stroke-icon`}
-                    icon={faDiamond}
+                    }`}
+                    icon={DiamondIcon}
+                    strokeWidth={4}
+                    size={15}
                 />
                 <p
                     className={`${

@@ -16,13 +16,6 @@ import {
     useDeleteExpenseMutation,
     useGetUserExpenseCategoriesQuery,
     useUpdateExpenseMutation,
-    fixedExpenseDto,
-    // createFixedExpenseDto,
-    // useGetUserFixedExpensesQuery,
-    // useCreateFixedExpenseMutation,
-    // useDeleteFixedExpenseMutation,
-    // useUpdateFixedExpenseMutation,
-    // updateFixedExpenseDto,
     updateBudgetPlanDto,
     createBudgetPlanDto,
     useCreateBudgetPlanMutation,
@@ -35,8 +28,6 @@ import {
     updateExpenseCategoryDto,
 } from "../../api/apiSlice";
 import Loader from "../components/Loader";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { showModal as showCreateModal } from "../reducers/createModalReducers";
 import { showModal as showDetailsModal } from "../reducers/detailsModalReducers";
@@ -197,15 +188,6 @@ export default function Expenses() {
         dispatch(showCreateModal(newState));
     };
 
-    // // Show create Fixed Expense Modal
-    // const showCreateFixedExpenseModal = () => {
-    //     clearFieldValues();
-    //     const newState = { ...createModalState };
-    //     newState.fixedExpense = true;
-
-    //     dispatch(showCreateModal(newState));
-    // };
-
     // Show create budget planning Modal
     const showCreateBudgetModal = () => {
         clearFieldValues();
@@ -230,22 +212,6 @@ export default function Expenses() {
         setSelectValue(selectedExpenseData!.expenseCategoryId);
         dispatch(showDetailsModal(newState));
     };
-
-    // //Show details Fixed Expense Modal
-    // const showDetailsFixedExpenseModal = (fixedExpenseId: number) => {
-    //     clearFieldValues();
-    //     const newState = { ...detailsModalState };
-    //     newState.id = fixedExpenseId;
-    //     newState.show = { ...detailsModalState.show, fixedExpense: true };
-
-    //     const selectedFixedExpenseData = fixedExpenseData!.find((fExp) => fExp.id === fixedExpenseId);
-
-    //     setAmount(selectedFixedExpenseData!.amount);
-    //     setDetails(selectedFixedExpenseData!.details);
-    //     setPeriodicity(selectedFixedExpenseData!.periodicity);
-    //     setSelectValue(selectedFixedExpenseData!.category);
-    //     dispatch(showDetailsModal(newState));
-    // };
 
     // Show details Budget Plan Modal
     const showDetailsBudgetPlanningModal = (budgetId: number) => {
@@ -293,17 +259,6 @@ export default function Expenses() {
         createExpense(expenseData);
     };
 
-    // // Create fixed expense function
-    // const createFixedExpenseHandler = () => {
-    //     const fixedExpenseData: createFixedExpenseDto = {
-    //         amount: amount,
-    //         details: details,
-    //         periodicity: periodicity,
-    //         category: selectValue,
-    //     };
-    //     createFixedExpense(fixedExpenseData);
-    // };
-
     // Create budget plan function
     const createBudgetHandler = () => {
         const budgetPlanData: createBudgetPlanDto = {
@@ -330,12 +285,6 @@ export default function Expenses() {
         deleteExpense(expenseId!);
     };
 
-    // // Delete Fixed Expense Function
-    // const deleteFixedExpenseHandler = () => {
-    //     const fixedExpenseId = detailsModalState.id;
-    //     deleteFixedExpense(fixedExpenseId!);
-    // };
-
     // Delete Budget Plan Function
     const deleteBudgetPlanHandler = () => {
         const budgetPlanId = detailsModalState.id;
@@ -357,21 +306,6 @@ export default function Expenses() {
 
         updateExpense(expenseData);
     };
-
-    // // Update Fixed Expense Function
-    // const updateFixedExpenseHandler = () => {
-    //     const fixedExpenseData: updateFixedExpenseDto = {
-    //         id: detailsModalState.id!,
-    //         data: {
-    //             amount: amount,
-    //             details: details,
-    //             periodicity: periodicity,
-    //             category: selectValue,
-    //         },
-    //     };
-
-    //     updateFixedExpense(fixedExpenseData);
-    // };
 
     // Update Budget Plan Function
     const updateBudgetPlanHandler = () => {
@@ -412,20 +346,6 @@ export default function Expenses() {
         ],
         rows: budgetExpensesRow,
     };
-
-    // const fixedExpensesData: dataObject = {
-    //     columns: [
-    //         { name: "Expense", type: "amount" },
-    //         { name: "Details", type: "string" },
-    //         {
-    //             name: "Periodicity",
-    //             type: "list",
-    //             values: periodicityValues,
-    //         },
-    //         { name: "Category", type: "string" },
-    //     ],
-    //     rows: fixedExpensesRow,
-    // };
 
     const expenseCategoryTableData: dataObject = {
         columns: [{ name: "Category", type: "string" }],

@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import SectionContent from "../components/SectionContent";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronUp, faChevronDown, faPlus } from "@fortawesome/free-solid-svg-icons";
 import CustomGauge from "../components/CustomGauge";
 import Table, { dataObject, tableRow } from "../components/Table";
 import {
@@ -319,8 +317,7 @@ export default function Savings() {
     const goalProgressScrollDown = () => setGoalsProgressScroll(goalsProgressScroll - 1);
 
     return (
-        <div className="flex flex-1 gap-8">
-            <Sidebar currentSection="Savings" />
+        <>
             <SectionContent>
                 <Header currentSection="Savings" />
                 <div className="flex-1 flex overflow-hidden gap-x-8">
@@ -343,9 +340,7 @@ export default function Savings() {
                                 }`}
                                 onClick={goalProgressScrollDown}
                                 disabled={goalsProgressScroll <= 0 ? true : false}
-                            >
-                                <FontAwesomeIcon icon={faChevronUp} className="flex-none py-1" />
-                            </button>
+                            ></button>
                             <div className="flex-1 overflow-y-hidden relative">
                                 <div className="bg-gradient-to-b from-custom-ly1 to-transparent w-full h-4 absolute top-0 z-30"></div>
                                 <div
@@ -368,9 +363,7 @@ export default function Savings() {
                                 }`}
                                 onClick={goalProgressScrollUp}
                                 disabled={goalsProgressScroll >= goalsProgress.length - 3 ? true : false}
-                            >
-                                <FontAwesomeIcon icon={faChevronDown} className="flex-none py-1" />
-                            </button>
+                            ></button>
                         </div>
                     </div>
                     <div className="flex flex-col flex-1 gap-y-8">
@@ -395,7 +388,6 @@ export default function Savings() {
                                         onClick={showCreateGoalContributionModal}
                                     >
                                         <p>New</p>
-                                        <FontAwesomeIcon icon={faPlus} />
                                     </button>
                                 </div>
                                 <div className="flex flex-1 items-center w-full">
@@ -423,7 +415,6 @@ export default function Savings() {
                                     onClick={showCreateSavingGoalModal}
                                 >
                                     <p>New</p>
-                                    <FontAwesomeIcon icon={faPlus} />
                                 </button>
                             </div>
                             <div className="flex flex-1 items-center w-full">
@@ -500,6 +491,6 @@ export default function Savings() {
                 />
                 <DateField defaultValue={date} fieldStateHandler={setDate} />
             </DetailsModal>
-        </div>
+        </>
     );
 }

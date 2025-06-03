@@ -21,8 +21,6 @@ import {
     createFixedIncomeDto,
 } from "../../api/apiSlice";
 import { periodicityValues } from "../components/Constants";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import CreateModal from "../components/CreateModal";
 import DetailsModal from "../components/DetailsModal";
 import { useAppDispatch, useAppSelector } from "../hooks";

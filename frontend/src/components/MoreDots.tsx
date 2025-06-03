@@ -1,17 +1,16 @@
-import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDiamond } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { DiamondIcon } from "@hugeicons/core-free-icons";
 
 export type SectionUrl = "/" | "/income" | "/expenses" | "/savings";
 
-function MoreDots({ section }: { section: SectionUrl }) {
+function MoreDots({ section, className }: { section: SectionUrl; className?: string }) {
     return (
-        <Link to={section}>
-            <div className="text-xs flex gap-x-2 text-custom-accent p-1">
-                <FontAwesomeIcon icon={faDiamond} size="xs" />
-                <FontAwesomeIcon icon={faDiamond} size="xs" />
-                <FontAwesomeIcon icon={faDiamond} size="xs" />
+        <Link className={`${className}`} to={section}>
+            <div className="flex gap-x-2 text-custom-accent p-1">
+                <HugeiconsIcon icon={DiamondIcon} strokeWidth={3} size={12} />
+                <HugeiconsIcon icon={DiamondIcon} strokeWidth={3} size={12} />
+                <HugeiconsIcon icon={DiamondIcon} strokeWidth={3} size={12} />
             </div>
         </Link>
     );

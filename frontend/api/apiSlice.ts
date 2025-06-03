@@ -43,7 +43,7 @@ export type createExpenseDto = {
 };
 export type updateExpenseDto = {
     id: number;
-    data: { amount: number; details: string; date: Date; category: number };
+    data: { amount: number; details: string; date: Date; expenseCategoryId: number };
 };
 
 export type fixedExpenseDto = {
