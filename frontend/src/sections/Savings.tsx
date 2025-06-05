@@ -319,7 +319,6 @@ export default function Savings() {
     return (
         <>
             <SectionContent>
-                <Header currentSection="Savings" />
                 <div className="flex-1 flex overflow-hidden gap-x-8">
                     <div className="infoContainer1 w-64">
                         <p>Goals Progress</p>

@@ -229,11 +229,9 @@ export default function Budget() {
     };
 
     return (
-        <div className="flex flex-1 gap-8">
-            <Sidebar currentSection="Income" />
+        <>
             <SectionContent>
-                <Header currentSection="Income" />
-                <div className="flex-1 flex overflow-hidden gap-x-9">
+                <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-11 gap-8 overflow-x-hidden overflow-y-auto auto-rows-auto 2xl:grid-rows-11 2xl:flex-1 max-h-[1200px]">
                     <div className="flex flex-col w-5/12 gap-y-9 justify-items-stretch">
                         <div className="infoContainer1 flex-1">
                             <p>Total Income</p>
@@ -282,7 +280,7 @@ export default function Budget() {
                                     }
                                 >
                                     <p>New</p>
-                                    <FontAwesomeIcon icon={faPlus} />
+                                    ...
                                 </button>
                             </div>
                             <div className="flex items-start flex-1 w-full">
@@ -359,6 +357,6 @@ export default function Budget() {
                     defaultValue={periodicity}
                 />
             </DetailsModal>
-        </div>
+        </>
     );
 }

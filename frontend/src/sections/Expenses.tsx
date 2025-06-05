@@ -353,10 +353,8 @@ export default function Expenses() {
     };
 
     return (
-        <div className="flex flex-1 gap-8">
-            <Sidebar currentSection="Expenses" />
+        <>
             <SectionContent>
-                <Header currentSection="Expenses" />
                 <div className="flex-1 flex flex-col overflow-hidden gap-y-9">
                     <div className="flex flex-1 gap-x-9">
                         <div className="infoContainer1 w-2/5">
@@ -466,7 +464,7 @@ export default function Expenses() {
                                     onClick={showCreateExpenseModal}
                                 >
                                     <p>New</p>
-                                    <FontAwesomeIcon icon={faPlus} />
+                                    ...
                                 </button>
                             </div>
                             <div className="flex items-center flex-1 w-full">
@@ -494,7 +492,7 @@ export default function Expenses() {
                                     onClick={showCreateBudgetModal}
                                 >
                                     <p>New</p>
-                                    <FontAwesomeIcon icon={faPlus} />
+                                    ...
                                 </button>
                             </div>
                             <div className="flex items-center flex-1 w-full">
@@ -521,7 +519,7 @@ export default function Expenses() {
                                     onClick={showCreateExpenseCategoryModal}
                                 >
                                     <p>New</p>
-                                    <FontAwesomeIcon icon={faPlus} />
+                                    ...
                                 </button>
                             </div>
                             <div className="flex items-center flex-1 w-full">
@@ -685,6 +683,6 @@ export default function Expenses() {
             >
                 <DetailsField defaultValue={details} fieldStateHandler={setDetails} />
             </DetailsModal>
-        </div>
+        </>
     );
 }
