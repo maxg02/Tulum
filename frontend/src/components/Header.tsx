@@ -6,11 +6,12 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { Menu01Icon } from "@hugeicons/core-free-icons";
 import { SectionType } from "./Sidebar";
 
-export default function Header({ currentSection }: { currentSection: SectionType }) {
+export default function Header() {
     const [dropdownShow, setDropdownShow] = useState<boolean>(false);
 
     const dispatch = useAppDispatch();
     const userInfo = useAppSelector((state) => state.user.userInfo);
+    const activeSection = useAppSelector((state) => state.utilities.activeSection);
 
     return (
         <div className="flex items-center justify-between h-14 relative">
@@ -18,7 +19,7 @@ export default function Header({ currentSection }: { currentSection: SectionType
                 <button className="me-3 xl:hidden" onClick={() => dispatch(toggleSidebar())}>
                     <HugeiconsIcon size={30} icon={Menu01Icon} />
                 </button>
-                <h1 className="text-3xl">{currentSection}</h1>
+                <h1 className="text-3xl">{activeSection}</h1>
             </div>
 
             <div className="h-full flex items-center gap-5">

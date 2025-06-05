@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { HugeiconsIcon, IconSvgElement } from "@hugeicons/react";
 import {
@@ -13,33 +13,51 @@ import {
 
 import type { ReactNode } from "react";
 import { useAppDispatch, useAppSelector } from "../hooks";
-import { toggleSidebar } from "../reducers/utilitiesReducers";
+import { toggleSidebar, toggleActiveSection } from "../reducers/utilitiesReducers";
 
 enum routes {
-    "/",
-    "income",
-    "expenses",
-    "savings",
+    Dashboard = "/",
+    Income = "/income",
+    Expenses = "/expenses",
+    Savings = "/savings",
 }
 
-export type SectionType = "Dashboard" | "Income" | "Expenses" | "Savings";
+export type SectionType = keyof typeof routes;
 
 type sidebarButtonProps = {
     icon: IconSvgElement;
     children: ReactNode;
-    route: number;
+    route: SectionType;
 };
 
 export default function Sidebar() {
-    const [activeSection, setActiveSection] = useState<number>(0);
+    const [activeSection, setActiveSection] = useState<SectionType | null>(null);
 
     const sidebarOpen = useAppSelector((state) => state.utilities.sidebarOpen);
     const dispatch = useAppDispatch();
 
+    const handleActiveSection = (section: SectionType) => {
+        setActiveSection(section);
+        dispatch(toggleSidebar());
+        dispatch(toggleActiveSection(section));
+    };
+
+    useEffect(() => {
+        //Get url subdirectory
+        const url = window.location.pathname;
+        const section = Object.keys(routes).find((key) => routes[key as keyof typeof routes] === url) as
+            | SectionType
+            | undefined;
+        if (section) {
+            handleActiveSection(section);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
     const SidebarButton = ({ icon, children, route }: sidebarButtonProps) => (
         <Link
             to={routes[route]}
-            onClick={() => setActiveSection(route)}
+            onClick={() => handleActiveSection(route)}
             className={`w-full flex items-center gap-2 border-0 py-1 text-white transition-all duration-300
         ${
             activeSection === route
@@ -75,19 +93,19 @@ export default function Sidebar() {
                 </div>
 
                 <div className="flex flex-col gap-2 px-3 overflow-hidden">
-                    <SidebarButton route={0} icon={DashboardSpeed01Icon}>
+                    <SidebarButton route={"Dashboard"} icon={DashboardSpeed01Icon}>
                         Dashboard
                     </SidebarButton>
 
-                    <SidebarButton route={1} icon={MoneyReceiveSquareIcon}>
+                    <SidebarButton route={"Income"} icon={MoneyReceiveSquareIcon}>
                         Income
                     </SidebarButton>
 
-                    <SidebarButton route={2} icon={Invoice02Icon}>
+                    <SidebarButton route={"Expenses"} icon={Invoice02Icon}>
                         Expenses
                     </SidebarButton>
 
-                    <SidebarButton route={3} icon={MoneySavingJarIcon}>
+                    <SidebarButton route={"Savings"} icon={MoneySavingJarIcon}>
                         Savings
                     </SidebarButton>
                 </div>
