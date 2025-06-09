@@ -38,7 +38,7 @@ export default function Sidebar() {
 
     const handleActiveSection = (section: SectionType) => {
         setActiveSection(section);
-        dispatch(toggleSidebar());
+        sidebarOpen && dispatch(toggleSidebar());
         dispatch(toggleActiveSection(section));
     };
 
