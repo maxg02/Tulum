@@ -20,7 +20,7 @@ import {
     updateFixedIncomeDto,
     createFixedIncomeDto,
 } from "../../api/apiSlice";
-import { periodicityValues } from "../components/Constants";
+import { monthList, periodicityValues } from "../components/Constants";
 import CreateModal from "../components/CreateModal";
 import DetailsModal from "../components/DetailsModal";
 import { useAppDispatch, useAppSelector } from "../hooks";
@@ -28,13 +28,19 @@ import { showModal as showCreateModal } from "../reducers/createModalReducers";
 import { showModal as showDetailsModal } from "../reducers/detailsModalReducers";
 import { AmountField, DateField, DetailsField, ListField } from "../components/ModalsFields";
 import Loader from "../components/Loader";
+import { AddSquareIcon, PlusSignIcon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { BarChart } from "@mui/x-charts/BarChart";
+import { axisClasses } from "@mui/x-charts/ChartsAxis/axisClasses";
+import { chartsAxisHighlightClasses } from "@mui/x-charts/ChartsAxisHighlight";
+import { basicColors } from "../components/Colors";
 
 export default function Budget() {
     const [amount, setAmount] = useState<number>(0);
     const [details, setDetails] = useState<string>("");
     const [date, setDate] = useState<Date>(new Date());
     const [periodicity, setPeriodicity] = useState<number>(0);
-    const [incomeToggle, setIncomeToggle] = useState<boolean>(true);
+    //const [incomeToggle, setIncomeToggle] = useState<boolean>(true);
 
     const clearFieldValues = () => {
         setAmount(0), setDetails(""), setDate(new Date()), setPeriodicity(0);
@@ -53,6 +59,10 @@ export default function Budget() {
     let totalMonthIncome: number = 0;
     let totalYearIncome: number = 0;
     let totalFixedIncome: number = 0;
+    let dataBarChart: {
+        month: string;
+        income: number;
+    }[] = [];
 
     //Income Fetching
     const { data: incomeData, isLoading: incomeIsLoading } = useGetUserIncomesQuery();
@@ -190,18 +200,18 @@ export default function Budget() {
 
         totalMonthIncome = monthIncomes.reduce((acc: number, next: incomeDto) => acc + next.amount, 0);
         totalYearIncome = yearIncomes.reduce((acc: number, next: incomeDto) => acc + next.amount, 0);
-    }
 
-    // Fixed Income data handling
-    if (!fixedIncomeIsLoading && fixedIncomeData != undefined) {
-        fixedIncomesRow = fixedIncomeData.map((fixedIncome: fixedIncomeDto) => ({
-            id: fixedIncome.id,
-            data: [fixedIncome.amount, fixedIncome.details, fixedIncome.periodicity],
+        dataBarChart = monthList.map((month) => ({
+            month,
+            income: yearIncomes
+                .filter(
+                    (income: incomeDto) =>
+                        new Intl.DateTimeFormat("en-US", { month: "short" }).format(
+                            new Date(income.date)
+                        ) == month
+                )
+                .reduce((acc: number, next: incomeDto) => acc + next.amount, 0),
         }));
-        totalFixedIncome = fixedIncomeData.reduce(
-            (acc: number, next: fixedIncomeDto) => acc + next.amount,
-            0
-        );
     }
 
     //Income table structure
@@ -231,87 +241,106 @@ export default function Budget() {
     return (
         <>
             <SectionContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-11 gap-8 overflow-x-hidden overflow-y-auto auto-rows-auto 2xl:grid-rows-11 2xl:flex-1 max-h-[1200px]">
-                    <div className="flex flex-col w-5/12 gap-y-9 justify-items-stretch">
-                        <div className="infoContainer1 flex-1">
-                            <p>Total Income</p>
-                            <h1 className="font-light text-5xl my-auto">RD${totalIncome}</h1>
-                        </div>
-                        <div className="infoContainer1 flex-1">
-                            <p>Total Fixed Income</p>
-                            <h1 className="font-light text-5xl my-auto">RD${totalFixedIncome}</h1>
-                        </div>
-                        <div className="infoContainer1 bg-gradient-to-b from-custom-secondary to-custom-accent shadow-none flex-1">
-                            <p>{`${currentMonth} Income`}</p>
-                            <h1 className="font-light text-5xl my-auto">RD${totalMonthIncome}</h1>
-                        </div>
-                        <div className="infoContainer1 bg-gradient-to-b from-custom-secondary to-custom-accent shadow-none flex-1">
-                            <p>{`${currentYear} Income`}</p>
-                            <h1 className="font-light text-5xl my-auto">RD${totalYearIncome}</h1>
+                <div className="grid grid-cols-2 auto-rows-auto gap-3 overflow-x-hidden overflow-y-auto max-h-[1200px] md:grid-cols-2 2xl:grid-cols-11 2xl:grid-rows-11 2xl:flex-1">
+                    <div className="infoContainer2 flex-1 p-3">
+                        <p className="hidden">{`${currentMonth}`}</p>
+                        <div className="border-s-4 border-custom-secondary self-start ps-2 py-1">
+                            <p className="">{`${currentMonth}`}</p>
+                            <h1 className="text-2xl font-normal">RD${totalMonthIncome}</h1>
                         </div>
                     </div>
-                    <div className="flex flex-col flex-1 gap-y-9">
-                        <div className="infoContainer2 flex-1">
-                            <div className="grid grid-cols-3 w-full">
-                                <div className="col-start-2 mx-auto flex gap-x-3">
-                                    <button
-                                        onClick={() => setIncomeToggle(true)}
-                                        className={`bg-transparent p-0 hover:border-transparent focus:outline-none ${
-                                            !incomeToggle && "opacity-40"
-                                        }`}
-                                        disabled={incomeToggle}
-                                    >
-                                        <p>Income</p>
-                                    </button>
-                                    <button
-                                        onClick={() => setIncomeToggle(false)}
-                                        className={`bg-transparent p-0 hover:border-transparent focus:outline-none ${
-                                            incomeToggle && "opacity-40"
-                                        }`}
-                                        disabled={!incomeToggle}
-                                    >
-                                        <p>Fixed Income</p>
-                                    </button>
-                                </div>
-                                <button
-                                    className="ml-auto tableButton flex gap-x-2 p-0 items-center opacity-55 hover:opacity-100"
-                                    onClick={
-                                        incomeToggle ? showCreateIncomeModal : showCreateFixedIncomeModal
+                    <div className="infoContainer2 flex-1 p-3">
+                        <p className="hidden">{`${currentYear}`}</p>
+                        <div className="border-s-4 border-custom-secondary self-start ps-2 py-1">
+                            <p className="">{`${currentYear}`}</p>
+                            <h1 className="text-2xl font-normal">RD${totalYearIncome}</h1>
+                        </div>
+                    </div>
+                    <div className="infoContainer2 flex-1 p-3 col-span-2">
+                        <p className="hidden">Total</p>
+                        <div className="border-s-4 border-custom-secondary self-start ps-2 py-1">
+                            <p className="">Total</p>
+                            <h1 className="text-2xl font-normal">RD${totalIncome}</h1>
+                        </div>
+                    </div>
+
+                    <hr className="col-span-2 my-4 border-t-2"></hr>
+
+                    <div className="infoContainer1 flex-1 col-span-2 mb-6">
+                        <div className="grid grid-cols-3 w-full">
+                            <p className="col-start-2 mx-auto">Income</p>
+                            <button
+                                className="ml-auto tableButton flex gap-x-2 p-0 items-center 2xl:opacity-70 hover:opacity-100"
+                                onClick={showCreateIncomeModal}
+                            >
+                                <HugeiconsIcon
+                                    icon={AddSquareIcon}
+                                    size={20}
+                                    className="text-custom-accent"
+                                />
+                            </button>
+                        </div>
+                        <div className="flex items-start flex-1 w-full">
+                            {incomeIsLoading ? (
+                                <Loader />
+                            ) : (
+                                <Table
+                                    data={incomeTableData}
+                                    tablePrefix="I"
+                                    detailsFunction={(incomeId: number) =>
+                                        showDetailsIncomeModal(incomeId)
                                     }
-                                >
-                                    <p>New</p>
-                                    ...
-                                </button>
-                            </div>
-                            <div className="flex items-start flex-1 w-full">
-                                {incomeToggle ? (
-                                    incomeIsLoading ? (
-                                        <Loader />
-                                    ) : (
-                                        <Table
-                                            dark
-                                            data={incomeTableData}
-                                            tablePrefix="I"
-                                            detailsFunction={(incomeId: number) =>
-                                                showDetailsIncomeModal(incomeId)
-                                            }
-                                            rowLimit={18}
-                                        />
-                                    )
-                                ) : fixedIncomeIsLoading ? (
-                                    <Loader />
-                                ) : (
-                                    <Table
-                                        data={fixedIncomeTableData}
-                                        tablePrefix="FI"
-                                        dark
-                                        detailsFunction={(fixedIncomeId: number) =>
-                                            showDetailsFixedIncomeModal(fixedIncomeId)
-                                        }
-                                        rowLimit={18}
-                                    />
-                                )}
-                            </div>
+                                    rowLimit={18}
+                                />
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="infoContainer2 flex-1 col-span-2">
+                        <p className="col-start-2 mx-auto">Income Summary {currentYear}</p>
+                        <div className="flex h-96 w-full">
+                            {incomeIsLoading ? (
+                                <Loader />
+                            ) : (
+                                <BarChart
+                                    dataset={dataBarChart}
+                                    margin={{ left: 35, right: 10, top: 15, bottom: 20 }}
+                                    xAxis={[
+                                        {
+                                            valueFormatter: (value) =>
+                                                value > 1000 ? `${value / 1000}K` : `${value}`,
+                                        },
+                                    ]}
+                                    yAxis={[{ scaleType: "band", dataKey: "month" }]}
+                                    series={[
+                                        {
+                                            dataKey: "income",
+                                            valueFormatter: (v) => `RD$${v}`,
+                                            color: basicColors.secondary,
+                                        },
+                                    ]}
+                                    layout="horizontal"
+                                    grid={{ vertical: true }}
+                                    sx={{
+                                        [`.${axisClasses.root}`]: {
+                                            [`.${axisClasses.tick}, .${axisClasses.line}`]: {
+                                                stroke: "white",
+                                                strokeWidth: 2,
+                                                opacity: 0.3,
+                                            },
+                                            [`.${axisClasses.tickLabel}`]: {
+                                                fill: "white",
+                                                opacity: 0.5,
+                                            },
+                                        },
+                                        [`.${chartsAxisHighlightClasses.root}`]: {
+                                            fill: "white",
+                                            stroke: "white",
+                                            opacity: 0.5,
+                                        },
+                                    }}
+                                />
+                            )}
                         </div>
                     </div>
                 </div>
