@@ -1,3 +1,11 @@
+import {
+    FilterAddIcon,
+    ArrowRight01Icon,
+    ArrowLeft01Icon,
+    ArrowLeftDoubleIcon,
+    ArrowRightDoubleIcon,
+} from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import { useState } from "react";
 
 type sortValues = ("asc" | "desc" | "null")[];
@@ -63,13 +71,6 @@ function Table({
             <th key={key}>
                 <div className="flex items-center gap-x-2">
                     <p>{item.name}</p>
-                    {item.type !== "list" && item.type !== "progress" ? (
-                        <button className="tableButton p-0" onClick={() => handleSortToggle(key)}>
-                            . . .
-                        </button>
-                    ) : (
-                        ""
-                    )}
                 </div>
             </th>
         ));
@@ -307,10 +308,10 @@ function Table({
             <div className="flex items-center mb-1 gap-x-3">
                 <div>
                     <button
-                        className="tableButton flex gap-x-2 p-0 items-center opacity-55 hover:opacity-100"
+                        className="tableButton flex gap-x-2 p-0 items-center 2xl:opacity-70 hover:opacity-100"
                         onClick={handleFilterDrop}
                     >
-                        . . .<p>Add Filter</p>
+                        <HugeiconsIcon size={20} icon={FilterAddIcon} className="text-custom-accent" />
                     </button>
                     <div
                         className={`absolute border border-custom-ly2 border-opacity-80 bg-custom-ly1 ${
@@ -350,16 +351,18 @@ function Table({
             </table>
             {/* Pagination Section */}
             <div className="flex justify-center py-2 border-t border-custom-accent">
-                <button className="tableButton">. . .</button>
+                <button className="tableButton">
+                    <HugeiconsIcon icon={ArrowLeftDoubleIcon} />
+                </button>
                 <button className="tableButton" onClick={handlePaginationPrevious}>
-                    . . .
+                    <HugeiconsIcon icon={ArrowLeft01Icon} />
                 </button>
                 {pageNumbers()}
                 <button className="tableButton" onClick={handlePaginationNext}>
-                    . . .
+                    <HugeiconsIcon icon={ArrowRight01Icon} />
                 </button>
                 <button className="tableButton" onClick={() => handlePaginationToValue(lastPage)}>
-                    . . .
+                    <HugeiconsIcon icon={ArrowRightDoubleIcon} />
                 </button>
             </div>
         </div>

@@ -22,6 +22,7 @@ import { DiamondIcon, Invoice02Icon, MoneyReceiveSquareIcon } from "@hugeicons/c
 import { HugeiconsIcon } from "@hugeicons/react";
 import { axisClasses } from "@mui/x-charts/ChartsAxis/axisClasses";
 import { chartsAxisHighlightClasses } from "@mui/x-charts/ChartsAxisHighlight";
+import { monthList } from "../components/Constants";
 
 export type pieChartSlice = {
     label: string;
@@ -50,21 +51,6 @@ export default function Dashboard() {
         useGetUserExpenseCategoriesQuery();
     const { data: expenseData, isLoading: expenseIsLoading } = useGetUserExpensesQuery();
     const { data: savingGoalData, isLoading: savingGoalIsLoading } = useGetSavingGoalsByUserIdQuery(1);
-
-    const monthList = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-    ];
 
     if (
         !incomeIsLoading &&
@@ -352,13 +338,17 @@ export default function Dashboard() {
                                         label: "Income",
                                         color: "#78d2b5",
                                         curve: "linear",
-                                        stackOrder: "appearance",
+                                        valueFormatter: (value) =>
+                                            value == null ? "RD$0" : `RD$${value}`,
                                     },
+
                                     {
                                         dataKey: "exp",
                                         label: "Expenses",
                                         color: "#d96533",
                                         curve: "linear",
+                                        valueFormatter: (value) =>
+                                            value == null ? "RD$0" : `RD$${value}`,
                                     },
                                 ]}
                                 dataset={dataLineChart}
