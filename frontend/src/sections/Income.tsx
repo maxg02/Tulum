@@ -241,32 +241,38 @@ export default function Budget() {
     return (
         <>
             <SectionContent>
-                <div className="grid grid-cols-2 auto-rows-auto gap-3 overflow-x-hidden overflow-y-auto max-h-[1200px] md:grid-cols-2 2xl:grid-cols-11 2xl:grid-rows-11 2xl:flex-1">
-                    <div className="infoContainer2 flex-1 p-3">
-                        <p className="hidden">{`${currentMonth}`}</p>
-                        <div className="border-s-4 border-custom-secondary self-start ps-2 py-1">
-                            <p className="">{`${currentMonth}`}</p>
-                            <h1 className="text-2xl font-normal">RD${totalMonthIncome}</h1>
+                <div className="grid grid-cols-2 auto-rows-auto gap-3 overflow-x-hidden overflow-y-auto max-h-[1200px] md:grid-cols-6 md:gap-6 2xl:flex-1 2xl:grid-rows-12">
+                    <div className="infoContainer2 flex-1 p-3 md:col-span-2 2xl:row-span-2 2xl:text-start 2xl:gap-y-2">
+                        <p className="max-2xl:hidden self-start">{`${currentMonth}`}</p>
+                        <div className="border-s-4 border-custom-secondary self-start ps-2 py-1 2xl:h-full 2xl:my-2 2xl:flex 2xl:border-s-[6px]">
+                            <p className="2xl:hidden">{`${currentMonth}`}</p>
+                            <h1 className="text-2xl font-normal 2xl:my-auto 2xl:text-4xl">
+                                RD${totalMonthIncome}
+                            </h1>
                         </div>
                     </div>
-                    <div className="infoContainer2 flex-1 p-3">
-                        <p className="hidden">{`${currentYear}`}</p>
-                        <div className="border-s-4 border-custom-secondary self-start ps-2 py-1">
-                            <p className="">{`${currentYear}`}</p>
-                            <h1 className="text-2xl font-normal">RD${totalYearIncome}</h1>
+                    <div className="infoContainer2 flex-1 p-3 md:col-span-2 2xl:row-span-2 2xl:text-start 2xl:gap-y-2">
+                        <p className="max-2xl:hidden self-start">{`${currentYear}`}</p>
+                        <div className="border-s-4 border-custom-secondary self-start ps-2 py-1 2xl:h-full 2xl:my-2 2xl:flex 2xl:border-s-[6px]">
+                            <p className="2xl:hidden">{`${currentYear}`}</p>
+                            <h1 className="text-2xl font-normal 2xl:my-auto 2xl:text-4xl">
+                                RD${totalYearIncome}
+                            </h1>
                         </div>
                     </div>
-                    <div className="infoContainer2 flex-1 p-3 col-span-2">
-                        <p className="hidden">Total</p>
-                        <div className="border-s-4 border-custom-secondary self-start ps-2 py-1">
-                            <p className="">Total</p>
-                            <h1 className="text-2xl font-normal">RD${totalIncome}</h1>
+                    <div className="infoContainer2 flex-1 p-3 col-span-2 2xl:row-span-2 2xl:text-start 2xl:gap-y-2">
+                        <p className="max-2xl:hidden self-start">Total</p>
+                        <div className="border-s-4 border-custom-secondary self-start ps-2 py-1 2xl:h-full 2xl:my-2 2xl:flex 2xl:border-s-[6px]">
+                            <p className="2xl:hidden">Total</p>
+                            <h1 className="text-2xl font-normal 2xl:my-auto 2xl:text-4xl">
+                                RD${totalIncome}
+                            </h1>
                         </div>
                     </div>
 
-                    <hr className="col-span-2 my-4 border-t-2"></hr>
+                    <hr className="col-span-2 my-4 border-t-2 md:hidden"></hr>
 
-                    <div className="infoContainer1 flex-1 col-span-2 mb-6">
+                    <div className="infoContainer1 flex-1 col-span-2 mb-6 md:col-span-6 md:mb-0 xl:col-span-3 2xl:row-span-10">
                         <div className="grid grid-cols-3 w-full">
                             <p className="col-start-2 mx-auto">Income</p>
                             <button
@@ -296,9 +302,9 @@ export default function Budget() {
                         </div>
                     </div>
 
-                    <div className="infoContainer2 flex-1 col-span-2">
+                    <div className="infoContainer2 flex-1 col-span-6 xl:col-span-3 2xl:row-span-10">
                         <p className="col-start-2 mx-auto">Income Summary {currentYear}</p>
-                        <div className="flex h-96 w-full">
+                        <div className="flex h-96 w-full xl:h-[30rem] 2xl:h-full">
                             {incomeIsLoading ? (
                                 <Loader />
                             ) : (
