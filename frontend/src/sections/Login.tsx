@@ -26,8 +26,8 @@ export default function Login() {
     };
 
     return (
-        <div className="bg-custom-bg flex w-screen h-screen">
-            <div className="m-auto infoContainer1 w-3/12">
+        <div className="bg-custom-bg flex w-screen h-screen px-5 relative">
+            <div className="m-auto infoContainer1 w-full max-w-96">
                 <p>Login</p>
                 <form onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-y-3 w-full">
                     <div className="flex flex-col gap-y-1">
@@ -64,6 +64,7 @@ export default function Login() {
                     </button>
                 </form>
             </div>
+            <span className="fixed bottom-0 mb-3">Design and Built By Max Garcia</span>
         </div>
     );
 }

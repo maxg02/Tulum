@@ -331,7 +331,7 @@ export default function Savings() {
     return (
         <>
             <SectionContent>
-                <div className="grid grid-cols-1 gap-8 overflow-x-hidden overflow-y-auto auto-rows-auto 2xl:grid-rows-11 2xl:grid-cols-11 2xl:flex-1 max-h-[1200px]">
+                <div className="grid grid-cols-1 gap-8 overflow-x-hidden overflow-y-auto auto-rows-auto 2xl:grid-rows-11 2xl:grid-cols-11 2xl:flex-1 max-h-[1100px]">
                     <div className="flex gap-3 2xl:col-span-4 2xl:flex-col 2xl:row-span-4">
                         <div className="flex-1">
                             <ValuePill title={currentMonth} value={totalMonthSavings} />
