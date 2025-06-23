@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { SectionType } from "../components/Sidebar";
+import { SectionType } from "../components/Layout/Sidebar";
 
 type utilitiesInfo = {
     sidebarOpen: boolean;

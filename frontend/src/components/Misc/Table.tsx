@@ -7,6 +7,7 @@ import {
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useState } from "react";
+import ProgressBar from "../Graphs/ProgressBar";
 
 type sortValues = ("asc" | "desc" | "null")[];
 export type tableRow = {
@@ -196,24 +197,11 @@ function Table({
                         ) : data.columns[key].type === "list" ? (
                             <p>{data.columns[key].values[content]}</p>
                         ) : (
-                            <div className="flex flex-col min-w-72">
-                                <div
-                                    className={`${
-                                        dark ? "bg-custom-ly1" : "bg-custom-ly2"
-                                    } h-3 w-full rounded-[0.30rem]`}
-                                >
-                                    <div
-                                        className="h-full bg-gradient-to-r from-custom-secondary to-custom-accent rounded-[0.30rem]"
-                                        style={{
-                                            width: `min(${(content.value * 100) / content.total}%,100%)`,
-                                        }}
-                                    ></div>
-                                </div>
-                                <div className="flex justify-between px-1">
-                                    <p className="text-xs">RD${content.value}</p>
-                                    <p className="text-xs">RD${content.total}</p>
-                                </div>
-                            </div>
+                            <ProgressBar
+                                dark={dark}
+                                value={content.value ?? 0}
+                                total={content.total ?? 0}
+                            />
                         )}
                     </td>
                 ))}

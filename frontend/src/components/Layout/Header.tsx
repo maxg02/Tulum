@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import { useAppDispatch, useAppSelector } from "../hooks";
-import { logOut } from "../reducers/userReducers";
-import { toggleSidebar } from "../reducers/utilitiesReducers";
+import { useAppDispatch, useAppSelector } from "../../hooks";
+import { logOut } from "../../reducers/userReducers";
+import { toggleSidebar } from "../../reducers/utilitiesReducers";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Menu01Icon } from "@hugeicons/core-free-icons";
-import { SectionType } from "./Sidebar";
 
 export default function Header() {
     const [dropdownShow, setDropdownShow] = useState<boolean>(false);

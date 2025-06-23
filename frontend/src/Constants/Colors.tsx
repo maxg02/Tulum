@@ -7,10 +7,4 @@ export enum basicColors {
     accent = "#DACEAF",
 }
 
-export enum gradientColors {
-    "#D2EBE5",
-    "#99CCBC",
-    "#56A98F",
-    "#336656",
-    "#24433A",
-}
+export const gradientColors = ["#D2EBE5", "#99CCBC", "#56A98F", "#336656", "#24433A"];

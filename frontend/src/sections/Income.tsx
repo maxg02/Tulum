@@ -1,9 +1,7 @@
 import { useState } from "react";
-import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
-import SectionContent from "../components/SectionContent";
-import Table, { tableRow } from "../components/Table";
-import { dataObject } from "../components/Table";
+import SectionContent from "../components/Layout/SectionContent";
+import Table, { tableRow } from "../components/Misc/Table";
+import { dataObject } from "../components/Misc/Table";
 import {
     useGetUserIncomesQuery,
     useCreateIncomeMutation,
@@ -20,20 +18,21 @@ import {
     updateFixedIncomeDto,
     createFixedIncomeDto,
 } from "../../api/apiSlice";
-import { monthList, periodicityValues } from "../components/Constants";
-import CreateModal from "../components/CreateModal";
-import DetailsModal from "../components/DetailsModal";
+import { monthList, periodicityValues } from "../Constants/Constants";
+import CreateModal from "../components/Modals/CreateModal";
+import DetailsModal from "../components/Modals/DetailsModal";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { showModal as showCreateModal } from "../reducers/createModalReducers";
 import { showModal as showDetailsModal } from "../reducers/detailsModalReducers";
-import { AmountField, DateField, DetailsField, ListField } from "../components/ModalsFields";
-import Loader from "../components/Loader";
-import { AddSquareIcon, PlusSignIcon } from "@hugeicons/core-free-icons";
+import { AmountField, DateField, DetailsField, ListField } from "../components/Modals/ModalsFields";
+import Loader from "../components/Misc/Loader";
+import { AddSquareIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { axisClasses } from "@mui/x-charts/ChartsAxis/axisClasses";
 import { chartsAxisHighlightClasses } from "@mui/x-charts/ChartsAxisHighlight";
-import { basicColors } from "../components/Colors";
+import { basicColors } from "../Constants/Colors";
+import ValuePill from "../components/Misc/ValuePill";
 
 export default function Budget() {
     const [amount, setAmount] = useState<number>(0);
@@ -241,33 +240,15 @@ export default function Budget() {
     return (
         <>
             <SectionContent>
-                <div className="grid grid-cols-2 auto-rows-auto gap-3 overflow-x-hidden overflow-y-auto max-h-[1200px] md:grid-cols-6 md:gap-6 2xl:flex-1 2xl:grid-rows-12">
-                    <div className="infoContainer2 flex-1 p-3 md:col-span-2 2xl:row-span-2 2xl:text-start 2xl:gap-y-2">
-                        <p className="max-2xl:hidden self-start">{`${currentMonth}`}</p>
-                        <div className="border-s-4 border-custom-secondary self-start ps-2 py-1 2xl:h-full 2xl:my-2 2xl:flex 2xl:border-s-[6px]">
-                            <p className="2xl:hidden">{`${currentMonth}`}</p>
-                            <h1 className="text-2xl font-normal 2xl:my-auto 2xl:text-4xl">
-                                RD${totalMonthIncome}
-                            </h1>
-                        </div>
+                <div className="grid grid-cols-2 auto-rows-auto gap-3 overflow-x-hidden overflow-y-auto max-h-[1000px] md:grid-cols-6 md:gap-6 2xl:flex-1 2xl:grid-rows-12">
+                    <div className="flex-1 md:col-span-2 2xl:row-span-2">
+                        <ValuePill title={currentMonth} value={totalMonthIncome} />
                     </div>
-                    <div className="infoContainer2 flex-1 p-3 md:col-span-2 2xl:row-span-2 2xl:text-start 2xl:gap-y-2">
-                        <p className="max-2xl:hidden self-start">{`${currentYear}`}</p>
-                        <div className="border-s-4 border-custom-secondary self-start ps-2 py-1 2xl:h-full 2xl:my-2 2xl:flex 2xl:border-s-[6px]">
-                            <p className="2xl:hidden">{`${currentYear}`}</p>
-                            <h1 className="text-2xl font-normal 2xl:my-auto 2xl:text-4xl">
-                                RD${totalYearIncome}
-                            </h1>
-                        </div>
+                    <div className="flex-1 md:col-span-2 2xl:row-span-2">
+                        <ValuePill title={currentYear.toString()} value={totalYearIncome} />
                     </div>
-                    <div className="infoContainer2 flex-1 p-3 col-span-2 2xl:row-span-2 2xl:text-start 2xl:gap-y-2">
-                        <p className="max-2xl:hidden self-start">Total</p>
-                        <div className="border-s-4 border-custom-secondary self-start ps-2 py-1 2xl:h-full 2xl:my-2 2xl:flex 2xl:border-s-[6px]">
-                            <p className="2xl:hidden">Total</p>
-                            <h1 className="text-2xl font-normal 2xl:my-auto 2xl:text-4xl">
-                                RD${totalIncome}
-                            </h1>
-                        </div>
+                    <div className="flex-1 col-span-2 2xl:row-span-2">
+                        <ValuePill title="Total" value={totalIncome} />
                     </div>
 
                     <hr className="col-span-2 my-4 border-t-2 md:hidden"></hr>
@@ -302,7 +283,7 @@ export default function Budget() {
                         </div>
                     </div>
 
-                    <div className="infoContainer2 flex-1 col-span-6 xl:col-span-3 2xl:row-span-10">
+                    <div className="infoContainer2 flex-1 col-span-2 md:col-span-6 xl:col-span-3 2xl:row-span-10">
                         <p className="col-start-2 mx-auto">Income Summary {currentYear}</p>
                         <div className="flex h-96 w-full xl:h-[30rem] 2xl:h-full">
                             {incomeIsLoading ? (

@@ -2,7 +2,7 @@ import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { setUserInfo } from "../reducers/userReducers";
-import Sidebar from "../components/Sidebar";
+import Sidebar from "../components/Layout/Sidebar";
 
 export default function RootLayout() {
     const dispatch = useAppDispatch();

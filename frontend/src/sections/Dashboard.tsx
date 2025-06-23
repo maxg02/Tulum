@@ -1,13 +1,11 @@
-import React, { ReactNode, useState } from "react";
-import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
-import SectionContent from "../components/SectionContent";
-import MoreDots from "../components/MoreDots";
+import React, { useState } from "react";
+import SectionContent from "../components/Layout/SectionContent";
+import MoreDots from "../components/Misc/MoreDots";
 import { LineChart, markElementClasses } from "@mui/x-charts/LineChart";
 import { PieChart } from "@mui/x-charts/PieChart";
-import { gradientColors } from "../components/Colors";
-import DiamondList from "../components/DiamondList";
-import CustomGauge from "../components/CustomGauge";
+import { gradientColors } from "../Constants/Colors";
+import DiamondList from "../components/Misc/DiamondList";
+import CustomGauge from "../components/Graphs/CustomGauge";
 import {
     expenseDto,
     goalContributionDto,
@@ -17,12 +15,12 @@ import {
     useGetSavingGoalsByUserIdQuery,
     useGetUserExpensesQuery,
 } from "../../api/apiSlice";
-import Loader from "../components/Loader";
+import Loader from "../components/Misc/Loader";
 import { DiamondIcon, Invoice02Icon, MoneyReceiveSquareIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { axisClasses } from "@mui/x-charts/ChartsAxis/axisClasses";
 import { chartsAxisHighlightClasses } from "@mui/x-charts/ChartsAxisHighlight";
-import { monthList } from "../components/Constants";
+import { monthList } from "../Constants/Constants";
 
 export type pieChartSlice = {
     label: string;
@@ -249,13 +247,7 @@ export default function Dashboard() {
                             ) : (
                                 <>
                                     <PieChart
-                                        colors={[
-                                            gradientColors[0],
-                                            gradientColors[1],
-                                            gradientColors[2],
-                                            gradientColors[3],
-                                            gradientColors[4],
-                                        ]}
+                                        colors={gradientColors}
                                         margin={{ left: 0, right: 0 }}
                                         series={[
                                             {

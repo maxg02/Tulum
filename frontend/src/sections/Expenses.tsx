@@ -1,11 +1,9 @@
 import { useState } from "react";
-import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
-import SectionContent from "../components/SectionContent";
+import SectionContent from "../components/Layout/SectionContent";
 import { PieChart } from "@mui/x-charts/PieChart";
-import { basicColors, gradientColors } from "../components/Colors";
-import DiamondList from "../components/DiamondList";
-import Table, { dataObject, tableRow } from "../components/Table";
+import { basicColors, gradientColors } from "../Constants/Colors";
+import DiamondList from "../components/Misc/DiamondList";
+import Table, { dataObject, tableRow } from "../components/Misc/Table";
 import {
     expenseDto,
     createExpenseDto,
@@ -27,15 +25,25 @@ import {
     createExpenseCategoryDto,
     updateExpenseCategoryDto,
 } from "../../api/apiSlice";
-import Loader from "../components/Loader";
+import Loader from "../components/Misc/Loader";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { showModal as showCreateModal } from "../reducers/createModalReducers";
 import { showModal as showDetailsModal } from "../reducers/detailsModalReducers";
-import CreateModal from "../components/CreateModal";
-import { AmountField, DateField, DetailsField, ListField, SelectField } from "../components/ModalsFields";
-import DetailsModal from "../components/DetailsModal";
-import { periodicityValues } from "../components/Constants";
+import CreateModal from "../components/Modals/CreateModal";
+import {
+    AmountField,
+    DateField,
+    DetailsField,
+    ListField,
+    SelectField,
+} from "../components/Modals/ModalsFields";
+import DetailsModal from "../components/Modals/DetailsModal";
+import { periodicityValues } from "../Constants/Constants";
 import { pieChartSlice } from "./Dashboard";
+import ValuePill from "../components/Misc/ValuePill";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { AddSquareIcon } from "@hugeicons/core-free-icons";
+import ProgressBar from "../components/Graphs/ProgressBar";
 
 export default function Expenses() {
     const [highlightedValue, setHighlightedValue] = useState(null);
@@ -47,9 +55,8 @@ export default function Expenses() {
 
     const currentDate: Date = new Date();
     const currentMonth: string = new Intl.DateTimeFormat("en-US", { month: "long" }).format(currentDate);
+    const currentYear: number = currentDate.getFullYear();
     let expensesRow: tableRow[] = [];
-
-    //let fixedExpensesRow: tableRow[] = [];
 
     let budgetExpensesRow: tableRow[] = [],
         expenseCategoriesRow: tableRow[] = [],
@@ -61,6 +68,9 @@ export default function Expenses() {
               }[]
             | undefined,
         expenseCategoriesWithBudget: expenseCategoryDto[] = [];
+
+    let totalMonthExpenses: number = 0;
+    let totalYearExpenses: number = 0;
 
     const clearFieldValues = () => {
         setAmount(0), setDetails(""), setDate(new Date()), setPeriodicity(0), setSelectValue(0);
@@ -87,12 +97,6 @@ export default function Expenses() {
     const [createBudgetPlan] = useCreateBudgetPlanMutation();
     const [deleteBudgetPlan] = useDeleteBudgetPlanMutation();
     const [updateBudgetPlan] = useUpdateBudgetPlanMutation();
-
-    // //Fixed Expense Fetching
-    // const { data: fixedExpenseData, isLoading: fixedExpenseIsLoading } = useGetUserFixedExpensesQuery();
-    // const [createFixedExpense] = useCreateFixedExpenseMutation();
-    // const [deleteFixedExpense] = useDeleteFixedExpenseMutation();
-    // const [updateFixedExpense] = useUpdateFixedExpenseMutation();
 
     // Expenses Category Data handling
     if (
@@ -127,11 +131,16 @@ export default function Expenses() {
 
         // TODO: REFACTOR MONTH EXPENSES
 
-        const monthExpenses = expenseData?.filter(
-            (expense) =>
-                new Date(expense.date).getMonth() === currentDate.getMonth() &&
-                new Date(expense.date).getFullYear() === currentDate.getFullYear()
+        const yearExpenses = expenseData?.filter(
+            (expense) => new Date(expense.date).getFullYear() === currentDate.getFullYear()
         );
+
+        const monthExpenses = yearExpenses?.filter(
+            (expense) => new Date(expense.date).getMonth() === currentDate.getMonth()
+        );
+
+        totalMonthExpenses = monthExpenses.reduce((acc, val) => acc + val.amount, 0);
+        totalYearExpenses = yearExpenses.reduce((acc, val) => acc + val.amount, 0);
 
         const monthExpensesByCategory: object = Object.groupBy(
             monthExpenses,
@@ -145,16 +154,6 @@ export default function Expenses() {
                     : "Otros",
             value: monthExpensesByCategory[key].reduce((acc, expense) => acc + expense.amount, 0),
         }));
-
-        // fixedExpensesRow = fixedExpenseData.map((fixedExpense: fixedExpenseDto) => ({
-        //     id: fixedExpense.id,
-        //     data: [
-        //         fixedExpense.amount,
-        //         fixedExpense.details,
-        //         fixedExpense.periodicity,
-        //         expenseCategoryData.find((ec) => ec.id === fixedExpense.category)!.category,
-        //     ],
-        // }));
 
         budgetExpensesRow = expenseCategoriesWithBudget.map((ec) => ({
             id: ec.budgetPlan!.id,
@@ -355,216 +354,186 @@ export default function Expenses() {
     return (
         <>
             <SectionContent>
-                <div className="flex-1 flex flex-col overflow-hidden gap-y-9">
-                    <div className="flex flex-1 gap-x-9">
-                        <div className="infoContainer1 w-2/5">
-                            <p>{`${currentMonth} Expenses`}</p>
-                            <div
-                                className={`w-full flex-1 flex items-center justify-center ${
-                                    dataPieChart.length && "gap-x-9"
-                                }`}
-                            >
-                                <div className="w-80 h-full relative">
-                                    {expenseCategoryIsLoading ? (
-                                        <Loader />
-                                    ) : (
-                                        <>
-                                            {dataPieChart.length ? (
-                                                <PieChart
-                                                    colors={[
-                                                        gradientColors[0],
-                                                        gradientColors[1],
-                                                        gradientColors[2],
-                                                        gradientColors[3],
-                                                        gradientColors[4],
-                                                    ]}
-                                                    margin={{ left: 0, right: 0 }}
-                                                    series={[
-                                                        {
-                                                            data: dataPieChart,
-                                                            id: "A",
-                                                            innerRadius: "65%",
-                                                            paddingAngle: 2,
-                                                            cornerRadius: 3,
-                                                            highlightScope: {
-                                                                fade: "global",
-                                                                highlight: "item",
-                                                            },
-                                                            faded: {
-                                                                color: "gray",
-                                                                additionalRadius: -5,
-                                                            },
-                                                            valueFormatter: (value) =>
-                                                                `RD$${value.value}`,
-                                                        },
-                                                    ]}
-                                                    onHighlightChange={setHighlightedValue}
-                                                    slotProps={{ legend: { hidden: true } }}
-                                                    sx={{
-                                                        "& .MuiPieArc-root": { strokeWidth: 0 },
-                                                    }}
-                                                    tooltip={{
-                                                        trigger: "item",
-                                                        classes: {
-                                                            labelCell: "hidden",
-                                                            valueCell: "ml-3 p-3",
-                                                            markCell: "pl-3 pr-0",
-                                                        },
-                                                    }}
-                                                ></PieChart>
-                                            ) : (
-                                                <PieChart
-                                                    colors={[basicColors.ly2]}
-                                                    margin={{ left: 0, right: 0 }}
-                                                    series={[
-                                                        {
-                                                            data: [
-                                                                {
-                                                                    label: "empty",
-                                                                    value: 100,
-                                                                },
-                                                            ],
-                                                            id: "B",
-                                                            innerRadius: "65%",
-                                                            paddingAngle: 2,
-                                                            cornerRadius: 3,
-                                                        },
-                                                    ]}
-                                                    slotProps={{ legend: { hidden: true } }}
-                                                    sx={{
-                                                        "& .MuiPieArc-root": { strokeWidth: 0 },
-                                                    }}
-                                                    tooltip={{
-                                                        trigger: "none",
-                                                    }}
-                                                ></PieChart>
-                                            )}
-
-                                            <h2 className="font-light text-3xl absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                                                {`RD$${dataPieChart.reduce(
-                                                    (acc, currentValue) =>
-                                                        (acc = acc + currentValue.value),
-                                                    0
-                                                )}`}
-                                            </h2>
-                                        </>
-                                    )}
-                                </div>
+                <div className="grid grid-cols-2 auto-rows-auto gap-8 overflow-x-hidden overflow-y-auto max-h-[1000px] xl:grid-cols-7 2xl:flex-1 2xl:grid-rows-12">
+                    <div className="flex col-span-2 gap-3 md:hidden">
+                        <div className="flex-1">
+                            <ValuePill title={currentMonth} value={totalMonthExpenses} />
+                        </div>
+                        <div className="flex-1">
+                            <ValuePill title={currentYear.toString()} value={totalYearExpenses} />
+                        </div>
+                    </div>
+                    <hr className="col-span-2 border-t-2 md:hidden"></hr>
+                    <div className="infoContainer1 max-md:hidden xl:col-span-3 2xl:row-span-6">
+                        <p>{`${currentMonth} Expenses`}</p>
+                        <div className="w-full flex-1 flex items-center justify-center gap-x-8 xl:justify-evenly xl:gap-x-0 overflow-y-hidden">
+                            <div className="w-full xl:w-[45%] 2xl:w-auto 2xl:h-full aspect-square relative">
+                                {expenseCategoryIsLoading ? (
+                                    <Loader />
+                                ) : (
+                                    <>
+                                        <PieChart
+                                            colors={gradientColors}
+                                            margin={{ left: 0, right: 0 }}
+                                            series={[
+                                                {
+                                                    data:
+                                                        dataPieChart.length > 0
+                                                            ? dataPieChart
+                                                            : [{ label: "No Data", value: 1 }],
+                                                    id: "A",
+                                                    innerRadius: "65%",
+                                                    paddingAngle: 2,
+                                                    cornerRadius: 3,
+                                                    highlightScope: {
+                                                        fade: "global",
+                                                        highlight:
+                                                            dataPieChart.length > 0 ? "item" : "none",
+                                                    },
+                                                    faded: { color: "gray", additionalRadius: -5 },
+                                                    valueFormatter: (value) => `RD$${value.value}`,
+                                                },
+                                            ]}
+                                            onHighlightChange={setHighlightedValue}
+                                            slotProps={{ legend: { hidden: true } }}
+                                            sx={{
+                                                "& .MuiPieArc-root": { strokeWidth: 0 },
+                                            }}
+                                            tooltip={{
+                                                trigger: dataPieChart.length > 0 ? "item" : "none",
+                                                classes: {
+                                                    labelCell: "hidden",
+                                                    valueCell: "ml-3 p-3",
+                                                    markCell: "pl-3 pr-0",
+                                                },
+                                            }}
+                                        ></PieChart>
+                                        <h2 className="font-light text-xl absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                                            {`RD$${dataPieChart.reduce(
+                                                (acc, currentValue) => (acc = acc + currentValue.value),
+                                                0
+                                            )}`}
+                                        </h2>
+                                    </>
+                                )}
+                            </div>
+                            {dataPieChart.length > 0 && (
                                 <DiamondList
                                     items={dataPieChart.map((x) => x.label)}
                                     highlightedItem={highlightedValue}
                                 />
-                            </div>
-                        </div>
-                        <div className="infoContainer1 flex-1">
-                            <div className="grid grid-cols-3 w-full">
-                                <p className="col-start-2 mx-auto">Expenses</p>
-                                <button
-                                    className="ml-auto tableButton flex gap-x-2 p-0 items-center opacity-55 hover:opacity-100"
-                                    onClick={showCreateExpenseModal}
-                                >
-                                    <p>New</p>
-                                    ...
-                                </button>
-                            </div>
-                            <div className="flex items-center flex-1 w-full">
-                                {expenseCategoryIsLoading ? (
-                                    <Loader />
-                                ) : (
-                                    <Table
-                                        data={expensesData}
-                                        detailsFunction={(expenseId: number) =>
-                                            showDetailsExpenseModal(expenseId)
-                                        }
-                                        tablePrefix="E"
-                                        rowLimit={6}
-                                    />
-                                )}
-                            </div>
+                            )}
                         </div>
                     </div>
-                    <div className="flex flex-1 gap-x-9">
-                        <div className="infoContainer2 w-[50%]">
-                            <div className="grid grid-cols-3 w-full">
-                                <p className="col-start-2 mx-auto">Budgets</p>
-                                <button
-                                    className="ml-auto tableButton flex gap-x-2 p-0 items-center opacity-55 hover:opacity-100"
-                                    onClick={showCreateBudgetModal}
-                                >
-                                    <p>New</p>
-                                    ...
-                                </button>
-                            </div>
-                            <div className="flex items-center flex-1 w-full">
-                                {expenseCategoryIsLoading ? (
-                                    <Loader />
-                                ) : (
-                                    <Table
-                                        dark
-                                        detailsFunction={(budgetId: number) =>
-                                            showDetailsBudgetPlanningModal(budgetId)
-                                        }
-                                        data={budgetExpensesData}
-                                        tablePrefix="BE"
-                                        rowLimit={5}
-                                    />
-                                )}
-                            </div>
+                    <div className="infoContainer1 col-span-2 md:order-3 xl:col-span-4 2xl:row-span-6">
+                        <div className="grid grid-cols-3 w-full">
+                            <p className="col-start-2 mx-auto">Expenses</p>
+                            <button
+                                className="ml-auto tableButton flex gap-x-2 p-0 items-center 2xl:opacity-70 hover:opacity-100"
+                                onClick={showCreateExpenseModal}
+                            >
+                                <HugeiconsIcon
+                                    icon={AddSquareIcon}
+                                    size={20}
+                                    className="text-custom-accent"
+                                />
+                            </button>
                         </div>
-                        <div className="infoContainer2 w-[50%]">
-                            <div className="grid grid-cols-3 w-full">
-                                <p className="col-start-2 mx-auto">Expense Categories</p>
-                                <button
-                                    className="ml-auto tableButton flex gap-x-2 p-0 items-center opacity-55 hover:opacity-100"
-                                    onClick={showCreateExpenseCategoryModal}
-                                >
-                                    <p>New</p>
-                                    ...
-                                </button>
-                            </div>
-                            <div className="flex items-center flex-1 w-full">
-                                {expenseCategoryIsLoading ? (
-                                    <Loader />
-                                ) : (
-                                    <Table
-                                        data={expenseCategoryTableData}
-                                        detailsFunction={(expenseCategoryId: number) =>
-                                            showDetailsExpenseCategoryModal(expenseCategoryId)
-                                        }
-                                        tablePrefix="E"
-                                        dark
-                                        rowLimit={5}
-                                    />
-                                )}
-                            </div>
+                        <div className="flex flex-1 w-full">
+                            {expenseCategoryIsLoading ? (
+                                <Loader />
+                            ) : (
+                                <Table
+                                    data={expensesData}
+                                    detailsFunction={(expenseId: number) =>
+                                        showDetailsExpenseModal(expenseId)
+                                    }
+                                    tablePrefix="E"
+                                    rowLimit={6}
+                                />
+                            )}
                         </div>
-                        {/* <div className="infoContainer2 flex-1">
-                            <div className="grid grid-cols-3 w-full">
-                                <p className="col-start-2 mx-auto">Fixed Expenses</p>
-                                <button
-                                    className="ml-auto tableButton flex gap-x-2 p-0 items-center opacity-55 hover:opacity-100"
-                                    onClick={showCreateFixedExpenseModal}
-                                >
-                                    <p>New</p>
-                                    <FontAwesomeIcon icon={faPlus} />
-                                </button>
-                            </div>
-                            <div className="flex items-center flex-1 w-full">
-                                {expenseCategoryIsLoading ? (
-                                    <Loader />
-                                ) : (
-                                    <Table
-                                        data={fixedExpensesData}
-                                        detailsFunction={(fixedExpenseId: number) =>
-                                            showDetailsFixedExpenseModal(fixedExpenseId)
-                                        }
-                                        tablePrefix="E"
-                                        dark
-                                        rowLimit={6}
-                                    />
-                                )}
-                            </div>
-                        </div> */}
+                    </div>
+                    <div className="infoContainer2 col-span-2 md:order-4 xl:order-2 xl:col-span-4 2xl:row-span-6">
+                        <div className="grid grid-cols-3 w-full">
+                            <p className="col-start-2 mx-auto">Budgets</p>
+                            <button
+                                className="ml-auto tableButton flex gap-x-2 p-0 items-center 2xl:opacity-70 hover:opacity-100"
+                                onClick={showCreateBudgetModal}
+                            >
+                                <HugeiconsIcon
+                                    icon={AddSquareIcon}
+                                    size={20}
+                                    className="text-custom-accent"
+                                />
+                            </button>
+                        </div>
+                        <div className="flex-1 w-full max-md:hidden 2xl:flex">
+                            {expenseCategoryIsLoading ? (
+                                <Loader />
+                            ) : (
+                                <Table
+                                    dark
+                                    detailsFunction={(budgetId: number) =>
+                                        showDetailsBudgetPlanningModal(budgetId)
+                                    }
+                                    data={budgetExpensesData}
+                                    tablePrefix="BE"
+                                    rowLimit={5}
+                                />
+                            )}
+                        </div>
+                        <div className="w-full flex flex-col gap-y-2 md:hidden">
+                            {expenseCategoriesWithBudget.map((ec) => (
+                                <div className="flex flex-col w-full">
+                                    <p>
+                                        {ec.category} -{" "}
+                                        <span className="opacity-60">
+                                            {periodicityValues[ec.budgetPlan!.periodicity]}
+                                        </span>
+                                    </p>
+                                    <div className="w-full">
+                                        <ProgressBar
+                                            dark
+                                            value={expenseData
+                                                .filter((e) => e.expenseCategoryId === ec.id)
+                                                .reduce((acc, value) => (acc += value.amount), 0)}
+                                            total={ec.budgetPlan!.amount}
+                                        />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="infoContainer2 col-span-2 md:col-span-1 md:order-2 xl:col-span-3 xl:order-4 2xl:row-span-6">
+                        <div className="grid grid-cols-3 w-full">
+                            <p className="col-start-2 mx-auto">Expense Categories</p>
+                            <button
+                                className="ml-auto tableButton flex gap-x-2 p-0 items-center 2xl:opacity-70 hover:opacity-100"
+                                onClick={showCreateExpenseCategoryModal}
+                            >
+                                <HugeiconsIcon
+                                    icon={AddSquareIcon}
+                                    size={20}
+                                    className="text-custom-accent"
+                                />
+                            </button>
+                        </div>
+                        <div className="flex flex-1 w-full">
+                            {expenseCategoryIsLoading ? (
+                                <Loader />
+                            ) : (
+                                <Table
+                                    data={expenseCategoryTableData}
+                                    detailsFunction={(expenseCategoryId: number) =>
+                                        showDetailsExpenseCategoryModal(expenseCategoryId)
+                                    }
+                                    tablePrefix="E"
+                                    dark
+                                    rowLimit={5}
+                                />
+                            )}
+                        </div>
                     </div>
                 </div>
             </SectionContent>
@@ -595,21 +564,6 @@ export default function Expenses() {
                     values={categorySelectValues!}
                 />
             </DetailsModal>
-            {/* Create Fixed Expense Modal */}
-            {/* <CreateModal show={createModalState.fixedExpense} createFunction={createFixedExpenseHandler}>
-                <AmountField fieldStateHandler={setAmount} />
-                <SelectField
-                    fieldStateHandler={setSelectValue}
-                    label="Category"
-                    values={categorySelectValues}
-                />
-                <DetailsField fieldStateHandler={setDetails} />
-                <ListField
-                    fieldStateHandler={setPeriodicity}
-                    label="Periodicity"
-                    values={fixedExpensesData.columns[2].values!}
-                />
-            </CreateModal> */}
             {/* Create Budget Modal */}
             <CreateModal show={createModalState.budgetPlanning} createFunction={createBudgetHandler}>
                 <AmountField fieldStateHandler={setAmount} />
@@ -633,27 +587,6 @@ export default function Expenses() {
             >
                 <DetailsField fieldStateHandler={setDetails} />
             </CreateModal>
-            {/* Fixed Expense Details Modal */}
-            {/* <DetailsModal
-                updateFunction={updateFixedExpenseHandler}
-                deleteFunction={deleteFixedExpenseHandler}
-                show={detailsModalState.show.fixedExpense}
-            >
-                <AmountField defaultValue={amount} fieldStateHandler={setAmount} />
-                <DetailsField defaultValue={details} fieldStateHandler={setDetails} />
-                <ListField
-                    fieldStateHandler={setPeriodicity}
-                    label="Periodicity"
-                    values={fixedExpensesData.columns[2].values!}
-                    defaultValue={periodicity}
-                />
-                <SelectField
-                    defaultValue={selectValue}
-                    fieldStateHandler={setSelectValue}
-                    label="Category"
-                    values={categorySelectValues!}
-                />
-            </DetailsModal> */}
             {/* Details Budget Planning Modal */}
             <DetailsModal
                 updateFunction={updateBudgetPlanHandler}

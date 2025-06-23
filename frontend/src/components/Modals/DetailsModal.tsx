@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import ModalContainer from "./ModalContainer";
-import { useAppDispatch, useAppSelector } from "../hooks";
-import { hideModal } from "../reducers/detailsModalReducers";
+import { useAppDispatch, useAppSelector } from "../../hooks";
+import { hideModal } from "../../reducers/detailsModalReducers";
 
 type detailsModal = {
     deleteFunction: () => void;

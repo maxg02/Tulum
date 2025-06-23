@@ -1,5 +1,5 @@
-import { useAppDispatch, useAppSelector } from "../hooks";
-import { hideModal } from "../reducers/createModalReducers";
+import { useAppDispatch, useAppSelector } from "../../hooks";
+import { hideModal } from "../../reducers/createModalReducers";
 import ModalContainer from "./ModalContainer";
 
 type createModal = {

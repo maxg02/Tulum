@@ -1,9 +1,7 @@
 import React, { useState } from "react";
-import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
-import SectionContent from "../components/SectionContent";
-import CustomGauge from "../components/CustomGauge";
-import Table, { dataObject, tableRow } from "../components/Table";
+import SectionContent from "../components/Layout/SectionContent";
+import CustomGauge from "../components/Graphs/CustomGauge";
+import Table, { dataObject, tableRow } from "../components/Misc/Table";
 import {
     createGoalContributionDto,
     createSavingGoalDto,
@@ -19,14 +17,24 @@ import {
     useUpdateGoalContributionMutation,
     useUpdateSavingGoalMutation,
 } from "../../api/apiSlice";
-import { periodicityValues } from "../components/Constants";
-import Loader from "../components/Loader";
+import { periodicityValues } from "../Constants/Constants";
+import Loader from "../components/Misc/Loader";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { showModal as showCreateModal } from "../reducers/createModalReducers";
 import { showModal as showDetailsModal } from "../reducers/detailsModalReducers";
-import CreateModal from "../components/CreateModal";
-import { AmountField, DateField, DetailsField, ListField, SelectField } from "../components/ModalsFields";
-import DetailsModal from "../components/DetailsModal";
+import CreateModal from "../components/Modals/CreateModal";
+import {
+    AmountField,
+    DateField,
+    DetailsField,
+    ListField,
+    SelectField,
+} from "../components/Modals/ModalsFields";
+import DetailsModal from "../components/Modals/DetailsModal";
+import ValuePill from "../components/Misc/ValuePill";
+import ProgressBar from "../components/Graphs/ProgressBar";
+import { AddSquareIcon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 
 export type goalsProgress = {
     value: number;
@@ -36,7 +44,6 @@ export type goalsProgress = {
 };
 
 export default function Savings() {
-    const [goalsProgressScroll, setGoalsProgressScroll] = useState<number>(0);
     const [amount, setAmount] = useState<number>(0);
     const [amountFC, setAmountFC] = useState<number | undefined>(undefined);
     const [details, setDetails] = useState<string>("");
@@ -149,6 +156,7 @@ export default function Savings() {
 
                 return {
                     label: sg!.details,
+                    id: sg!.id,
                     total: sg!.goal,
                     progress: progress,
                     value: (progress * 100) / sg!.goal,
@@ -299,138 +307,89 @@ export default function Savings() {
 
     const goalProgressGauges = () =>
         goalsProgress.map((item, key) => (
-            <div
-                key={key}
-                className="w-full flex flex-col items-center py-4"
-                style={{ height: `${100 / goalsProgress.length}%` }}
-            >
-                <div className="flex-1 w-full mb-1">
+            <div key={key} className="flex flex-col items-center">
+                <button
+                    onClick={() => showDetailsSavingGoalModal(item.id)}
+                    className="mb-1 w-36 2xl:w-52 aspect-square"
+                >
                     <CustomGauge value={item.value} label={item.label} />
-                </div>
+                </button>
                 <p>
-                    <span className="text-custom-accent">RD${item.total}</span>/RD${item.progress}
+                    RD${item.progress}/<span className="opacity-50">RD${item.total}</span>
                 </p>
             </div>
         ));
 
-    const goalProgressScrollUp = () => setGoalsProgressScroll(goalsProgressScroll + 1);
-    const goalProgressScrollDown = () => setGoalsProgressScroll(goalsProgressScroll - 1);
+    const goalProgressBars = () =>
+        goalsProgress.map((item, key) => (
+            <div key={key} className="w-full flex flex-col">
+                <p>{item.label}</p>
+                <ProgressBar value={item.value} total={item.total} />
+            </div>
+        ));
 
     return (
         <>
             <SectionContent>
-                <div className="flex-1 flex overflow-hidden gap-x-8">
-                    <div className="infoContainer1 w-64">
-                        <p>Goals Progress</p>
-                        <div
-                            className="flex-1 w-full flex flex-col gap-y-4 justify-between overflow-y-hidden"
-                            onWheel={(event) =>
-                                event.deltaY > 0
-                                    ? !(goalsProgressScroll >= goalsProgress.length - 3) &&
-                                      goalProgressScrollUp()
-                                    : !(goalsProgressScroll <= 0) && goalProgressScrollDown()
-                            }
-                        >
-                            <button
-                                className={`bg-transparent border-0 p-0 outline-0 ${
-                                    goalsProgressScroll <= 0
-                                        ? "hover:text-gray-400 text-gray-400"
-                                        : "hover:text-custom-accent"
-                                }`}
-                                onClick={goalProgressScrollDown}
-                                disabled={goalsProgressScroll <= 0 ? true : false}
-                            ></button>
-                            <div className="flex-1 overflow-y-hidden relative">
-                                <div className="bg-gradient-to-b from-custom-ly1 to-transparent w-full h-4 absolute top-0 z-30"></div>
-                                <div
-                                    className="w-full overflow-y-hidden relative"
-                                    id="goalsCarrousell"
-                                    style={{
-                                        height: `${33.333333333 * goalsProgress.length}%`,
-                                        top: `${-33 * goalsProgressScroll}%`,
-                                    }}
-                                >
-                                    {goalProgressGauges()}
-                                </div>
-                                <div className="bg-gradient-to-t from-custom-ly1 to-transparent w-full h-4 absolute bottom-0 z-30"></div>
-                            </div>
-                            <button
-                                className={`bg-transparent border-0 p-0 outline-0 ${
-                                    goalsProgressScroll >= goalsProgress.length - 3
-                                        ? "hover:text-gray-400 text-gray-400"
-                                        : "hover:text-custom-accent"
-                                }`}
-                                onClick={goalProgressScrollUp}
-                                disabled={goalsProgressScroll >= goalsProgress.length - 3 ? true : false}
-                            ></button>
+                <div className="grid grid-cols-1 gap-8 overflow-x-hidden overflow-y-auto auto-rows-auto 2xl:grid-rows-11 2xl:grid-cols-11 2xl:flex-1 max-h-[1200px]">
+                    <div className="flex gap-3 2xl:col-span-4 2xl:flex-col 2xl:row-span-4">
+                        <div className="flex-1">
+                            <ValuePill title={currentMonth} value={totalMonthSavings} />
+                        </div>
+                        <div className="flex-1">
+                            <ValuePill title={currentYear.toString()} value={totalYearSavings} />
                         </div>
                     </div>
-                    <div className="flex flex-col flex-1 gap-y-8">
-                        <div className="flex flex-1 gap-x-8">
-                            <div className="flex-auto flex flex-col justify-between">
-                                <div className="infoContainer1 w-full bg-gradient-to-b from-custom-secondary to-custom-accent shadow-none h-[45%]">
-                                    <p>{currentMonth} Savings</p>
-                                    <h1 className="font-light text-5xl my-auto">
-                                        RD${totalMonthSavings}
-                                    </h1>
-                                </div>
-                                <div className="infoContainer1 w-full bg-gradient-to-b from-custom-secondary to-custom-accent shadow-none h-[45%]">
-                                    <p>{currentYear} Savings</p>
-                                    <h1 className="font-light text-5xl my-auto">RD${totalYearSavings}</h1>
-                                </div>
-                            </div>
-                            <div className="infoContainer2 flex-auto basis-3/5">
-                                <div className="grid grid-cols-3 w-full">
-                                    <p className="col-start-2 mx-auto">Goals Contributions</p>
-                                    <button
-                                        className="ml-auto tableButton flex gap-x-2 p-0 items-center opacity-55 hover:opacity-100"
-                                        onClick={showCreateGoalContributionModal}
-                                    >
-                                        <p>New</p>
-                                    </button>
-                                </div>
-                                <div className="flex flex-1 items-center w-full">
-                                    {savingGoalIsLoading ? (
-                                        <Loader />
-                                    ) : (
-                                        <Table
-                                            data={goalsContributionsTableData}
-                                            tablePrefix="GC"
-                                            detailsFunction={(gCId: number) =>
-                                                showDetailsGoalContributionModal(gCId)
-                                            }
-                                            dark
-                                            rowLimit={5}
-                                        />
-                                    )}
-                                </div>
+                    <hr className="border-t-2 md:hidden"></hr>
+                    <div className="infoContainer1 2xl:col-span-7 2xl:flex-col 2xl:row-span-11">
+                        <div className="grid grid-cols-3 w-full">
+                            <p className="col-start-2 mx-auto">Saving Goals</p>
+                            <button
+                                className="ml-auto tableButton flex gap-x-2 p-0 items-center 2xl:opacity-70 hover:opacity-100"
+                                onClick={showCreateSavingGoalModal}
+                            >
+                                <HugeiconsIcon
+                                    icon={AddSquareIcon}
+                                    size={20}
+                                    className="text-custom-accent"
+                                />
+                            </button>
+                        </div>
+                        <div className="w-100 md:hidden">{goalProgressBars()}</div>
+                        <div className="flex-1 w-full items-center">
+                            <div className="hidden md:flex overflow-x-auto gap-7 flex-wrap justify-center">
+                                {goalProgressGauges()}
                             </div>
                         </div>
-                        <div className="infoContainer2 flex-1">
-                            <div className="grid grid-cols-3 w-full">
-                                <p className="col-start-2 mx-auto">Saving Goals</p>
-                                <button
-                                    className="ml-auto tableButton flex gap-x-2 p-0 items-center opacity-55 hover:opacity-100"
-                                    onClick={showCreateSavingGoalModal}
-                                >
-                                    <p>New</p>
-                                </button>
-                            </div>
-                            <div className="flex flex-1 items-center w-full">
-                                {savingGoalIsLoading ? (
-                                    <Loader />
-                                ) : (
-                                    <Table
-                                        data={savingGoalsTableData}
-                                        tablePrefix="SG"
-                                        detailsFunction={(sVId: number) =>
-                                            showDetailsSavingGoalModal(sVId)
-                                        }
-                                        dark
-                                        rowLimit={6}
-                                    />
-                                )}
-                            </div>
+                    </div>
+                    <div className="infoContainer2 2xl:col-span-4 2xl:row-span-7">
+                        <div className="grid grid-cols-3 w-full">
+                            <p className="col-start-2 mx-auto">Goals Contributions</p>
+                            <button
+                                className="ml-auto tableButton flex gap-x-2 p-0 items-center 2xl:opacity-70 hover:opacity-100"
+                                onClick={showCreateGoalContributionModal}
+                            >
+                                <HugeiconsIcon
+                                    icon={AddSquareIcon}
+                                    size={20}
+                                    className="text-custom-accent"
+                                />
+                            </button>
+                        </div>
+                        <div className="flex flex-1 w-full">
+                            {savingGoalIsLoading ? (
+                                <Loader />
+                            ) : (
+                                <Table
+                                    data={goalsContributionsTableData}
+                                    tablePrefix="GC"
+                                    detailsFunction={(gCId: number) =>
+                                        showDetailsGoalContributionModal(gCId)
+                                    }
+                                    dark
+                                    rowLimit={5}
+                                />
+                            )}
                         </div>
                     </div>
                 </div>
