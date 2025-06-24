@@ -59,10 +59,10 @@ function CreateModal({ children, show, createFunction }: createModal) {
             {children}
             <span className="formDivider"></span>
             <div className="self-end flex gap-x-2">
-                <button type="reset" className="formButton" onClick={handleClosing}>
+                <button type="reset" className="formBtn formBtnSecondary" onClick={handleClosing}>
                     <p>Cancel</p>
                 </button>
-                <button className="formButton" onClick={() => handleCreate()}>
+                <button className="formBtn formBtnPrimary" onClick={() => handleCreate()}>
                     <p>Create</p>
                 </button>
             </div>

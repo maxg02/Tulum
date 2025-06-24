@@ -429,7 +429,7 @@ export default function Expenses() {
                         <div className="grid grid-cols-3 w-full">
                             <p className="col-start-2 mx-auto">Expenses</p>
                             <button
-                                className="ml-auto tableButton flex gap-x-2 p-0 items-center 2xl:opacity-70 hover:opacity-100"
+                                className="ml-auto tableButton flex gap-x-2 p-0 items-center xl:opacity-70 hover:opacity-100"
                                 onClick={showCreateExpenseModal}
                             >
                                 <HugeiconsIcon
@@ -458,7 +458,7 @@ export default function Expenses() {
                         <div className="grid grid-cols-3 w-full">
                             <p className="col-start-2 mx-auto">Budgets</p>
                             <button
-                                className="ml-auto tableButton flex gap-x-2 p-0 items-center 2xl:opacity-70 hover:opacity-100"
+                                className="ml-auto tableButton flex gap-x-2 p-0 items-center xl:opacity-70 hover:opacity-100"
                                 onClick={showCreateBudgetModal}
                             >
                                 <HugeiconsIcon

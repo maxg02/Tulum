@@ -57,9 +57,9 @@ export default function Login() {
                         />
                     </div>
 
-                    <span className="formDivider"></span>
+                    <hr className="border-t-2"></hr>
                     {error && <p className="text-red-400">{error}</p>}
-                    <button className="formButton" onClick={() => handleLogin()}>
+                    <button className="formBtn formBtnPrimary self-start" onClick={() => handleLogin()}>
                         <p>Log In</p>
                     </button>
                 </form>

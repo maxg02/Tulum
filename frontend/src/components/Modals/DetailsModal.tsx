@@ -64,15 +64,15 @@ function DetailsModal({ children, show, deleteFunction, updateFunction }: detail
     return (
         <ModalContainer closingHandler={handleClosing} title={title}>
             {children}
-            <span className="formDivider"></span>
+            <hr className="border-t-2"></hr>
             <div className="self-end flex gap-x-2">
-                <button type="reset" className="formButton" onClick={handleClosing}>
+                <button type="reset" className="formBtn formBtnSecondary" onClick={handleClosing}>
                     <p>Cancel</p>
                 </button>
-                <button className="formButton hover:bg-red-500" onClick={() => handleDelete()}>
+                <button className="formBtn formBtnDestroy" onClick={() => handleDelete()}>
                     <p>Delete</p>
                 </button>
-                <button className="formButton" onClick={() => handleUpdate()}>
+                <button className="formBtn formBtnPrimary" onClick={() => handleUpdate()}>
                     <p>Save</p>
                 </button>
             </div>
