@@ -42,6 +42,7 @@ export default function Dashboard() {
         monthIncomeRows: JSX.Element[] = [],
         monthExpenseRows: JSX.Element[] = [],
         monthExpensesData: pieChartSlice[] = [],
+        totalMonthExpenses: number = 0,
         goalsProgressData: { label: string; progress: number; value: number }[] = [];
 
     const { data: incomeData, isLoading: incomeIsLoading } = useGetUserIncomesQuery();
@@ -164,6 +165,11 @@ export default function Dashboard() {
             value: monthExpensesByCategory[key].reduce((acc, expense) => acc + expense.amount, 0),
         }));
 
+        totalMonthExpenses = monthExpensesData.reduce(
+            (acc, currentValue) => (acc = acc + currentValue.value),
+            0
+        );
+
         const allGoalContributions = savingGoalData
             ?.map((sG) => sG.goalContributions)
             .reduce((acc, currentValue) => acc!.concat(currentValue!), []);
@@ -211,11 +217,11 @@ export default function Dashboard() {
                     <div className="flex gap-9 px-4 mb-8">
                         <div className="flex justify-center items-center bg-custom-ly1 containerShadow rounded-2xl flex-1 py-5">
                             <HugeiconsIcon className={"me-2"} icon={MoneyReceiveSquareIcon} size={30} />
-                            <h1 className="font-light text-xl">RD$50000</h1>
+                            <h1 className="font-light text-xl">RD${totalMonthIncome}</h1>
                         </div>
                         <div className="flex justify-center items-center bg-custom-ly2 rounded-2xl flex-1">
                             <HugeiconsIcon className={"me-2"} icon={Invoice02Icon} size={30} />
-                            <h1 className="font-light text-xl">RD${totalMonthIncome}</h1>
+                            <h1 className="font-light text-xl">RD${totalMonthExpenses}</h1>
                         </div>
                     </div>
                 </div>
@@ -282,10 +288,7 @@ export default function Dashboard() {
                                         }}
                                     ></PieChart>
                                     <h2 className="font-light text-xl absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                                        {`RD$${dataPieChart.reduce(
-                                            (acc, currentValue) => (acc = acc + currentValue.value),
-                                            0
-                                        )}`}
+                                        RD${totalMonthExpenses}
                                     </h2>
                                 </>
                             )}
