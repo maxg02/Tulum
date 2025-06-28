@@ -9,11 +9,14 @@ import {
     Github01FreeIcons,
     Linkedin01FreeIcons,
     MoneyReceiveSquareIcon,
+    UserSquareIcon,
+    Logout03Icon,
 } from "@hugeicons/core-free-icons";
 
 import type { ReactNode } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { toggleSidebar, toggleActiveSection } from "../../reducers/utilitiesReducers";
+import { logOut } from "../../reducers/userReducers";
 
 enum routes {
     Dashboard = "/",
@@ -34,6 +37,7 @@ export default function Sidebar() {
     const [activeSection, setActiveSection] = useState<SectionType | null>(null);
 
     const sidebarOpen = useAppSelector((state) => state.utilities.sidebarOpen);
+    const userInfo = useAppSelector((state) => state.user.userInfo);
     const dispatch = useAppDispatch();
 
     const handleActiveSection = (section: SectionType) => {
@@ -111,7 +115,24 @@ export default function Sidebar() {
                 </div>
 
                 <div className="mt-auto px-6">
-                    <div className="border-t-2 border-white py-2 overflow-hidden">
+                    <div className="flex items-center">
+                        <HugeiconsIcon className="max-xl:hidden" size={30} icon={UserSquareIcon} />
+                        <HugeiconsIcon className="xl:hidden" size={40} icon={UserSquareIcon} />
+                        <span className="mx-2 text-2xl text-white xl:text-xl text-nowrap overflow-hidden text-ellipsis">
+                            {userInfo!.fullName}
+                        </span>
+                        <button
+                            className="ms-auto text-custom-accent"
+                            onClick={() => {
+                                dispatch(logOut());
+                            }}
+                        >
+                            <HugeiconsIcon className="max-xl:hidden" size={25} icon={Logout03Icon} />
+                            <HugeiconsIcon className="xl:hidden" size={30} icon={Logout03Icon} />
+                        </button>
+                    </div>
+                    <hr className="border-t-2 my-2"></hr>
+                    <div className="overflow-hidden">
                         <p className="mb-2 text-base">Design and made by Max García</p>
                         <div className="flex gap-x-2">
                             <a
