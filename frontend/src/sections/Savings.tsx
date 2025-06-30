@@ -342,10 +342,10 @@ export default function Savings() {
                     </div>
                     <hr className="border-t-2 md:hidden"></hr>
                     <div className="infoContainer1 2xl:col-span-7 2xl:flex-col 2xl:row-span-11">
-                        <div className="grid grid-cols-3 w-full">
-                            <p className="col-start-2 mx-auto">Saving Goals</p>
+                        <div className="flex justify-center w-full relative">
+                            <p className="text-nowrap">Saving Goals</p>
                             <button
-                                className="ml-auto tableButton flex gap-x-2 p-0 items-center xl:opacity-70 hover:opacity-100"
+                                className="absolute right-0 top-0 tableButton flex gap-x-2 p-0 items-center xl:opacity-70 hover:opacity-100"
                                 onClick={showCreateSavingGoalModal}
                             >
                                 <HugeiconsIcon
@@ -363,10 +363,10 @@ export default function Savings() {
                         </div>
                     </div>
                     <div className="infoContainer2 2xl:col-span-4 2xl:row-span-7">
-                        <div className="grid grid-cols-3 w-full">
-                            <p className="col-start-2 mx-auto">Goals Contributions</p>
+                        <div className="flex justify-center w-full relative">
+                            <p className="text-nowrap">Goals Contributions</p>
                             <button
-                                className="ml-auto tableButton flex gap-x-2 p-0 items-center xl:opacity-70 hover:opacity-100"
+                                className="absolute right-0 top-0 tableButton flex gap-x-2 p-0 items-center xl:opacity-70 hover:opacity-100"
                                 onClick={showCreateGoalContributionModal}
                             >
                                 <HugeiconsIcon

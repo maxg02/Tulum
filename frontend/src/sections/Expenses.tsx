@@ -426,10 +426,10 @@ export default function Expenses() {
                         </div>
                     </div>
                     <div className="infoContainer1 col-span-2 md:order-3 xl:col-span-4 2xl:row-span-6">
-                        <div className="grid grid-cols-3 w-full">
-                            <p className="col-start-2 mx-auto">Expenses</p>
+                        <div className="flex justify-center relative w-full">
+                            <p className="text-nowrap">Expenses</p>
                             <button
-                                className="ml-auto tableButton flex gap-x-2 p-0 items-center xl:opacity-70 hover:opacity-100"
+                                className="absolute right-0 top-0 tableButton flex gap-x-2 p-0 items-center xl:opacity-70 hover:opacity-100"
                                 onClick={showCreateExpenseModal}
                             >
                                 <HugeiconsIcon
@@ -455,10 +455,10 @@ export default function Expenses() {
                         </div>
                     </div>
                     <div className="infoContainer2 col-span-2 md:order-4 xl:order-2 xl:col-span-4 2xl:row-span-6">
-                        <div className="grid grid-cols-3 w-full">
-                            <p className="col-start-2 mx-auto">Budgets</p>
+                        <div className="flex justify-center w-full relative">
+                            <p className="text-nowrap">Budgets</p>
                             <button
-                                className="ml-auto tableButton flex gap-x-2 p-0 items-center xl:opacity-70 hover:opacity-100"
+                                className="absolute right-0 top-0  tableButton flex gap-x-2 p-0 items-center xl:opacity-70 hover:opacity-100"
                                 onClick={showCreateBudgetModal}
                             >
                                 <HugeiconsIcon
@@ -506,10 +506,10 @@ export default function Expenses() {
                         </div>
                     </div>
                     <div className="infoContainer2 col-span-2 md:col-span-1 md:order-2 xl:col-span-3 xl:order-4 2xl:row-span-6">
-                        <div className="grid grid-cols-3 w-full">
-                            <p className="col-start-2 mx-auto">Expense Categories</p>
+                        <div className="flex justify-center relative w-full">
+                            <p className="text-nowrap">Expense Categories</p>
                             <button
-                                className="ml-auto tableButton flex gap-x-2 p-0 items-center 2xl:opacity-70 hover:opacity-100"
+                                className="absolute right-0 top-0 tableButton flex gap-x-2 p-0 items-center 2xl:opacity-70 hover:opacity-100"
                                 onClick={showCreateExpenseCategoryModal}
                             >
                                 <HugeiconsIcon

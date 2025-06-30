@@ -254,10 +254,10 @@ export default function Budget() {
                     <hr className="col-span-2 my-4 border-t-2 md:hidden"></hr>
 
                     <div className="infoContainer1 flex-1 col-span-2 mb-6 md:col-span-6 md:mb-0 xl:col-span-3 2xl:row-span-10">
-                        <div className="grid grid-cols-3 w-full">
-                            <p className="col-start-2 mx-auto">Income</p>
+                        <div className="flex justify-center relative w-full">
+                            <p className="text-nowrap">Income</p>
                             <button
-                                className="ml-auto tableButton flex gap-x-2 p-0 items-center xl:opacity-70 hover:opacity-100"
+                                className="absolute right-0 top-0 tableButton flex gap-x-2 p-0 items-center xl:opacity-70 hover:opacity-100"
                                 onClick={showCreateIncomeModal}
                             >
                                 <HugeiconsIcon
