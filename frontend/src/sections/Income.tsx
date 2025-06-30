@@ -240,7 +240,7 @@ export default function Budget() {
     return (
         <>
             <SectionContent>
-                <div className="grid grid-cols-2 auto-rows-auto gap-3 overflow-x-hidden overflow-y-auto max-h-[1000px] md:grid-cols-6 md:gap-6 2xl:flex-1 2xl:grid-rows-12">
+                <div className="grid grid-cols-2 auto-rows-auto gap-3 overflow-x-hidden overflow-y-auto 2xl:max-h-[1000px] md:grid-cols-6 md:gap-6 2xl:flex-1 2xl:grid-rows-12">
                     <div className="flex-1 md:col-span-2 2xl:row-span-2">
                         <ValuePill title={currentMonth} value={totalMonthIncome} />
                     </div>
@@ -267,7 +267,7 @@ export default function Budget() {
                                 />
                             </button>
                         </div>
-                        <div className="flex items-start flex-1 w-full overflow-hidden">
+                        <div className="flex items-start flex-1 w-full max-h-[40rem] lg:max-h-[30rem] 2xl:max-h-none overflow-hidden">
                             {incomeIsLoading ? (
                                 <Loader />
                             ) : (

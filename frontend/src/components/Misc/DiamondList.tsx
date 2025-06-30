@@ -9,6 +9,7 @@ const textColorClasses = [
     "text-gradient-4",
     "text-gradient-5",
 ];
+//TODO fix diamonds inconsistent size / create pie graph component and unifie with diamon list
 
 function DiamondList({
     items,

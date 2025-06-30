@@ -20,12 +20,12 @@ export type dataObject = {
 function Table({
     data,
     dark = false,
-    tablePrefix,
+    filters = true,
     detailsFunction,
 }: {
     data: dataObject;
     dark?: boolean;
-    tablePrefix: string;
+    filters?: boolean;
     detailsFunction?: (itemId: number) => void;
 }) {
     const [FilterDropState, setFilterDropState] = useState<boolean>(false);
@@ -167,7 +167,7 @@ function Table({
         ));
 
     return (
-        <div className="flex flex-col flex-1 w-full overflow-hidden max-h-[30rem] overflow-y-auto 2xl:max-h-full">
+        <div className="flex flex-col flex-1 w-full h-full overflow-hidden overflow-y-auto">
             {/* Filter Section */}
             {/* <div className="flex items-center mb-1 gap-x-3 sticky top-0 z-20">
                 <div>
@@ -199,7 +199,7 @@ function Table({
             {/* Table Section */}
             <table className="w-full border-collapse">
                 <thead className={`sticky top-0 z-10 ${dark ? "bg-custom-ly2" : "bg-custom-ly1"}`}>
-                    <tr>
+                    <tr className={`${filters || "hidden"}`}>
                         <th colSpan={data.columns.length}>
                             <button
                                 className="tableButton flex gap-x-2 p-0 items-center 2xl:opacity-70 hover:opacity-100"

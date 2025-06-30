@@ -331,7 +331,7 @@ export default function Savings() {
     return (
         <>
             <SectionContent>
-                <div className="grid grid-cols-1 gap-8 overflow-x-hidden overflow-y-auto auto-rows-auto 2xl:grid-rows-11 2xl:grid-cols-11 2xl:flex-1 max-h-[1100px]">
+                <div className="grid grid-cols-1 gap-8 overflow-x-hidden overflow-y-auto auto-rows-auto 2xl:grid-rows-11 2xl:grid-cols-11 2xl:flex-1 2xl:max-h-[1100px]">
                     <div className="flex gap-3 2xl:col-span-4 2xl:flex-col 2xl:row-span-4">
                         <div className="flex-1">
                             <ValuePill title={currentMonth} value={totalMonthSavings} />
@@ -355,11 +355,11 @@ export default function Savings() {
                                 />
                             </button>
                         </div>
-                        <div className="w-100 md:hidden">{goalProgressBars()}</div>
-                        <div className="flex-1 w-full items-center">
-                            <div className="hidden md:flex overflow-x-auto gap-7 flex-wrap justify-center">
-                                {goalProgressGauges()}
-                            </div>
+                        <div className="w-100 flex flex-col gap-y-2 md:hidden max-md:max-h-96 max-md:overflow-y-auto">
+                            {goalProgressBars()}
+                        </div>
+                        <div className="hidden md:flex overflow-y-auto gap-7 flex-wrap justify-center max-h-96 2xl:max-h-none">
+                            {goalProgressGauges()}
                         </div>
                     </div>
                     <div className="infoContainer2 2xl:col-span-4 2xl:row-span-7">
@@ -376,7 +376,7 @@ export default function Savings() {
                                 />
                             </button>
                         </div>
-                        <div className="flex flex-1 w-full">
+                        <div className="flex flex-1 w-full max-h-[40rem] lg:max-h-96 2xl:max-h-none overflow-hidden">
                             {savingGoalIsLoading ? (
                                 <Loader />
                             ) : (

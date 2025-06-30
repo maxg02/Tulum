@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+/* TODO Customize Sidebar */
+
 @font-face {
     font-family: "Sofia Sans";
     src: url("/fonts/Sofia_Sans/SofiaSans-VariableFont_wght.ttf");
@@ -57,10 +59,10 @@ body {
         @apply font-body text-sm font-normal;
     }
     .infoContainer1 {
-        @apply rounded-xl gap-y-4 bg-custom-ly1 px-7 py-6 flex flex-col items-center justify-between overflow-hidden;
+        @apply rounded-xl gap-y-4 bg-custom-ly1 px-7 py-6 flex flex-col items-center overflow-hidden;
     }
     .infoContainer2 {
-        @apply rounded-xl gap-y-4 bg-custom-ly2 px-7 py-6 flex flex-col items-center justify-between overflow-hidden;
+        @apply rounded-xl gap-y-4 bg-custom-ly2 px-7 py-6 flex flex-col items-center overflow-hidden;
     }
     .tableRow > * {
         @apply text-start px-1 py-2;

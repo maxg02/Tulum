@@ -9,7 +9,7 @@ function ProgressBar({ value, total, dark = false }: { value: number; total: num
                     }}
                 ></div>
             </div>
-            <div className="flex justify-between px-1">
+            <div className="flex justify-between">
                 <p className="text-xs">RD${value}</p>
                 <p className="text-xs">RD${total}</p>
             </div>

@@ -351,10 +351,12 @@ export default function Expenses() {
         rows: expenseCategoriesRow,
     };
 
+    // TODO Change expenses visualization for mobile
+
     return (
         <>
             <SectionContent>
-                <div className="grid grid-cols-2 auto-rows-auto gap-8 overflow-x-hidden overflow-y-auto max-h-[1000px] xl:grid-cols-7 2xl:flex-1 2xl:grid-rows-12">
+                <div className="grid grid-cols-2 auto-rows-auto gap-8 overflow-x-hidden overflow-y-auto 2xl:max-h-[1000px] xl:grid-cols-7 2xl:flex-1 2xl:grid-rows-12">
                     <div className="flex col-span-2 gap-3 md:hidden">
                         <div className="flex-1">
                             <ValuePill title={currentMonth} value={totalMonthExpenses} />
@@ -364,7 +366,7 @@ export default function Expenses() {
                         </div>
                     </div>
                     <hr className="col-span-2 border-t-2 md:hidden"></hr>
-                    <div className="infoContainer1 max-md:hidden xl:col-span-3 2xl:row-span-6">
+                    <div className="infoContainer1 max-md:hidden xl:col-span-3 2xl:row-span-5">
                         <p>{`${currentMonth} Expenses`}</p>
                         <div className="w-full flex-1 flex items-center justify-center gap-x-8 xl:justify-evenly xl:gap-x-0 overflow-y-hidden">
                             <div className="w-full xl:w-[45%] 2xl:w-auto 2xl:h-full aspect-square relative">
@@ -372,6 +374,7 @@ export default function Expenses() {
                                     <Loader />
                                 ) : (
                                     <>
+                                        {/* //TODO Limit number of data */}
                                         <PieChart
                                             colors={gradientColors}
                                             margin={{ left: 0, right: 0 }}
@@ -379,7 +382,7 @@ export default function Expenses() {
                                                 {
                                                     data:
                                                         dataPieChart.length > 0
-                                                            ? dataPieChart
+                                                            ? dataPieChart.slice(0, 5)
                                                             : [{ label: "No Data", value: 1 }],
                                                     id: "A",
                                                     innerRadius: "65%",
@@ -419,13 +422,13 @@ export default function Expenses() {
                             </div>
                             {dataPieChart.length > 0 && (
                                 <DiamondList
-                                    items={dataPieChart.map((x) => x.label)}
+                                    items={dataPieChart.slice(0, 5).map((x) => x.label)}
                                     highlightedItem={highlightedValue}
                                 />
                             )}
                         </div>
                     </div>
-                    <div className="infoContainer1 col-span-2 md:order-3 xl:col-span-4 2xl:row-span-6">
+                    <div className="infoContainer1 col-span-2 md:order-3 xl:col-span-4 2xl:row-span-7">
                         <div className="flex justify-center relative w-full">
                             <p className="text-nowrap">Expenses</p>
                             <button
@@ -439,7 +442,7 @@ export default function Expenses() {
                                 />
                             </button>
                         </div>
-                        <div className="flex flex-1 w-full">
+                        <div className="flex flex-1 w-full max-h-[40rem] lg:max-h-96 2xl:max-h-none overflow-hidden">
                             {expenseCategoryIsLoading ? (
                                 <Loader />
                             ) : (
@@ -454,7 +457,7 @@ export default function Expenses() {
                             )}
                         </div>
                     </div>
-                    <div className="infoContainer2 col-span-2 md:order-4 xl:order-2 xl:col-span-4 2xl:row-span-6">
+                    <div className="infoContainer2 col-span-2 md:order-4 xl:order-2 xl:col-span-4 2xl:row-span-5">
                         <div className="flex justify-center w-full relative">
                             <p className="text-nowrap">Budgets</p>
                             <button
@@ -468,7 +471,7 @@ export default function Expenses() {
                                 />
                             </button>
                         </div>
-                        <div className="flex-1 w-full max-md:hidden 2xl:flex">
+                        <div className=" max-md:hidden flex flex-1 w-full max-h-[40rem] xl:max-h-52 2xl:max-h-none overflow-hidden">
                             {expenseCategoryIsLoading ? (
                                 <Loader />
                             ) : (
@@ -478,12 +481,11 @@ export default function Expenses() {
                                         showDetailsBudgetPlanningModal(budgetId)
                                     }
                                     data={budgetExpensesData}
-                                    tablePrefix="BE"
-                                    rowLimit={5}
+                                    filters={false}
                                 />
                             )}
                         </div>
-                        <div className="w-full flex flex-col gap-y-2 md:hidden">
+                        <div className="w-full flex flex-col gap-y-2 md:hidden max-md:max-h-96 max-md:overflow-y-auto">
                             {expenseCategoriesWithBudget.map((ec) => (
                                 <div className="flex flex-col w-full">
                                     <p>
@@ -505,7 +507,7 @@ export default function Expenses() {
                             ))}
                         </div>
                     </div>
-                    <div className="infoContainer2 col-span-2 md:col-span-1 md:order-2 xl:col-span-3 xl:order-4 2xl:row-span-6">
+                    <div className="infoContainer2 col-span-2 md:col-span-1 md:order-2 xl:col-span-3 xl:order-4 2xl:row-span-7">
                         <div className="flex justify-center relative w-full">
                             <p className="text-nowrap">Expense Categories</p>
                             <button
@@ -519,7 +521,7 @@ export default function Expenses() {
                                 />
                             </button>
                         </div>
-                        <div className="flex flex-1 w-full">
+                        <div className="flex flex-1 w-full max-h-96 md:max-h-52 lg:max-h-96 2xl:max-h-none overflow-hidden">
                             {expenseCategoryIsLoading ? (
                                 <Loader />
                             ) : (
@@ -528,9 +530,8 @@ export default function Expenses() {
                                     detailsFunction={(expenseCategoryId: number) =>
                                         showDetailsExpenseCategoryModal(expenseCategoryId)
                                     }
-                                    tablePrefix="E"
                                     dark
-                                    rowLimit={5}
+                                    filters={false}
                                 />
                             )}
                         </div>
