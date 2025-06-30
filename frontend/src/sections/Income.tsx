@@ -267,7 +267,7 @@ export default function Budget() {
                                 />
                             </button>
                         </div>
-                        <div className="flex items-start flex-1 w-full">
+                        <div className="flex items-start flex-1 w-full overflow-hidden">
                             {incomeIsLoading ? (
                                 <Loader />
                             ) : (
@@ -277,7 +277,6 @@ export default function Budget() {
                                     detailsFunction={(incomeId: number) =>
                                         showDetailsIncomeModal(incomeId)
                                     }
-                                    rowLimit={18}
                                 />
                             )}
                         </div>

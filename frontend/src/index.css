@@ -65,9 +65,6 @@ body {
     .tableRow > * {
         @apply text-start px-1 py-2;
     }
-    .tableRow {
-        @apply border-b border-opacity-35;
-    }
 
     .tableRow:nth-last-child(1) {
         @apply border-0;
@@ -76,9 +73,7 @@ body {
     .tableRow p {
         @apply font-normal;
     }
-    .tableButton {
-        @apply bg-transparent p-0 px-2 border-0 font-normal focus:outline-none outline-0 hover:text-custom-accent font-body text-sm;
-    }
+
     .stroke-icon path {
         @apply stroke-custom-primary stroke-[20px];
     }
