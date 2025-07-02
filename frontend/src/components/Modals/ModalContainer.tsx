@@ -13,7 +13,7 @@ type modalBody = {
 
 function ModalContainer({ closingHandler, children, title }: modalBody) {
     return (
-        <div className="absolute left-0 h-[100vh] w-[100vw] bg-black bg-opacity-40 flex px-4">
+        <div className="absolute left-0 h-[100vh] w-[100vw] bg-black bg-opacity-40 flex px-4 z-20">
             <div className="bg-custom-ly1 m-auto w-full max-w-96 infoContainer1 shadow-[0_0_5px_1px_rgba(0,0,0,0.35)]">
                 <div className="grid grid-cols-3 w-full">
                     <p className="col-start-2 m-auto">{title}</p>

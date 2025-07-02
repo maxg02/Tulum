@@ -39,7 +39,7 @@ import {
 } from "../components/Modals/ModalsFields";
 import DetailsModal from "../components/Modals/DetailsModal";
 import { periodicityValues } from "../Constants/Constants";
-import { pieChartSlice } from "./Dashboard";
+import CustomPieChart, { pieChartSlice } from "../components/Graphs/CustomPieChart";
 import ValuePill from "../components/Misc/ValuePill";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { AddSquareIcon } from "@hugeicons/core-free-icons";
@@ -368,55 +368,18 @@ export default function Expenses() {
                     <hr className="col-span-2 border-t-2 md:hidden"></hr>
                     <div className="infoContainer1 max-md:hidden xl:col-span-3 2xl:row-span-5">
                         <p>{`${currentMonth} Expenses`}</p>
-                        <div className="w-full flex-1 flex items-center justify-center gap-x-8 xl:justify-evenly xl:gap-x-0 overflow-y-hidden">
-                            <div className="w-full xl:w-[45%] 2xl:w-auto 2xl:h-full aspect-square relative">
+                        <div className="w-full flex-1 flex items-center gap-x-8 justify-evenly xl:gap-x-0 overflow-y-hidden">
+                            <div className="w-full max-h-52 aspect-square relative lg:max-h-60 xl:max-h-52 2xl:w-auto 2xl:h-full 2xl:max-h-none">
                                 {expenseCategoryIsLoading ? (
                                     <Loader />
                                 ) : (
                                     <>
                                         {/* //TODO Limit number of data */}
-                                        <PieChart
-                                            colors={gradientColors}
-                                            margin={{ left: 0, right: 0 }}
-                                            series={[
-                                                {
-                                                    data:
-                                                        dataPieChart.length > 0
-                                                            ? dataPieChart.slice(0, 5)
-                                                            : [{ label: "No Data", value: 1 }],
-                                                    id: "A",
-                                                    innerRadius: "65%",
-                                                    paddingAngle: 2,
-                                                    cornerRadius: 3,
-                                                    highlightScope: {
-                                                        fade: "global",
-                                                        highlight:
-                                                            dataPieChart.length > 0 ? "item" : "none",
-                                                    },
-                                                    faded: { color: "gray", additionalRadius: -5 },
-                                                    valueFormatter: (value) => `RD$${value.value}`,
-                                                },
-                                            ]}
+                                        <CustomPieChart
+                                            data={dataPieChart.slice(0, 5)}
+                                            label={totalMonthExpenses}
                                             onHighlightChange={setHighlightedValue}
-                                            slotProps={{ legend: { hidden: true } }}
-                                            sx={{
-                                                "& .MuiPieArc-root": { strokeWidth: 0 },
-                                            }}
-                                            tooltip={{
-                                                trigger: dataPieChart.length > 0 ? "item" : "none",
-                                                classes: {
-                                                    labelCell: "hidden",
-                                                    valueCell: "ml-3 p-3",
-                                                    markCell: "pl-3 pr-0",
-                                                },
-                                            }}
-                                        ></PieChart>
-                                        <h2 className="font-light text-xl absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                                            {`RD$${dataPieChart.reduce(
-                                                (acc, currentValue) => (acc = acc + currentValue.value),
-                                                0
-                                            )}`}
-                                        </h2>
+                                        />
                                     </>
                                 )}
                             </div>
@@ -442,7 +405,7 @@ export default function Expenses() {
                                 />
                             </button>
                         </div>
-                        <div className="flex flex-1 w-full max-h-[40rem] lg:max-h-96 2xl:max-h-none overflow-hidden">
+                        <div className="flex flex-1 w-full max-h-[40rem] xl:max-h-96 2xl:max-h-none overflow-hidden">
                             {expenseCategoryIsLoading ? (
                                 <Loader />
                             ) : (
@@ -521,7 +484,7 @@ export default function Expenses() {
                                 />
                             </button>
                         </div>
-                        <div className="flex flex-1 w-full max-h-96 md:max-h-52 lg:max-h-96 2xl:max-h-none overflow-hidden">
+                        <div className="flex flex-1 w-full max-h-96 md:max-h-52 lg:max-h-60 xl:max-h-96 2xl:max-h-none overflow-hidden">
                             {expenseCategoryIsLoading ? (
                                 <Loader />
                             ) : (

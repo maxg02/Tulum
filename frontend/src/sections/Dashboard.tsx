@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import SectionContent from "../components/Layout/SectionContent";
 import MoreDots from "../components/Misc/MoreDots";
 import { LineChart, markElementClasses } from "@mui/x-charts/LineChart";
-import { PieChart } from "@mui/x-charts/PieChart";
-import { gradientColors } from "../Constants/Colors";
+
 import DiamondList from "../components/Misc/DiamondList";
 import CustomGauge from "../components/Graphs/CustomGauge";
 import {
@@ -21,11 +20,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { axisClasses } from "@mui/x-charts/ChartsAxis/axisClasses";
 import { chartsAxisHighlightClasses } from "@mui/x-charts/ChartsAxisHighlight";
 import { monthList } from "../Constants/Constants";
-
-export type pieChartSlice = {
-    label: string;
-    value: number;
-};
+import CustomPieChart, { pieChartSlice } from "../components/Graphs/CustomPieChart";
 
 export default function Dashboard() {
     const [highlightedValue, setHighlightedValue] = useState(null);
@@ -37,7 +32,6 @@ export default function Dashboard() {
             inc: number;
             exp: number;
         }[] = [],
-        lineChartMaxValue: number = 0,
         totalMonthIncome: number = 0,
         monthIncomeRows: JSX.Element[] = [],
         monthExpenseRows: JSX.Element[] = [],
@@ -102,15 +96,6 @@ export default function Dashboard() {
                 )
                 .reduce((acc: number, next: expenseDto) => acc + next.amount, 0),
         }));
-
-        const preLineChartMaxValue = Math.max(
-            ...dataLineChart.map((data) => data.inc),
-            ...dataLineChart.map((data) => data.exp)
-        );
-        lineChartMaxValue =
-            (preLineChartMaxValue + (1000 - (preLineChartMaxValue % 1000))) % 2000 === 0
-                ? preLineChartMaxValue + (1000 - (preLineChartMaxValue % 1000))
-                : preLineChartMaxValue + (1000 - (preLineChartMaxValue % 1000)) + 1000;
 
         monthIncomeRows = monthIncomes
             .sort((a, b) => new Date(a.date) - new Date(b.date))
@@ -252,44 +237,11 @@ export default function Dashboard() {
                                 <Loader />
                             ) : (
                                 <>
-                                    <PieChart
-                                        colors={gradientColors}
-                                        margin={{ left: 0, right: 0 }}
-                                        series={[
-                                            {
-                                                data:
-                                                    dataPieChart.length > 0
-                                                        ? dataPieChart
-                                                        : [{ label: "No Data", value: 1 }],
-                                                id: "A",
-                                                innerRadius: "65%",
-                                                paddingAngle: 2,
-                                                cornerRadius: 3,
-                                                highlightScope: {
-                                                    fade: "global",
-                                                    highlight: dataPieChart.length > 0 ? "item" : "none",
-                                                },
-                                                faded: { color: "gray", additionalRadius: -5 },
-                                                valueFormatter: (value) => `RD$${value.value}`,
-                                            },
-                                        ]}
+                                    <CustomPieChart
+                                        data={dataPieChart.slice(0, 5)}
+                                        label={totalMonthExpenses}
                                         onHighlightChange={setHighlightedValue}
-                                        slotProps={{ legend: { hidden: true } }}
-                                        sx={{
-                                            "& .MuiPieArc-root": { strokeWidth: 0 },
-                                        }}
-                                        tooltip={{
-                                            trigger: dataPieChart.length > 0 ? "item" : "none",
-                                            classes: {
-                                                labelCell: "hidden",
-                                                valueCell: "ml-3 p-3",
-                                                markCell: "pl-3 pr-0",
-                                            },
-                                        }}
-                                    ></PieChart>
-                                    <h2 className="font-light text-xl absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                                        RD${totalMonthExpenses}
-                                    </h2>
+                                    />
                                 </>
                             )}
                         </div>
@@ -300,6 +252,7 @@ export default function Dashboard() {
                             />
                         )}
                     </div>
+
                     <div className="2xl:flex flex-col self-stretch justify-between border-t-2 py-3 hidden">
                         {monthExpenseRows}
                     </div>
