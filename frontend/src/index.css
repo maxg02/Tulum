@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* TODO Customize Sidebar */
-
 @font-face {
     font-family: "Sofia Sans";
     src: url("/fonts/Sofia_Sans/SofiaSans-VariableFont_wght.ttf");
@@ -49,6 +47,7 @@ body {
     h1 {
         @apply font-bold font-title text-white;
     }
+
     h2 {
         @apply font-semibold font-title text-white;
     }
@@ -60,9 +59,13 @@ body {
     }
     .infoContainer1 {
         @apply rounded-xl gap-y-4 bg-custom-ly1 px-7 py-6 flex flex-col items-center overflow-hidden;
+        scrollbar-width: thin;
+        scrollbar-color: rgb(79 103 94) rgb(57 73 66);
     }
     .infoContainer2 {
         @apply rounded-xl gap-y-4 bg-custom-ly2 px-7 py-6 flex flex-col items-center overflow-hidden;
+        scrollbar-width: thin;
+        scrollbar-color: rgb(57 73 66) rgb(79 103 94);
     }
     .tableRow > * {
         @apply text-start px-1 py-2;
