@@ -1,6 +1,5 @@
 import { DiamondIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import React from "react";
 
 const textColorClasses = [
     "text-gradient-1",
@@ -9,7 +8,7 @@ const textColorClasses = [
     "text-gradient-4",
     "text-gradient-5",
 ];
-//TODO fix diamonds inconsistent size / create pie graph component and unifie with diamon list
+//TODO fix diamonds inconsistent size
 
 function DiamondList({
     items,

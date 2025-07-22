@@ -33,7 +33,7 @@ function CustomPieChart({
                             highlight: data.length > 0 ? "item" : "none",
                         },
                         faded: { color: "gray", additionalRadius: -5 },
-                        valueFormatter: (value: pieChartSlice) => `RD$${value.value}`,
+                        valueFormatter: (value) => `RD$${value.value}`,
                     },
                 ]}
                 onHighlightChange={onHighlightChange}

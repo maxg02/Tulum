@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { modalState as defaultModalState } from "./createModalReducers";
 import { initialState as defaultInitialState } from "./createModalReducers";
 
