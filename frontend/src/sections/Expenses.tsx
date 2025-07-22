@@ -115,6 +115,8 @@ export default function Expenses() {
 
         expenseCategoriesWithBudget = expenseCategoryData.filter((ec) => ec.budgetPlan);
 
+        //TODO Verificar fecha
+
         expensesRow = expenseData.map((expense: expenseDto) => ({
             id: expense.id,
             data: [
@@ -159,19 +161,22 @@ export default function Expenses() {
             },
         ];
 
-        // TODO take only expenses from periodicity
-        budgetExpensesRow = expenseCategoriesWithBudget.map((ec) => ({
-            id: ec.budgetPlan!.id,
-            data: [
-                ec.category,
-                {
-                    value: expenseData
-                        .filter((e) => e.expenseCategoryId === ec.id)
-                        .reduce((acc, value) => (acc += value.amount), 0),
-                    total: ec.budgetPlan!.amount,
-                },
-            ],
-        }));
+        budgetExpensesRow = expenseCategoriesWithBudget.map((ec) => {
+            const budgetExpenses = ec.budgetPlan!.periodicity === 0 ? monthExpenses : yearExpenses;
+
+            return {
+                id: ec.budgetPlan!.id,
+                data: [
+                    ec.category,
+                    {
+                        value: budgetExpenses
+                            .filter((e) => e.expenseCategoryId === ec.id)
+                            .reduce((acc, value) => (acc += value.amount), 0),
+                        total: ec.budgetPlan!.amount,
+                    },
+                ],
+            };
+        });
     }
 
     // Show create Expense Modal

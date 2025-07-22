@@ -1,4 +1,4 @@
-export const periodicityValues = ["Daily", "Weekly", "Biweekly", "Monthly", "Quarterly", "Annual"];
+export const periodicityValues = ["Monthly", "Annual"];
 export const monthList = [
     "Jan",
     "Feb",
