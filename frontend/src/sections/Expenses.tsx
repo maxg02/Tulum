@@ -168,6 +168,7 @@ export default function Expenses() {
                 id: ec.budgetPlan!.id,
                 data: [
                     ec.category,
+                    periodicityValues[ec.budgetPlan!.periodicity],
                     {
                         value: budgetExpenses
                             .filter((e) => e.expenseCategoryId === ec.id)
@@ -350,6 +351,7 @@ export default function Expenses() {
     const budgetExpensesData: dataObject = {
         columns: [
             { name: "Budget", type: "string" },
+            { name: "Periodicity", type: "string" },
             { name: "Expenses", type: "progress" },
         ],
         rows: budgetExpensesRow,
