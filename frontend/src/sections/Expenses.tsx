@@ -1,7 +1,5 @@
 import { useState } from "react";
 import SectionContent from "../components/Layout/SectionContent";
-import { PieChart } from "@mui/x-charts/PieChart";
-import { basicColors, gradientColors } from "../Constants/Colors";
 import DiamondList from "../components/Misc/DiamondList";
 import Table, { dataObject, tableRow } from "../components/Misc/Table";
 import {
@@ -129,8 +127,6 @@ export default function Expenses() {
             ],
         }));
 
-        // TODO: REFACTOR MONTH EXPENSES
-
         const yearExpenses = expenseData?.filter(
             (expense) => new Date(expense.date).getFullYear() === currentDate.getFullYear()
         );
@@ -143,18 +139,27 @@ export default function Expenses() {
         totalYearExpenses = yearExpenses.reduce((acc, val) => acc + val.amount, 0);
 
         const monthExpensesByCategory: object = Object.groupBy(
-            monthExpenses,
+            monthExpenses.filter((ex) => ex.expenseCategoryId),
             (expense: expenseDto) => expense.expenseCategoryId
         );
 
-        monthExpensesData = Object.keys(monthExpensesByCategory).map<pieChartSlice>((key) => ({
-            label:
-                key != "null"
-                    ? categorySelectValues?.find((c) => c.id === parseInt(key))!.value
-                    : "Otros",
-            value: monthExpensesByCategory[key].reduce((acc, expense) => acc + expense.amount, 0),
-        }));
+        const monthExpensesTopData = Object.keys(monthExpensesByCategory)
+            .map<pieChartSlice>((key) => ({
+                label: categorySelectValues?.find((c) => c.id === parseInt(key))!.value,
+                value: monthExpensesByCategory[key].reduce((acc, expense) => acc + expense.amount, 0),
+            }))
+            .sort((a, b) => b.value - a.value)
+            .slice(0, 4);
 
+        monthExpensesData = [
+            ...monthExpensesTopData,
+            {
+                label: "Others",
+                value: totalMonthExpenses - monthExpensesTopData.reduce((acc, val) => acc + val.value, 0),
+            },
+        ];
+
+        // TODO take only expenses from periodicity
         budgetExpensesRow = expenseCategoriesWithBudget.map((ec) => ({
             id: ec.budgetPlan!.id,
             data: [
@@ -218,7 +223,6 @@ export default function Expenses() {
         const newState = { ...detailsModalState };
         newState.id = budgetId;
         newState.show = { ...detailsModalState.show, budgetPlanning: true };
-        //TODO: add budgetplandto
 
         const selectedBudgetPlan = expenseCategoriesWithBudget.find(
             (ec) => ec.budgetPlan!.id == budgetId
@@ -374,9 +378,8 @@ export default function Expenses() {
                                     <Loader />
                                 ) : (
                                     <>
-                                        {/* //TODO Limit number of data */}
                                         <CustomPieChart
-                                            data={dataPieChart.slice(0, 5)}
+                                            data={dataPieChart}
                                             label={totalMonthExpenses}
                                             onHighlightChange={setHighlightedValue}
                                         />
@@ -414,8 +417,6 @@ export default function Expenses() {
                                     detailsFunction={(expenseId: number) =>
                                         showDetailsExpenseModal(expenseId)
                                     }
-                                    tablePrefix="E"
-                                    rowLimit={6}
                                 />
                             )}
                         </div>

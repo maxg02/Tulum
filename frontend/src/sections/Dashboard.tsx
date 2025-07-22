@@ -61,6 +61,8 @@ export default function Dashboard() {
                 new Date(expense.date).getFullYear() === currentDate.getFullYear()
         );
 
+        totalMonthExpenses = monthExpenses.reduce((acc, val) => acc + val.amount, 0);
+
         const yearIncomes = incomeData.filter(
             (income) => new Date(income.date).getFullYear() === currentDate.getFullYear()
         );
@@ -138,22 +140,25 @@ export default function Dashboard() {
             });
 
         const monthExpensesByCategory: object = Object.groupBy(
-            monthExpenses,
+            monthExpenses.filter((ex) => ex.expenseCategoryId),
             (expense: expenseDto) => expense.expenseCategoryId
         );
 
-        monthExpensesData = Object.keys(monthExpensesByCategory).map<pieChartSlice>((key) => ({
-            label:
-                key != "null"
-                    ? expenseCategoryData?.find((c) => c.id === parseInt(key))!.category
-                    : "Otros",
-            value: monthExpensesByCategory[key].reduce((acc, expense) => acc + expense.amount, 0),
-        }));
+        const monthExpensesTopData = Object.keys(monthExpensesByCategory)
+            .map<pieChartSlice>((key) => ({
+                label: expenseCategoryData?.find((c) => c.id === parseInt(key))!.category,
+                value: monthExpensesByCategory[key].reduce((acc, expense) => acc + expense.amount, 0),
+            }))
+            .sort((a, b) => b.value - a.value)
+            .slice(0, 4);
 
-        totalMonthExpenses = monthExpensesData.reduce(
-            (acc, currentValue) => (acc = acc + currentValue.value),
-            0
-        );
+        monthExpensesData = [
+            ...monthExpensesTopData,
+            {
+                label: "Others",
+                value: totalMonthExpenses - monthExpensesTopData.reduce((acc, val) => acc + val.value, 0),
+            },
+        ];
 
         const allGoalContributions = savingGoalData
             ?.map((sG) => sG.goalContributions)
@@ -238,7 +243,7 @@ export default function Dashboard() {
                             ) : (
                                 <>
                                     <CustomPieChart
-                                        data={dataPieChart.slice(0, 5)}
+                                        data={dataPieChart}
                                         label={totalMonthExpenses}
                                         onHighlightChange={setHighlightedValue}
                                     />
