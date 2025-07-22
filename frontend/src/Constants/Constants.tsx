@@ -13,3 +13,11 @@ export const monthList = [
     "Nov",
     "Dec",
 ];
+export enum modalTitles {
+    "income" = "Income",
+    "budgetPlanning" = "Budget Plan",
+    "expense" = "Expense",
+    "savingGoal" = "Saving Goal",
+    "goalContribution" = "Goal Contribution",
+    "expenseCategory" = "Expense Category",
+}

@@ -2,6 +2,7 @@ import React from "react";
 import ModalContainer from "./ModalContainer";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { hideModal } from "../../reducers/detailsModalReducers";
+import { modalTitles } from "../../Constants/Constants";
 
 type detailsModal = {
     deleteFunction: () => void;
@@ -30,36 +31,11 @@ function DetailsModal({ children, show, deleteFunction, updateFunction }: detail
         handleClosing();
     };
 
-    const currentModal = Object.keys(detailsModalState).filter((k) => detailsModalState[k]);
+    const currentModal = Object.keys(detailsModalState).find(
+        (k) => detailsModalState[k as keyof typeof detailsModalState]
+    )!;
 
-    let title: string = "";
-
-    switch (currentModal[0]) {
-        case "income":
-            title = "Income Details";
-            break;
-        case "fixedIncome":
-            title = "Fixed Income Details";
-            break;
-        case "budgetPlanning":
-            title = "Budget Plan Details";
-            break;
-        case "expense":
-            title = "Expense Details";
-            break;
-        case "fixedExpense":
-            title = "Fixed Expense Details";
-            break;
-        case "savingGoal":
-            title = "Saving Goal Details";
-            break;
-        case "goalContribution":
-            title = "Goal Contribution Details";
-            break;
-        case "expenseCategory":
-            title = "Expense Category Details";
-            break;
-    }
+    const title: string = `${modalTitles[currentModal as keyof typeof modalTitles]} Details`;
 
     return (
         <ModalContainer closingHandler={handleClosing} title={title}>

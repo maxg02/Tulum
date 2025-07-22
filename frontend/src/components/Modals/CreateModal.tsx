@@ -1,3 +1,4 @@
+import { modalTitles } from "../../Constants/Constants";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { hideModal } from "../../reducers/createModalReducers";
 import ModalContainer from "./ModalContainer";
@@ -18,36 +19,11 @@ function CreateModal({ children, show, createFunction }: createModal) {
         return null;
     }
 
-    const currentModal = Object.keys(createModalState).filter((k) => createModalState[k]);
+    const currentModal = Object.keys(createModalState).find(
+        (k) => createModalState[k as keyof typeof createModalState]
+    );
 
-    let title: string = "";
-
-    switch (currentModal[0]) {
-        case "income":
-            title = "Create Income";
-            break;
-        case "fixedIncome":
-            title = "Create Fixed Income";
-            break;
-        case "budgetPlanning":
-            title = "Create Budget Plan";
-            break;
-        case "expense":
-            title = "Create Expense";
-            break;
-        case "fixedExpense":
-            title = "Fixed Expense Details";
-            break;
-        case "savingGoal":
-            title = "Saving Goal Details";
-            break;
-        case "goalContribution":
-            title = "Goal Contribution Details";
-            break;
-        case "expenseCategory":
-            title = "Expense Category Details";
-            break;
-    }
+    const title: string = `Create ${modalTitles[currentModal as keyof typeof modalTitles]}`;
 
     const handleCreate = () => {
         createFunction();
