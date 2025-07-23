@@ -1,6 +1,5 @@
 import { useState } from "react";
 import SectionContent from "../components/Layout/SectionContent";
-import DiamondList from "../components/Misc/DiamondList";
 import Table, { dataObject, tableRow } from "../components/Misc/Table";
 import {
     expenseDto,
@@ -44,7 +43,6 @@ import { AddSquareIcon } from "@hugeicons/core-free-icons";
 import ProgressBar from "../components/Graphs/ProgressBar";
 
 export default function Expenses() {
-    const [highlightedValue, setHighlightedValue] = useState(null);
     const [amount, setAmount] = useState<number>(0);
     const [details, setDetails] = useState<string>("");
     const [date, setDate] = useState<Date>(new Date());
@@ -149,6 +147,7 @@ export default function Expenses() {
             .map<pieChartSlice>((key) => ({
                 label: categorySelectValues?.find((c) => c.id === parseInt(key))!.value,
                 value: monthExpensesByCategory[key].reduce((acc, expense) => acc + expense.amount, 0),
+                labelMarkType: "circle",
             }))
             .sort((a, b) => b.value - a.value)
             .slice(0, 4);
@@ -367,7 +366,7 @@ export default function Expenses() {
     return (
         <>
             <SectionContent>
-                <div className="grid grid-cols-2 auto-rows-auto gap-8 overflow-x-hidden overflow-y-auto 2xl:max-h-[1000px] xl:grid-cols-7 2xl:flex-1 2xl:grid-rows-12">
+                <div className="grid grid-cols-2 auto-rows-auto gap-8 overflow-x-hidden overflow-y-auto md:grid-cols-5 xl:grid-cols-7 2xl:max-h-[1000px] 2xl:flex-1 2xl:grid-rows-12">
                     <div className="flex col-span-2 gap-3 md:hidden">
                         <div className="flex-1">
                             <ValuePill title={currentMonth} value={totalMonthExpenses} />
@@ -377,31 +376,19 @@ export default function Expenses() {
                         </div>
                     </div>
                     <hr className="col-span-2 border-t-2 md:hidden"></hr>
-                    <div className="infoContainer1 max-md:hidden xl:col-span-3 2xl:row-span-5">
+                    <div className="infoContainer1 max-md:hidden md:col-span-3 xl:col-span-3 2xl:row-span-5">
                         <p>{`${currentMonth} Expenses`}</p>
-                        <div className="w-full flex-1 flex items-center gap-x-8 justify-evenly xl:gap-x-0 overflow-y-hidden">
-                            <div className="w-full max-h-52 aspect-square relative lg:max-h-60 xl:max-h-52 2xl:w-auto 2xl:h-full 2xl:max-h-none">
-                                {expenseCategoryIsLoading ? (
-                                    <Loader />
-                                ) : (
-                                    <>
-                                        <CustomPieChart
-                                            data={dataPieChart}
-                                            label={totalMonthExpenses}
-                                            onHighlightChange={setHighlightedValue}
-                                        />
-                                    </>
-                                )}
-                            </div>
-                            {dataPieChart.length > 0 && (
-                                <DiamondList
-                                    items={dataPieChart.slice(0, 5).map((x) => x.label)}
-                                    highlightedItem={highlightedValue}
-                                />
+                        <div className="w-full md:h-52 2xl:flex-1 overflow-y-hidden">
+                            {expenseCategoryIsLoading ? (
+                                <Loader />
+                            ) : (
+                                <>
+                                    <CustomPieChart data={dataPieChart} label={totalMonthExpenses} />
+                                </>
                             )}
                         </div>
                     </div>
-                    <div className="infoContainer1 col-span-2 md:order-3 xl:col-span-4 2xl:row-span-7">
+                    <div className="infoContainer1 col-span-2 md:col-span-5 md:order-3 xl:col-span-4 2xl:row-span-7">
                         <div className="flex justify-center relative w-full">
                             <p className="text-nowrap">Expenses</p>
                             <button
@@ -428,7 +415,7 @@ export default function Expenses() {
                             )}
                         </div>
                     </div>
-                    <div className="infoContainer2 col-span-2 md:order-4 xl:order-2 xl:col-span-4 2xl:row-span-5">
+                    <div className="infoContainer2 col-span-2 md:col-span-5 md:order-4 xl:order-2 xl:col-span-4 2xl:row-span-5">
                         <div className="flex justify-center w-full relative">
                             <p className="text-nowrap">Budgets</p>
                             <button
@@ -478,7 +465,7 @@ export default function Expenses() {
                             ))}
                         </div>
                     </div>
-                    <div className="infoContainer2 col-span-2 md:col-span-1 md:order-2 xl:col-span-3 xl:order-4 2xl:row-span-7">
+                    <div className="infoContainer2 col-span-2 md:col-span-2 md:order-2 xl:col-span-3 xl:order-4 2xl:row-span-7">
                         <div className="flex justify-center relative w-full">
                             <p className="text-nowrap">Expense Categories</p>
                             <button
@@ -492,7 +479,7 @@ export default function Expenses() {
                                 />
                             </button>
                         </div>
-                        <div className="flex flex-1 w-full max-h-96 md:max-h-52 lg:max-h-60 xl:max-h-96 2xl:max-h-none overflow-hidden">
+                        <div className="flex flex-1 w-full max-h-96 md:max-h-52 xl:max-h-96 2xl:max-h-none overflow-hidden">
                             {expenseCategoryIsLoading ? (
                                 <Loader />
                             ) : (

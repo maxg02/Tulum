@@ -29,7 +29,7 @@ import Loader from "../components/Misc/Loader";
 import { AddSquareIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { BarChart } from "@mui/x-charts/BarChart";
-import { axisClasses } from "@mui/x-charts/ChartsAxis/axisClasses";
+import { axisClasses } from "@mui/x-charts";
 import { chartsAxisHighlightClasses } from "@mui/x-charts/ChartsAxisHighlight";
 import { basicColors } from "../Constants/Colors";
 import ValuePill from "../components/Misc/ValuePill";

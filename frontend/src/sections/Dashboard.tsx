@@ -17,7 +17,7 @@ import {
 import Loader from "../components/Misc/Loader";
 import { DiamondIcon, Invoice02Icon, MoneyReceiveSquareIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { axisClasses } from "@mui/x-charts/ChartsAxis/axisClasses";
+import { axisClasses } from "@mui/x-charts";
 import { chartsAxisHighlightClasses } from "@mui/x-charts/ChartsAxisHighlight";
 import { monthList } from "../Constants/Constants";
 import CustomPieChart, { pieChartSlice } from "../components/Graphs/CustomPieChart";
@@ -201,7 +201,7 @@ export default function Dashboard() {
 
     return (
         <SectionContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-11 gap-8 overflow-x-hidden overflow-y-auto auto-rows-auto 2xl:grid-rows-11 2xl:flex-1 max-h-[1200px]">
+            <div className="grid grid-cols-1 md:grid-cols-5 2xl:grid-cols-11 gap-8 overflow-x-hidden overflow-y-auto auto-rows-auto 2xl:grid-rows-11 2xl:flex-1 max-h-[1200px]">
                 <div className="flex flex-col gap-6 border-b-2 md:hidden">
                     <p className="self-center">{currentMonth} Balance</p>
                     <div className="flex gap-9 px-4 mb-8">
@@ -216,7 +216,7 @@ export default function Dashboard() {
                     </div>
                 </div>
 
-                <div className="infoContainer1 hidden md:flex 2xl:row-span-5 2xl:col-span-5">
+                <div className="infoContainer1 hidden col-span-2 md:flex 2xl:row-span-5 2xl:col-span-5">
                     <div className="grid grid-cols-3 w-full">
                         <p className="col-start-2 mx-auto">{currentMonth} Income</p>
                         <div className="ml-auto">
@@ -229,32 +229,20 @@ export default function Dashboard() {
                     </div>
                 </div>
 
-                <div className="infoContainer2 flex-1 hidden md:flex 2xl:row-span-6 2xl:col-span-6">
+                <div className="infoContainer1 flex-1 hidden col-span-3 md:flex 2xl:row-span-6 2xl:col-span-6">
                     <div className="grid grid-cols-3 w-full">
                         <p className="col-start-2 mx-auto">{currentMonth} Expenses</p>
                         <div className="ml-auto">
                             <MoreDots section="/expenses" />
                         </div>
                     </div>
-                    <div className="w-full flex-1 flex items-center justify-center gap-x-8 xl:justify-evenly xl:gap-x-0 overflow-y-hidden">
-                        <div className="w-full xl:w-[45%] 2xl:w-auto 2xl:h-full aspect-square relative">
-                            {expenseCategoryIsLoading ? (
-                                <Loader />
-                            ) : (
-                                <>
-                                    <CustomPieChart
-                                        data={dataPieChart}
-                                        label={totalMonthExpenses}
-                                        onHighlightChange={setHighlightedValue}
-                                    />
-                                </>
-                            )}
-                        </div>
-                        {dataPieChart.length > 0 && (
-                            <DiamondList
-                                items={dataPieChart.map((x) => x.label)}
-                                highlightedItem={highlightedValue}
-                            />
+                    <div className="w-full md:h-52 2xl:flex-1 overflow-y-hidden">
+                        {expenseCategoryIsLoading ? (
+                            <Loader />
+                        ) : (
+                            <>
+                                <CustomPieChart data={dataPieChart} label={totalMonthExpenses} />
+                            </>
                         )}
                     </div>
 
@@ -263,7 +251,7 @@ export default function Dashboard() {
                     </div>
                 </div>
 
-                <div className="infoContainer2 md:col-span-2 2xl:row-span-6 2xl:col-span-5">
+                <div className="infoContainer2 md:col-span-5 2xl:row-span-6 2xl:col-span-5">
                     <p>{currentDate.getFullYear()} Summary</p>
                     <div className="w-full h-40 md:h-52 2xl:h-4/6">
                         {incomeIsLoading || expenseCategoryIsLoading ? (
@@ -346,7 +334,7 @@ export default function Dashboard() {
                     </div>
                 </div>
 
-                <div className="infoContainer1 md:col-span-2 2xl:row-span-5 2xl:col-span-6">
+                <div className="infoContainer1 md:col-span-5 2xl:row-span-5 2xl:col-span-6">
                     <div className="grid grid-cols-3 w-full">
                         <p className="col-start-2 mx-auto">Saving Goals</p>
                         <div className="ml-auto">

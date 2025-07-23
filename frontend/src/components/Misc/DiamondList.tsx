@@ -31,7 +31,7 @@ function DiamondList({
                 <p
                     className={`${
                         key === highlightedItem?.dataIndex ? "text-custom-accent" : ""
-                    } text-sm`}
+                    } text-sm text-ellipsis overflow-hidden`}
                 >
                     {item}
                 </p>
