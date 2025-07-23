@@ -1,9 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import SectionContent from "../components/Layout/SectionContent";
 import MoreDots from "../components/Misc/MoreDots";
 import { LineChart, markElementClasses } from "@mui/x-charts/LineChart";
-
-import DiamondList from "../components/Misc/DiamondList";
 import CustomGauge from "../components/Graphs/CustomGauge";
 import {
     expenseDto,
@@ -15,7 +13,7 @@ import {
     useGetUserExpensesQuery,
 } from "../../api/apiSlice";
 import Loader from "../components/Misc/Loader";
-import { DiamondIcon, Invoice02Icon, MoneyReceiveSquareIcon } from "@hugeicons/core-free-icons";
+import { Invoice02Icon, MoneyReceiveSquareIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { axisClasses } from "@mui/x-charts";
 import { chartsAxisHighlightClasses } from "@mui/x-charts/ChartsAxisHighlight";
@@ -23,12 +21,10 @@ import { monthList } from "../Constants/Constants";
 import CustomPieChart, { pieChartSlice } from "../components/Graphs/CustomPieChart";
 
 export default function Dashboard() {
-    const [highlightedValue, setHighlightedValue] = useState(null);
-
     const currentDate: Date = new Date();
     const currentMonth: string = new Intl.DateTimeFormat("en-US", { month: "long" }).format(currentDate);
     let dataLineChart: {
-            name: string;
+            month: string;
             inc: number;
             exp: number;
         }[] = [],
@@ -80,7 +76,7 @@ export default function Dashboard() {
         );
 
         dataLineChart = monthList.map((month) => ({
-            name: month,
+            month,
             inc: yearIncomes
                 .filter(
                     (income: incomeDto) =>
@@ -201,7 +197,7 @@ export default function Dashboard() {
 
     return (
         <SectionContent>
-            <div className="grid grid-cols-1 md:grid-cols-5 2xl:grid-cols-11 gap-8 overflow-x-hidden overflow-y-auto auto-rows-auto 2xl:grid-rows-11 2xl:flex-1 max-h-[1200px]">
+            <div className="grid grid-cols-1 md:grid-cols-5 xl:grid-cols-9 2xl:grid-cols-11 gap-8 overflow-x-hidden overflow-y-auto auto-rows-auto 2xl:grid-rows-11 2xl:flex-1 max-h-[1200px]">
                 <div className="flex flex-col gap-6 border-b-2 md:hidden">
                     <p className="self-center">{currentMonth} Balance</p>
                     <div className="flex gap-9 px-4 mb-8">
@@ -216,7 +212,7 @@ export default function Dashboard() {
                     </div>
                 </div>
 
-                <div className="infoContainer1 hidden col-span-2 md:flex 2xl:row-span-5 2xl:col-span-5">
+                <div className="infoContainer1 hidden col-span-2 md:flex xl:col-span-5 2xl:row-span-5">
                     <div className="grid grid-cols-3 w-full">
                         <p className="col-start-2 mx-auto">{currentMonth} Income</p>
                         <div className="ml-auto">
@@ -229,7 +225,7 @@ export default function Dashboard() {
                     </div>
                 </div>
 
-                <div className="infoContainer1 flex-1 hidden col-span-3 md:flex 2xl:row-span-6 2xl:col-span-6">
+                <div className="infoContainer1 flex-1 hidden col-span-3 md:flex xl:col-span-4 2xl:row-span-6 2xl:col-span-6">
                     <div className="grid grid-cols-3 w-full">
                         <p className="col-start-2 mx-auto">{currentMonth} Expenses</p>
                         <div className="ml-auto">
@@ -251,17 +247,16 @@ export default function Dashboard() {
                     </div>
                 </div>
 
-                <div className="infoContainer2 md:col-span-5 2xl:row-span-6 2xl:col-span-5">
+                <div className="infoContainer2 md:col-span-5 xl:col-span-9 2xl:row-span-6 2xl:col-span-5">
                     <p>{currentDate.getFullYear()} Summary</p>
-                    <div className="w-full h-40 md:h-52 2xl:h-4/6">
+                    <div className="w-full h-40 md:h-52 2xl:flex-1">
                         {incomeIsLoading || expenseCategoryIsLoading ? (
                             <Loader />
                         ) : (
                             <LineChart
-                                margin={{ left: 35, right: 10, top: 15, bottom: 20 }}
                                 xAxis={[
                                     {
-                                        dataKey: "name",
+                                        dataKey: "month",
                                         scaleType: "point",
                                     },
                                 ]}
@@ -269,7 +264,7 @@ export default function Dashboard() {
                                     {
                                         min: 0,
                                         domainLimit: "nice",
-                                        valueFormatter: (value) =>
+                                        valueFormatter: (value: number) =>
                                             value < 1000 ? value : `${value / 1000}K`,
                                     },
                                 ]}
@@ -281,8 +276,8 @@ export default function Dashboard() {
                                         curve: "linear",
                                         valueFormatter: (value) =>
                                             value == null ? "RD$0" : `RD$${value}`,
+                                        labelMarkType: "circle",
                                     },
-
                                     {
                                         dataKey: "exp",
                                         label: "Expenses",
@@ -290,14 +285,22 @@ export default function Dashboard() {
                                         curve: "linear",
                                         valueFormatter: (value) =>
                                             value == null ? "RD$0" : `RD$${value}`,
+                                        labelMarkType: "circle",
                                     },
                                 ]}
                                 dataset={dataLineChart}
                                 grid={{ vertical: true, horizontal: true }}
-                                slotProps={{ legend: { hidden: true } }}
+                                slotProps={{
+                                    legend: {
+                                        sx: {
+                                            color: "white",
+                                            fontSize: 13,
+                                            fontFamily: "Karla, sans-serif",
+                                        },
+                                    },
+                                }}
                                 sx={{
                                     [`& .${markElementClasses.root}`]: {
-                                        scale: "0.9",
                                         fill: "#394942",
                                         strokeWidth: 2,
                                     },
@@ -321,20 +324,9 @@ export default function Dashboard() {
                             />
                         )}
                     </div>
-                    <div className="flex gap-6">
-                        <div className="flex flex-col items-center gap-1">
-                            <HugeiconsIcon icon={DiamondIcon} size={15} strokeWidth={3} color="#78d2b5" />
-                            <p>Income</p>
-                        </div>
-
-                        <div className="flex flex-col items-center gap-1">
-                            <HugeiconsIcon icon={DiamondIcon} size={15} strokeWidth={3} color="#d96533" />
-                            <p>Expenses</p>
-                        </div>
-                    </div>
                 </div>
 
-                <div className="infoContainer1 md:col-span-5 2xl:row-span-5 2xl:col-span-6">
+                <div className="infoContainer1 md:col-span-5 xl:col-span-9 2xl:row-span-5 2xl:col-span-6">
                     <div className="grid grid-cols-3 w-full">
                         <p className="col-start-2 mx-auto">Saving Goals</p>
                         <div className="ml-auto">
