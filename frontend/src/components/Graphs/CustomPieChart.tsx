@@ -2,17 +2,18 @@ import { useDrawingArea } from "@mui/x-charts/hooks";
 import { gradientColors } from "../../Constants/Colors";
 import { PieChart } from "@mui/x-charts/PieChart";
 import { styled } from "@mui/material/styles";
-import { ChartsLabelCustomMarkProps } from "@mui/x-charts/ChartsLabel";
-import { MakeOptional } from "@mui/x-charts/internals";
-import { PieValueType } from "@mui/x-charts/models/seriesType/pie";
 
-export type pieChartSlice = MakeOptional<PieValueType, "id">;
+export type pieChartSlice = {
+    label: string;
+    value: number;
+};
 
-const StyledText = styled("text")(({ theme }) => ({
+const StyledText = styled("text")(() => ({
     fill: ["#ffffff"],
     textAnchor: "middle",
     dominantBaseline: "central",
     fontSize: 20,
+    fontFamily: "Karla, sans-serif",
 }));
 
 function PieCenterLabel({ children }: { children: React.ReactNode }) {
@@ -44,16 +45,19 @@ function CustomPieChart({ data, label }: { data: pieChartSlice[]; label: number 
                     labelMarkType: "circle",
                 },
             ]}
+            slotProps={{
+                legend: {
+                    sx: { color: "white", fontSize: 13, fontFamily: "Karla, sans-serif" },
+                },
+                tooltip: {
+                    trigger: data.length > 0 ? "item" : "none",
+                    classes: {
+                        valueCell: "ml-3 p-3",
+                    },
+                },
+            }}
             sx={{
                 "& .MuiPieArc-root": { strokeWidth: 0 },
-            }}
-            tooltip={{
-                trigger: data.length > 0 ? "item" : "none",
-                classes: {
-                    labelCell: "hidden",
-                    valueCell: "ml-3 p-3",
-                    markCell: "pl-3 pr-0",
-                },
             }}
         >
             <PieCenterLabel>RD${label}</PieCenterLabel>
