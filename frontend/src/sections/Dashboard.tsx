@@ -15,7 +15,7 @@ import {
 import Loader from "../components/Misc/Loader";
 import { Invoice02Icon, MoneyReceiveSquareIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { axisClasses } from "@mui/x-charts";
+import { axisClasses, chartsGridClasses } from "@mui/x-charts";
 import { chartsAxisHighlightClasses } from "@mui/x-charts/ChartsAxisHighlight";
 import { monthList } from "../Constants/Constants";
 import CustomPieChart, { pieChartSlice } from "../components/Graphs/CustomPieChart";
@@ -249,7 +249,7 @@ export default function Dashboard() {
 
                 <div className="infoContainer2 md:col-span-5 xl:col-span-9 2xl:row-span-6 2xl:col-span-5">
                     <p>{currentDate.getFullYear()} Summary</p>
-                    <div className="w-full h-40 md:h-52 2xl:flex-1">
+                    <div className="w-full h-52 2xl:flex-1">
                         {incomeIsLoading || expenseCategoryIsLoading ? (
                             <Loader />
                         ) : (
@@ -260,12 +260,14 @@ export default function Dashboard() {
                                         scaleType: "point",
                                     },
                                 ]}
+                                margin={{ left: 0, top: 20, bottom: 0, right: 10 }}
                                 yAxis={[
                                     {
                                         min: 0,
                                         domainLimit: "nice",
                                         valueFormatter: (value: number) =>
                                             value < 1000 ? value : `${value / 1000}K`,
+                                        width: 40,
                                     },
                                 ]}
                                 series={[
@@ -292,6 +294,10 @@ export default function Dashboard() {
                                 grid={{ vertical: true, horizontal: true }}
                                 slotProps={{
                                     legend: {
+                                        position: {
+                                            horizontal: "center",
+                                            vertical: "bottom",
+                                        },
                                         sx: {
                                             color: "white",
                                             fontSize: 13,
@@ -319,6 +325,11 @@ export default function Dashboard() {
                                         fill: "white",
                                         stroke: "white",
                                         opacity: 0.5,
+                                    },
+                                    [`.${chartsGridClasses.line}`]: {
+                                        fill: "white",
+                                        stroke: "white",
+                                        opacity: 0.1,
                                     },
                                 }}
                             />

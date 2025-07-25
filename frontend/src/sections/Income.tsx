@@ -10,15 +10,8 @@ import {
     incomeDto,
     updateIncomeDto,
     createIncomeDto,
-    useGetUserFixedIncomesQuery,
-    useCreateFixedIncomeMutation,
-    useDeleteFixedIncomeMutation,
-    useUpdateFixedIncomeMutation,
-    fixedIncomeDto,
-    updateFixedIncomeDto,
-    createFixedIncomeDto,
 } from "../../api/apiSlice";
-import { monthList, periodicityValues } from "../Constants/Constants";
+import { monthList } from "../Constants/Constants";
 import CreateModal from "../components/Modals/CreateModal";
 import DetailsModal from "../components/Modals/DetailsModal";
 import { useAppDispatch, useAppSelector } from "../hooks";
@@ -29,7 +22,7 @@ import Loader from "../components/Misc/Loader";
 import { AddSquareIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { BarChart } from "@mui/x-charts/BarChart";
-import { axisClasses } from "@mui/x-charts";
+import { axisClasses, chartsGridClasses } from "@mui/x-charts";
 import { chartsAxisHighlightClasses } from "@mui/x-charts/ChartsAxisHighlight";
 import { basicColors } from "../Constants/Colors";
 import ValuePill from "../components/Misc/ValuePill";
@@ -39,7 +32,6 @@ export default function Budget() {
     const [details, setDetails] = useState<string>("");
     const [date, setDate] = useState<Date>(new Date());
     const [periodicity, setPeriodicity] = useState<number>(0);
-    //const [incomeToggle, setIncomeToggle] = useState<boolean>(true);
 
     const clearFieldValues = () => {
         setAmount(0), setDetails(""), setDate(new Date()), setPeriodicity(0);
@@ -49,15 +41,13 @@ export default function Budget() {
     const createModalState = useAppSelector((state) => state.createModal.show);
     const detailsModalState = useAppSelector((state) => state.detailsModal);
 
-    let incomesRow: tableRow[] = [],
-        fixedIncomesRow: tableRow[] = [];
+    let incomesRow: tableRow[] = [];
     const currentDate: Date = new Date();
     const currentMonth: string = new Intl.DateTimeFormat("en-US", { month: "long" }).format(currentDate);
     const currentYear: number = currentDate.getFullYear();
     let totalIncome: number = 0;
     let totalMonthIncome: number = 0;
     let totalYearIncome: number = 0;
-    let totalFixedIncome: number = 0;
     let dataBarChart: {
         month: string;
         income: number;
@@ -69,26 +59,11 @@ export default function Budget() {
     const [deleteIncome] = useDeleteIncomeMutation();
     const [updateIncome] = useUpdateIncomeMutation();
 
-    //Fixed Income Fetching
-    const { data: fixedIncomeData, isLoading: fixedIncomeIsLoading } = useGetUserFixedIncomesQuery();
-    const [createFixedIncome] = useCreateFixedIncomeMutation();
-    const [deleteFixedIncome] = useDeleteFixedIncomeMutation();
-    const [updateFixedIncome] = useUpdateFixedIncomeMutation();
-
     // Show create Income Modal
     const showCreateIncomeModal = () => {
         clearFieldValues();
         const newState = { ...createModalState };
         newState.income = true;
-
-        dispatch(showCreateModal(newState));
-    };
-
-    // Show create Fixed Income Modal
-    const showCreateFixedIncomeModal = () => {
-        clearFieldValues();
-        const newState = { ...createModalState };
-        newState.fixedIncome = true;
 
         dispatch(showCreateModal(newState));
     };
@@ -108,24 +83,6 @@ export default function Budget() {
         dispatch(showDetailsModal(newState));
     };
 
-    // Show details Fixed Income Modal
-    const showDetailsFixedIncomeModal = (fixedIncomeId: number) => {
-        clearFieldValues();
-        const newState = { ...detailsModalState };
-        newState.id = fixedIncomeId;
-        newState.show = { ...detailsModalState.show, fixedIncome: true };
-
-        const selectedFixedIncomeData: fixedIncomeDto = fixedIncomeData!.filter(
-            (i: fixedIncomeDto) => i.id === fixedIncomeId
-        )[0];
-
-        setAmount(selectedFixedIncomeData.amount);
-        setDetails(selectedFixedIncomeData.details);
-        setPeriodicity(selectedFixedIncomeData.periodicity);
-
-        dispatch(showDetailsModal(newState));
-    };
-
     // Create Income Function
     const createIncomeHandler = () => {
         const incomeData: createIncomeDto = {
@@ -136,26 +93,10 @@ export default function Budget() {
         createIncome(incomeData);
     };
 
-    // Create Fixed income function
-    const createFixedIncomeHandler = () => {
-        const fixedIncomeData: createFixedIncomeDto = {
-            amount: amount,
-            details: details,
-            periodicity: periodicity,
-        };
-        createFixedIncome(fixedIncomeData);
-    };
-
     // Delete Income Function
     const deleteIncomeHandler = () => {
         const incomeId = detailsModalState.id;
         deleteIncome(incomeId!);
-    };
-
-    // Delete Fixed Income Function
-    const deleteFixedIncomeHandler = () => {
-        const fixedIncomeId = detailsModalState.id;
-        deleteFixedIncome(fixedIncomeId!);
     };
 
     // Update Income Function
@@ -166,16 +107,6 @@ export default function Budget() {
         };
 
         updateIncome(incomeData);
-    };
-
-    // Update Fixed Income Function
-    const updateFixedIncomeHandler = () => {
-        const fixedIncomeData: updateFixedIncomeDto = {
-            id: detailsModalState.id!,
-            data: { amount: amount, details: details, periodicity: periodicity },
-        };
-
-        updateFixedIncome(fixedIncomeData);
     };
 
     // Income data handling
@@ -223,20 +154,6 @@ export default function Budget() {
         rows: incomesRow,
     };
 
-    //Fixed Income table structure
-    const fixedIncomeTableData: dataObject = {
-        columns: [
-            { name: "Income", type: "amount" },
-            { name: "Details", type: "string" },
-            {
-                name: "Periodicity",
-                type: "list",
-                values: periodicityValues,
-            },
-        ],
-        rows: fixedIncomesRow,
-    };
-
     return (
         <>
             <SectionContent>
@@ -273,7 +190,6 @@ export default function Budget() {
                             ) : (
                                 <Table
                                     data={incomeTableData}
-                                    tablePrefix="I"
                                     detailsFunction={(incomeId: number) =>
                                         showDetailsIncomeModal(incomeId)
                                     }
@@ -290,14 +206,20 @@ export default function Budget() {
                             ) : (
                                 <BarChart
                                     dataset={dataBarChart}
-                                    margin={{ left: 35, right: 10, top: 15, bottom: 20 }}
+                                    borderRadius={5}
+                                    barLabel={(item) =>
+                                        item.value ?? 0 > 1000
+                                            ? `${(item.value! / 1000).toFixed(2)}K`
+                                            : `${item.value}`
+                                    }
+                                    margin={{ left: 0 }}
                                     xAxis={[
                                         {
-                                            valueFormatter: (value) =>
+                                            valueFormatter: (value: number) =>
                                                 value > 1000 ? `${value / 1000}K` : `${value}`,
                                         },
                                     ]}
-                                    yAxis={[{ scaleType: "band", dataKey: "month" }]}
+                                    yAxis={[{ scaleType: "band", dataKey: "month", width: 35 }]}
                                     series={[
                                         {
                                             dataKey: "income",
@@ -324,6 +246,15 @@ export default function Budget() {
                                             stroke: "white",
                                             opacity: 0.5,
                                         },
+                                        "& .MuiBarLabel-root": {
+                                            fill: "white",
+                                            fontFamily: "Karla, sans-serif",
+                                        },
+                                        [`.${chartsGridClasses.line}`]: {
+                                            fill: "white",
+                                            stroke: "white",
+                                            opacity: 0.1,
+                                        },
                                     }}
                                 />
                             )}
@@ -337,16 +268,6 @@ export default function Budget() {
                 <DetailsField fieldStateHandler={setDetails} />
                 <DateField fieldStateHandler={setDate} />
             </CreateModal>
-            {/* Create Fixed Income Modal */}
-            <CreateModal show={createModalState.fixedIncome} createFunction={createFixedIncomeHandler}>
-                <AmountField fieldStateHandler={setAmount} />
-                <DetailsField fieldStateHandler={setDetails} />
-                <ListField
-                    fieldStateHandler={setPeriodicity}
-                    label="Periodicity"
-                    values={fixedIncomeTableData.columns[2].values!}
-                />
-            </CreateModal>
             {/* Details Income Modal */}
             <DetailsModal
                 updateFunction={updateIncomeHandler}
@@ -356,21 +277,6 @@ export default function Budget() {
                 <AmountField defaultValue={amount} fieldStateHandler={setAmount} />
                 <DetailsField defaultValue={details} fieldStateHandler={setDetails} />
                 <DateField defaultValue={date} fieldStateHandler={setDate} />
-            </DetailsModal>
-            {/* Details Fixed Income Modal */}
-            <DetailsModal
-                updateFunction={updateFixedIncomeHandler}
-                deleteFunction={deleteFixedIncomeHandler}
-                show={detailsModalState.show.fixedIncome}
-            >
-                <AmountField defaultValue={amount} fieldStateHandler={setAmount} />
-                <DetailsField defaultValue={details} fieldStateHandler={setDetails} />
-                <ListField
-                    fieldStateHandler={setPeriodicity}
-                    label="Periodicity"
-                    values={fixedIncomeTableData.columns[2].values!}
-                    defaultValue={periodicity}
-                />
             </DetailsModal>
         </>
     );
