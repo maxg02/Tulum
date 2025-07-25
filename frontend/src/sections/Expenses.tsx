@@ -361,7 +361,25 @@ export default function Expenses() {
         rows: expenseCategoriesRow,
     };
 
-    // TODO Change expenses visualization for mobile
+    const ExpenseCards = () =>
+        expenseData?.map((e) => (
+            <button
+                className="border-2 rounded-md p-2"
+                key={e.id}
+                onClick={() => showDetailsExpenseModal(e.id)}
+            >
+                <div className="flex justify-between gap-16">
+                    <p className="font-bold text-ellipsis overflow-hidden text-nowrap">{e.details}</p>
+                    <p className="font-bold">RD${e.amount}</p>
+                </div>
+                <div className="flex justify-between">
+                    <p>{expenseCategoryData?.find((ec) => ec.id == e.expenseCategoryId)?.category}</p>
+                    <p>{new Date(e.date).toDateString()}</p>
+                </div>
+            </button>
+        ));
+
+    // TODO Crder things by date
 
     return (
         <>
@@ -402,7 +420,7 @@ export default function Expenses() {
                                 />
                             </button>
                         </div>
-                        <div className="flex flex-1 w-full max-h-[40rem] xl:max-h-96 2xl:max-h-none overflow-hidden">
+                        <div className="flex flex-1 w-full max-h-[40rem] max-md:hidden xl:max-h-96 2xl:max-h-none overflow-hidden">
                             {expenseCategoryIsLoading ? (
                                 <Loader />
                             ) : (
@@ -413,6 +431,9 @@ export default function Expenses() {
                                     }
                                 />
                             )}
+                        </div>
+                        <div className="flex flex-col w-full overflow-x-hidden gap-4 max-h-[40rem] overflow-y-auto md:hidden">
+                            <ExpenseCards />
                         </div>
                     </div>
                     <div className="infoContainer2 col-span-2 md:col-span-5 md:order-4 xl:order-2 xl:col-span-4 2xl:row-span-5">
