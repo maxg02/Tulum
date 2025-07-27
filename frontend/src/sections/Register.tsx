@@ -1,27 +1,21 @@
-import React, { useState } from "react";
-import { useGetUserMutation } from "../../api/apiSlice";
-import { setUserInfo } from "../reducers/userReducers";
-
+import { useState } from "react";
+import { useRegisterUserMutation } from "../../api/apiSlice";
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch } from "../hooks";
-
 import loginImage from "../assets/loginImage.jpg";
 
-export default function Login() {
+export default function Register() {
     const [email, setEmail] = useState<string>("");
-    const [password, setPassword] = useState<string>("");
+    const [passwordHash, setPasswordHash] = useState<string>("");
+    const [name, setName] = useState<string>("");
     const [error, setError] = useState<string | null>(null);
 
-    const dispatch = useAppDispatch();
-
-    const [logUser] = useGetUserMutation();
+    const [registerUser] = useRegisterUserMutation();
     const navigate = useNavigate();
 
-    const handleLogin = async () => {
+    const handleRegister = async () => {
         try {
-            const tokens = await logUser({ email, password }).unwrap();
-            dispatch(setUserInfo(tokens));
-            navigate("/");
+            await registerUser({ email, passwordHash, name });
+            navigate("/login");
         } catch (error) {
             setError(error.data.error);
         }
@@ -37,11 +31,24 @@ export default function Login() {
             <div className="m-auto infoContainer1 w-full h-2/4 flex-row max-xl:max-w-96 max-xl:max-h-[30rem] xl:h-2/3 xl:w-2/3 xl:p-6 xl:gap-x-6 2xl:max-w-5xl 2xl:max-h-[40rem]">
                 <div className="flex flex-col h-full w-full xl:w-1/2">
                     <div className="flex-1 w-full flex flex-col items-center py-11">
-                        <h1 className="text-3xl">Log In</h1>
+                        <h1 className="text-3xl">Sign Up</h1>
                         <form
                             onSubmit={(e) => e.preventDefault()}
                             className="flex flex-col gap-y-3 w-full my-auto px-7"
                         >
+                            <div className="flex flex-col gap-y-1">
+                                <label htmlFor="name">
+                                    <p>Name</p>
+                                </label>
+                                <input
+                                    name="name"
+                                    id="name"
+                                    type="text"
+                                    className="formInput"
+                                    onChange={(e) => setName(e.target.value)}
+                                    required
+                                />
+                            </div>
                             <div className="flex flex-col gap-y-1">
                                 <label htmlFor="email">
                                     <p>Email</p>
@@ -64,23 +71,23 @@ export default function Login() {
                                     id="password"
                                     type="password"
                                     className="formInput"
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    onChange={(e) => setPasswordHash(e.target.value)}
                                     required
                                 />
                             </div>
                             {error && <p className="text-red-400">{error}</p>}
                             <button
                                 className="formBtn formBtnPrimary w-full mt-6"
-                                onClick={() => handleLogin()}
+                                onClick={() => handleRegister()}
                             >
-                                <p>Log In</p>
+                                <p>Sign Up</p>
                             </button>
                         </form>
                     </div>
                     <p className="text-sm text-gray-400 text-center">
-                        Don't have an account?{" "}
-                        <a className="text-custom-accent cursor-pointer" href="/register">
-                            Sign Up
+                        Already have an account?{" "}
+                        <a className="text-custom-accent cursor-pointer" href="/login">
+                            Log in
                         </a>
                     </p>
                 </div>

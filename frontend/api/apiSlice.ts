@@ -174,6 +174,13 @@ export const apiSlice = createApi({
                 body: userData,
             }),
         }),
+        registerUser: builder.mutation<tokenDto, { email: string; passwordHash: string; name: string }>({
+            query: (userData) => ({
+                url: "auth/register",
+                method: "Post",
+                body: userData,
+            }),
+        }),
         getUserRefreshToken: builder.mutation({
             query: (refreshToken: string) => ({
                 url: "token/",
@@ -410,6 +417,7 @@ export const apiSlice = createApi({
 
 export const {
     useGetUserMutation,
+    useRegisterUserMutation,
 
     useGetUserIncomesQuery,
     useCreateIncomeMutation,
