@@ -115,46 +115,54 @@ export default function Dashboard() {
                 );
             });
 
-        monthExpenseRows = monthExpenses
-            .sort((a, b) => new Date(a.date) - new Date(b.date))
-            .reverse()
-            .slice(0, 3)
-            .map((expense: expenseDto, key) => {
-                const dateFormat = new Intl.DateTimeFormat("en-US", {
-                    day: "2-digit",
-                    weekday: "long",
-                }).formatToParts(new Date(expense.date));
-                return (
-                    <div key={key} className="flex justify-between">
-                        <p>
-                            ({dateFormat.find((p) => p.type === "day")?.value}{" "}
-                            {dateFormat.find((p) => p.type === "weekday")?.value}) {expense.details}
-                        </p>
-                        <p className="text-custom-accent">RD${expense.amount}</p>
-                    </div>
-                );
-            });
+        if (monthExpenses.length === 0) {
+            monthExpensesData = [{ label: "No Data", value: 1 }];
+        } else {
+            monthExpenseRows = monthExpenses
+                .sort((a, b) => new Date(a.date) - new Date(b.date))
+                .reverse()
+                .slice(0, 3)
+                .map((expense: expenseDto, key) => {
+                    const dateFormat = new Intl.DateTimeFormat("en-US", {
+                        day: "2-digit",
+                        weekday: "long",
+                    }).formatToParts(new Date(expense.date));
+                    return (
+                        <div key={key} className="flex justify-between">
+                            <p>
+                                ({dateFormat.find((p) => p.type === "day")?.value}{" "}
+                                {dateFormat.find((p) => p.type === "weekday")?.value}) {expense.details}
+                            </p>
+                            <p className="text-custom-accent">RD${expense.amount}</p>
+                        </div>
+                    );
+                });
 
-        const monthExpensesByCategory: object = Object.groupBy(
-            monthExpenses.filter((ex) => ex.expenseCategoryId),
-            (expense: expenseDto) => expense.expenseCategoryId
-        );
+            const monthExpensesByCategory: object = Object.groupBy(
+                monthExpenses.filter((ex) => ex.expenseCategoryId),
+                (expense: expenseDto) => expense.expenseCategoryId
+            );
 
-        const monthExpensesTopData = Object.keys(monthExpensesByCategory)
-            .map<pieChartSlice>((key) => ({
-                label: expenseCategoryData?.find((c) => c.id === parseInt(key))!.category,
-                value: monthExpensesByCategory[key].reduce((acc, expense) => acc + expense.amount, 0),
-            }))
-            .sort((a, b) => b.value - a.value)
-            .slice(0, 4);
+            //TODO test less than 4 categories
 
-        monthExpensesData = [
-            ...monthExpensesTopData,
-            {
-                label: "Others",
-                value: totalMonthExpenses - monthExpensesTopData.reduce((acc, val) => acc + val.value, 0),
-            },
-        ];
+            const monthExpensesTopData = Object.keys(monthExpensesByCategory)
+                .map<pieChartSlice>((key) => ({
+                    label: expenseCategoryData?.find((c) => c.id === parseInt(key))!.category,
+                    value: monthExpensesByCategory[key].reduce((acc, expense) => acc + expense.amount, 0),
+                }))
+                .sort((a, b) => b.value - a.value)
+                .slice(0, 4);
+
+            monthExpensesData = [
+                ...monthExpensesTopData,
+                {
+                    label: "Others",
+                    value:
+                        totalMonthExpenses -
+                        monthExpensesTopData.reduce((acc, val) => acc + val.value, 0),
+                },
+            ];
+        }
 
         const allGoalContributions = savingGoalData
             ?.map((sG) => sG.goalContributions)
@@ -252,7 +260,7 @@ export default function Dashboard() {
                     <div className="w-full h-52 2xl:flex-1">
                         {incomeIsLoading || expenseCategoryIsLoading ? (
                             <Loader />
-                        ) : (
+                        ) : dataLineChart.some((x) => x.exp > 0 || x.inc > 0) ? (
                             <LineChart
                                 xAxis={[
                                     {
@@ -333,6 +341,10 @@ export default function Dashboard() {
                                     },
                                 }}
                             />
+                        ) : (
+                            <div className="flex items-center justify-center h-full">
+                                <p className="text-gray-400">No data available for this year.</p>
+                            </div>
                         )}
                     </div>
                 </div>
@@ -345,7 +357,13 @@ export default function Dashboard() {
                         </div>
                     </div>
                     <div className="w-full flex-1 flex items-center justify-evenly flex-wrap">
-                        {savingGoalIsLoading ? <Loader /> : goalsProgressGauges}
+                        {savingGoalIsLoading ? (
+                            <Loader />
+                        ) : goalsProgressGauges.length ? (
+                            goalsProgressGauges
+                        ) : (
+                            <p className="text-gray-400 py-12">No saving goals available.</p>
+                        )}
                     </div>
                 </div>
             </div>
