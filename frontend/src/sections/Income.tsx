@@ -46,6 +46,7 @@ export default function Budget() {
     const currentMonth: string = new Intl.DateTimeFormat("en-US", { month: "long" }).format(currentDate);
     const currentYear: number = currentDate.getFullYear();
     let totalIncome: number = 0;
+    let yearIncomes: incomeDto[] = [];
     let totalMonthIncome: number = 0;
     let totalYearIncome: number = 0;
     let dataBarChart: {
@@ -124,7 +125,7 @@ export default function Budget() {
                 new Date(income.date).getFullYear() === currentDate.getFullYear()
         );
 
-        const yearIncomes = incomeData.filter(
+        yearIncomes = incomeData.filter(
             (income) => new Date(income.date).getFullYear() === currentDate.getFullYear()
         );
 
@@ -153,6 +154,25 @@ export default function Budget() {
         ],
         rows: incomesRow,
     };
+
+    const IncomeCards = () =>
+        incomeData?.map((e) => (
+            <button
+                className="border-2 rounded-md p-2 flex gap-x-16"
+                key={e.id}
+                onClick={() => showDetailsIncomeModal(e.id)}
+            >
+                <div className="flex flex-col items-start overflow-hidden">
+                    <p className="font-bold text-ellipsis overflow-hidden text-nowrap w-full text-start">
+                        {e.details}
+                    </p>
+                    <p>{new Date(e.date).toDateString()}</p>
+                </div>
+                <div className="flex h-full items-center justify-end flex-1">
+                    <p className="font-bold">RD${e.amount}</p>
+                </div>
+            </button>
+        ));
 
     return (
         <>
@@ -184,18 +204,35 @@ export default function Budget() {
                                 />
                             </button>
                         </div>
-                        <div className="flex items-start flex-1 w-full max-h-[40rem] lg:max-h-[30rem] 2xl:max-h-none overflow-hidden">
-                            {incomeIsLoading ? (
-                                <Loader />
-                            ) : (
-                                <Table
-                                    data={incomeTableData}
-                                    detailsFunction={(incomeId: number) =>
-                                        showDetailsIncomeModal(incomeId)
-                                    }
+                        {incomeData && incomeData.length === 0 ? (
+                            <div className="text-gray-400 py-12 flex items-center gap-x-1 h-full">
+                                <p>Press</p>
+                                <HugeiconsIcon
+                                    icon={AddSquareIcon}
+                                    size={20}
+                                    className="text-custom-accent"
                                 />
-                            )}
-                        </div>
+                                <p>to add a new income</p>
+                            </div>
+                        ) : (
+                            <>
+                                <div className="flex items-start flex-1 w-full max-h-[40rem] max-md:hidden lg:max-h-[30rem] 2xl:max-h-none overflow-hidden">
+                                    {incomeIsLoading ? (
+                                        <Loader />
+                                    ) : (
+                                        <Table
+                                            data={incomeTableData}
+                                            detailsFunction={(incomeId: number) =>
+                                                showDetailsIncomeModal(incomeId)
+                                            }
+                                        />
+                                    )}
+                                </div>
+                                <div className="flex flex-col w-full overflow-x-hidden gap-4 max-h-[40rem] overflow-y-auto md:hidden">
+                                    <IncomeCards />
+                                </div>
+                            </>
+                        )}
                     </div>
 
                     <div className="infoContainer2 flex-1 col-span-2 md:col-span-6 xl:col-span-3 2xl:row-span-10">
@@ -203,7 +240,7 @@ export default function Budget() {
                         <div className="flex h-96 w-full xl:h-[30rem] 2xl:h-full">
                             {incomeIsLoading ? (
                                 <Loader />
-                            ) : (
+                            ) : yearIncomes.length ? (
                                 <BarChart
                                     dataset={dataBarChart}
                                     borderRadius={5}
@@ -257,6 +294,10 @@ export default function Budget() {
                                         },
                                     }}
                                 />
+                            ) : (
+                                <div className="flex items-center justify-center h-full w-full">
+                                    <p className="text-gray-400">No data available for this year.</p>
+                                </div>
                             )}
                         </div>
                     </div>
