@@ -28,10 +28,10 @@ export default function Register() {
                 background: "linear-gradient(137deg,rgba(45, 57, 52, 1) 27%, rgba(51, 79, 71, 1) 100%)",
             }}
         >
-            <div className="m-auto infoContainer1 w-full h-2/4 flex-row max-xl:max-w-96 max-xl:max-h-[30rem] xl:h-2/3 xl:w-2/3 xl:p-6 xl:gap-x-6 2xl:max-w-5xl 2xl:max-h-[40rem]">
+            <div className="m-auto infoContainer1 w-full flex-row max-xl:max-w-96 max-xl:max-h-[30rem] xl:h-2/3 xl:w-2/3 xl:p-6 xl:gap-x-6 2xl:max-w-5xl 2xl:max-h-[40rem]">
                 <div className="flex flex-col h-full w-full xl:w-1/2">
                     <div className="flex-1 w-full flex flex-col items-center py-11">
-                        <h1 className="text-3xl">Sign Up</h1>
+                        <h1 className="text-3xl mb-8">Sign Up</h1>
                         <form
                             onSubmit={(e) => e.preventDefault()}
                             className="flex flex-col gap-y-3 w-full my-auto px-7"
