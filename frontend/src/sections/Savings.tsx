@@ -41,6 +41,7 @@ export type goalsProgress = {
     label: string;
     total: number;
     progress: number;
+    id: number;
 };
 
 export default function Savings() {
@@ -51,8 +52,7 @@ export default function Savings() {
     const [periodicity, setPeriodicity] = useState<number | undefined>(undefined);
     const [selectValue, setSelectValue] = useState<number>(0);
 
-    let savingGoalsRow: tableRow[] = [],
-        goalContributionsRow: tableRow[] = [],
+    let goalContributionsRow: tableRow[] = [],
         savingGoalSelectValues: {
             id: number;
             value: string;
@@ -92,16 +92,6 @@ export default function Savings() {
 
     //Saving goals data handling
     if (!savingGoalIsLoading && savingGoalData != undefined) {
-        savingGoalsRow = savingGoalData.map((savingGoal: savingGoalDto) => ({
-            id: savingGoal.id,
-            data: [
-                savingGoal.details,
-                savingGoal.goal,
-                savingGoal.fixedContribution,
-                savingGoal.periodicity,
-            ],
-        }));
-
         allGoalContributions = savingGoalData
             ?.map((sG) => sG.goalContributions)
             .reduce((acc, currentValue) => acc!.concat(currentValue!), []);
@@ -146,7 +136,7 @@ export default function Savings() {
         );
 
         goalsProgressData = savingGoalData
-            .map((sg) => {
+            .map<goalsProgress>((sg) => {
                 const progress = goalContributionsBySavings[sg.id.toString()]
                     ? goalContributionsBySavings[sg.id.toString()].reduce(
                           (acc: number, gC: goalContributionDto) => acc + gC.amount,
@@ -173,16 +163,6 @@ export default function Savings() {
             { name: "Date", type: "date" },
         ],
         rows: goalContributionsRow,
-    };
-
-    const savingGoalsTableData: dataObject = {
-        columns: [
-            { name: "Detail", type: "string" },
-            { name: "Cost", type: "amount" },
-            { name: "Fixed Contribution", type: "amount" },
-            { name: "Periodicity", type: "list", values: periodicityValues },
-        ],
-        rows: savingGoalsRow,
     };
 
     // Show create Saving Goal Modal
@@ -322,10 +302,14 @@ export default function Savings() {
 
     const goalProgressBars = () =>
         goalsProgress.map((item, key) => (
-            <div key={key} className="w-full flex flex-col">
+            <button
+                key={key}
+                className="w-full flex flex-col"
+                onClick={() => showDetailsSavingGoalModal(item.id)}
+            >
                 <p>{item.label}</p>
                 <ProgressBar value={item.value} total={item.total} />
-            </div>
+            </button>
         ));
 
     return (
@@ -355,11 +339,29 @@ export default function Savings() {
                                 />
                             </button>
                         </div>
-                        <div className="w-100 flex flex-col gap-y-2 md:hidden max-md:max-h-96 max-md:overflow-y-auto">
-                            {goalProgressBars()}
-                        </div>
-                        <div className="hidden md:flex overflow-y-auto gap-7 flex-wrap justify-center max-h-96 2xl:max-h-none">
-                            {goalProgressGauges()}
+                        <div className="flex flex-1 w-full max-h-[40rem] lg:max-h-96 2xl:max-h-none overflow-hidden">
+                            {savingGoalIsLoading ? (
+                                <Loader />
+                            ) : savingGoalData && savingGoalData.length ? (
+                                <>
+                                    <div className="w-100 flex flex-col gap-y-2 md:hidden max-md:max-h-96 max-md:overflow-y-auto">
+                                        {goalProgressBars()}
+                                    </div>
+                                    <div className="hidden md:flex overflow-y-auto gap-7 flex-wrap justify-center max-h-96 2xl:max-h-none">
+                                        {goalProgressGauges()}
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="text-gray-400 py-12 flex items-center gap-x-1 h-full w-full justify-center">
+                                    <p>Press</p>
+                                    <HugeiconsIcon
+                                        icon={AddSquareIcon}
+                                        size={20}
+                                        className="text-custom-accent"
+                                    />
+                                    <p>to add a new goal</p>
+                                </div>
+                            )}
                         </div>
                     </div>
                     <div className="infoContainer2 2xl:col-span-4 2xl:row-span-7">
@@ -379,16 +381,24 @@ export default function Savings() {
                         <div className="flex flex-1 w-full max-h-[40rem] lg:max-h-96 2xl:max-h-none overflow-hidden">
                             {savingGoalIsLoading ? (
                                 <Loader />
-                            ) : (
+                            ) : savingGoalData && goalsContributionsTableData.rows.length ? (
                                 <Table
                                     data={goalsContributionsTableData}
-                                    tablePrefix="GC"
                                     detailsFunction={(gCId: number) =>
                                         showDetailsGoalContributionModal(gCId)
                                     }
                                     dark
-                                    rowLimit={5}
                                 />
+                            ) : (
+                                <div className="text-gray-400 py-12 flex items-center gap-x-1 h-full w-full justify-center">
+                                    <p>Press</p>
+                                    <HugeiconsIcon
+                                        icon={AddSquareIcon}
+                                        size={20}
+                                        className="text-custom-accent"
+                                    />
+                                    <p>to add a new contribution</p>
+                                </div>
                             )}
                         </div>
                     </div>
@@ -401,7 +411,7 @@ export default function Savings() {
                 <ListField
                     fieldStateHandler={setPeriodicity}
                     label="Periodicity"
-                    values={savingGoalsTableData.columns[3].values!}
+                    values={periodicityValues}
                 />
             </CreateModal>
             <DetailsModal
@@ -419,7 +429,7 @@ export default function Savings() {
                 <ListField
                     fieldStateHandler={setPeriodicity}
                     label="Periodicity"
-                    values={savingGoalsTableData.columns[3].values!}
+                    values={periodicityValues}
                     defaultValue={periodicity}
                 />
             </DetailsModal>

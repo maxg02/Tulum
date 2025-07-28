@@ -115,6 +115,8 @@ export default function Dashboard() {
                 );
             });
 
+        //TODO refactor to dont do any of this if there is no expenses
+
         if (monthExpenses.length === 0) {
             monthExpensesData = [{ label: "No Data", value: 1 }];
         } else {

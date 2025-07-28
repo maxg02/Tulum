@@ -58,6 +58,8 @@ export default function Sidebar() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    //TODO CHECK WIDTH
+
     const SidebarButton = ({ icon, children, route }: sidebarButtonProps) => (
         <Link
             to={routes[route]}

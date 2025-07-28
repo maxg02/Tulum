@@ -138,27 +138,33 @@ export default function Expenses() {
         totalMonthExpenses = monthExpenses.reduce((acc, val) => acc + val.amount, 0);
         totalYearExpenses = yearExpenses.reduce((acc, val) => acc + val.amount, 0);
 
-        const monthExpensesByCategory: object = Object.groupBy(
-            monthExpenses.filter((ex) => ex.expenseCategoryId),
-            (expense: expenseDto) => expense.expenseCategoryId
-        );
+        if (monthExpenses.length === 0) {
+            monthExpensesData = [{ label: "No Data", value: 1 }];
+        } else {
+            const monthExpensesByCategory: object = Object.groupBy(
+                monthExpenses.filter((ex) => ex.expenseCategoryId),
+                (expense: expenseDto) => expense.expenseCategoryId
+            );
 
-        const monthExpensesTopData = Object.keys(monthExpensesByCategory)
-            .map<pieChartSlice>((key) => ({
-                label: categorySelectValues?.find((c) => c.id === parseInt(key))!.value,
-                value: monthExpensesByCategory[key].reduce((acc, expense) => acc + expense.amount, 0),
-                labelMarkType: "circle",
-            }))
-            .sort((a, b) => b.value - a.value)
-            .slice(0, 4);
+            const monthExpensesTopData = Object.keys(monthExpensesByCategory)
+                .map<pieChartSlice>((key) => ({
+                    label: categorySelectValues?.find((c) => c.id === parseInt(key))!.value,
+                    value: monthExpensesByCategory[key].reduce((acc, expense) => acc + expense.amount, 0),
+                    labelMarkType: "circle",
+                }))
+                .sort((a, b) => b.value - a.value)
+                .slice(0, 4);
 
-        monthExpensesData = [
-            ...monthExpensesTopData,
-            {
-                label: "Others",
-                value: totalMonthExpenses - monthExpensesTopData.reduce((acc, val) => acc + val.value, 0),
-            },
-        ];
+            monthExpensesData = [
+                ...monthExpensesTopData,
+                {
+                    label: "Others",
+                    value:
+                        totalMonthExpenses -
+                        monthExpensesTopData.reduce((acc, val) => acc + val.value, 0),
+                },
+            ];
+        }
 
         budgetExpensesRow = expenseCategoriesWithBudget.map((ec) => {
             const budgetExpenses = ec.budgetPlan!.periodicity === 0 ? monthExpenses : yearExpenses;
@@ -420,21 +426,33 @@ export default function Expenses() {
                                 />
                             </button>
                         </div>
-                        <div className="flex flex-1 w-full max-h-[40rem] max-md:hidden xl:max-h-96 2xl:max-h-none overflow-hidden">
-                            {expenseCategoryIsLoading ? (
-                                <Loader />
-                            ) : (
-                                <Table
-                                    data={expensesData}
-                                    detailsFunction={(expenseId: number) =>
-                                        showDetailsExpenseModal(expenseId)
-                                    }
+                        {expenseCategoryIsLoading ? (
+                            <Loader />
+                        ) : expensesData && expenseData?.length === 0 ? (
+                            <div className="text-gray-400 py-12 flex items-center gap-x-1 h-full justify-self-center">
+                                <p>Press</p>
+                                <HugeiconsIcon
+                                    icon={AddSquareIcon}
+                                    size={20}
+                                    className="text-custom-accent"
                                 />
-                            )}
-                        </div>
-                        <div className="flex flex-col w-full overflow-x-hidden gap-4 max-h-[40rem] overflow-y-auto md:hidden">
-                            <ExpenseCards />
-                        </div>
+                                <p>to add a new expense</p>
+                            </div>
+                        ) : (
+                            <>
+                                <div className="flex flex-1 w-full max-h-[40rem] max-md:hidden xl:max-h-96 2xl:max-h-none overflow-hidden">
+                                    <Table
+                                        data={expensesData}
+                                        detailsFunction={(expenseId: number) =>
+                                            showDetailsExpenseModal(expenseId)
+                                        }
+                                    />
+                                </div>
+                                <div className="flex flex-col w-full overflow-x-hidden gap-4 max-h-[40rem] overflow-y-auto md:hidden">
+                                    <ExpenseCards />
+                                </div>
+                            </>
+                        )}
                     </div>
                     <div className="infoContainer2 col-span-2 md:col-span-5 md:order-4 xl:order-2 xl:col-span-4 2xl:row-span-5">
                         <div className="flex justify-center w-full relative">
@@ -450,41 +468,54 @@ export default function Expenses() {
                                 />
                             </button>
                         </div>
-                        <div className=" max-md:hidden flex flex-1 w-full max-h-[40rem] xl:max-h-52 2xl:max-h-none overflow-hidden">
-                            {expenseCategoryIsLoading ? (
-                                <Loader />
-                            ) : (
-                                <Table
-                                    dark
-                                    detailsFunction={(budgetId: number) =>
-                                        showDetailsBudgetPlanningModal(budgetId)
-                                    }
-                                    data={budgetExpensesData}
-                                    filters={false}
-                                />
-                            )}
-                        </div>
-                        <div className="w-full flex flex-col gap-y-2 md:hidden max-md:max-h-96 max-md:overflow-y-auto">
-                            {expenseCategoriesWithBudget.map((ec) => (
-                                <div className="flex flex-col w-full">
-                                    <p>
-                                        {ec.category} -{" "}
-                                        <span className="opacity-60">
-                                            {periodicityValues[ec.budgetPlan!.periodicity]}
-                                        </span>
-                                    </p>
-                                    <div className="w-full">
-                                        <ProgressBar
-                                            dark
-                                            value={expenseData
-                                                .filter((e) => e.expenseCategoryId === ec.id)
-                                                .reduce((acc, value) => (acc += value.amount), 0)}
-                                            total={ec.budgetPlan!.amount}
-                                        />
-                                    </div>
+
+                        {expenseCategoryIsLoading ? (
+                            <Loader />
+                        ) : budgetExpensesData.rows.length ? (
+                            <>
+                                <div className=" max-md:hidden flex flex-1 w-full max-h-[40rem] xl:max-h-52 2xl:max-h-none overflow-hidden">
+                                    <Table
+                                        dark
+                                        detailsFunction={(budgetId: number) =>
+                                            showDetailsBudgetPlanningModal(budgetId)
+                                        }
+                                        data={budgetExpensesData}
+                                        filters={false}
+                                    />
                                 </div>
-                            ))}
-                        </div>
+                                <div className="w-full flex flex-col gap-y-2 md:hidden max-md:max-h-96 max-md:overflow-y-auto">
+                                    {expenseCategoriesWithBudget.map((ec) => (
+                                        <div className="flex flex-col w-full">
+                                            <p>
+                                                {ec.category} -{" "}
+                                                <span className="opacity-60">
+                                                    {periodicityValues[ec.budgetPlan!.periodicity]}
+                                                </span>
+                                            </p>
+                                            <div className="w-full">
+                                                <ProgressBar
+                                                    dark
+                                                    value={expenseData
+                                                        .filter((e) => e.expenseCategoryId === ec.id)
+                                                        .reduce((acc, value) => (acc += value.amount), 0)}
+                                                    total={ec.budgetPlan!.amount}
+                                                />
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </>
+                        ) : (
+                            <div className="text-gray-400 py-12 flex items-center gap-x-1 h-full w-full justify-center">
+                                <p>Press</p>
+                                <HugeiconsIcon
+                                    icon={AddSquareIcon}
+                                    size={20}
+                                    className="text-custom-accent"
+                                />
+                                <p>to configure a new budget</p>
+                            </div>
+                        )}
                     </div>
                     <div className="infoContainer2 col-span-2 md:col-span-2 md:order-2 xl:col-span-3 xl:order-4 2xl:row-span-7">
                         <div className="flex justify-center relative w-full">
@@ -503,6 +534,16 @@ export default function Expenses() {
                         <div className="flex flex-1 w-full max-h-96 md:max-h-52 xl:max-h-96 2xl:max-h-none overflow-hidden">
                             {expenseCategoryIsLoading ? (
                                 <Loader />
+                            ) : expenseCategoryData && expenseCategoryData?.length === 0 ? (
+                                <div className="text-gray-400 py-12 flex items-center gap-x-1 h-full w-full justify-center">
+                                    <p>Press</p>
+                                    <HugeiconsIcon
+                                        icon={AddSquareIcon}
+                                        size={20}
+                                        className="text-custom-accent"
+                                    />
+                                    <p>to add a new category</p>
+                                </div>
                             ) : (
                                 <Table
                                     data={expenseCategoryTableData}
