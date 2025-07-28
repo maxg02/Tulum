@@ -25,13 +25,27 @@ function PieCenterLabel({ children }: { children: React.ReactNode }) {
     );
 }
 
-function CustomPieChart({ data, label }: { data: pieChartSlice[]; label: number }) {
+function CustomPieChart({ data, total }: { data: pieChartSlice[]; total: number }) {
+    const topData = data.slice(0, 4);
+    const otherData = total - topData.reduce((acc, val) => acc + val.value, 0);
+
+    const pieChartData =
+        otherData > 0
+            ? [
+                  ...topData,
+                  {
+                      label: "Others",
+                      value: otherData,
+                  },
+              ]
+            : topData;
+
     return (
         <PieChart
             colors={gradientColors}
             series={[
                 {
-                    data: data.length > 0 ? data : [{ label: "No Data", value: 1 }],
+                    data: pieChartData.length > 0 ? pieChartData : [{ label: "No Data", value: 1 }],
                     id: "A",
                     innerRadius: "70%",
                     paddingAngle: 2,
@@ -60,7 +74,7 @@ function CustomPieChart({ data, label }: { data: pieChartSlice[]; label: number 
                 "& .MuiPieArc-root": { strokeWidth: 0 },
             }}
         >
-            <PieCenterLabel>RD${label}</PieCenterLabel>
+            <PieCenterLabel>RD${total}</PieCenterLabel>
         </PieChart>
     );
 }

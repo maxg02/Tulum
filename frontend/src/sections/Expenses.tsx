@@ -56,7 +56,7 @@ export default function Expenses() {
 
     let budgetExpensesRow: tableRow[] = [],
         expenseCategoriesRow: tableRow[] = [],
-        monthExpensesData: pieChartSlice[] = [],
+        dataPieChart: pieChartSlice[] = [],
         categorySelectValues:
             | {
                   id: number;
@@ -138,32 +138,18 @@ export default function Expenses() {
         totalMonthExpenses = monthExpenses.reduce((acc, val) => acc + val.amount, 0);
         totalYearExpenses = yearExpenses.reduce((acc, val) => acc + val.amount, 0);
 
-        if (monthExpenses.length === 0) {
-            monthExpensesData = [{ label: "No Data", value: 1 }];
-        } else {
+        if (monthExpenses.length > 0) {
             const monthExpensesByCategory: object = Object.groupBy(
                 monthExpenses.filter((ex) => ex.expenseCategoryId),
                 (expense: expenseDto) => expense.expenseCategoryId
             );
 
-            const monthExpensesTopData = Object.keys(monthExpensesByCategory)
+            dataPieChart = Object.keys(monthExpensesByCategory)
                 .map<pieChartSlice>((key) => ({
                     label: categorySelectValues?.find((c) => c.id === parseInt(key))!.value,
                     value: monthExpensesByCategory[key].reduce((acc, expense) => acc + expense.amount, 0),
-                    labelMarkType: "circle",
                 }))
-                .sort((a, b) => b.value - a.value)
-                .slice(0, 4);
-
-            monthExpensesData = [
-                ...monthExpensesTopData,
-                {
-                    label: "Others",
-                    value:
-                        totalMonthExpenses -
-                        monthExpensesTopData.reduce((acc, val) => acc + val.value, 0),
-                },
-            ];
+                .sort((a, b) => b.value - a.value);
         }
 
         budgetExpensesRow = expenseCategoriesWithBudget.map((ec) => {
@@ -341,8 +327,6 @@ export default function Expenses() {
         updateExpenseCategory(expenseCategoryData);
     };
 
-    const dataPieChart: pieChartSlice[] = monthExpensesData;
-
     const expensesData: dataObject = {
         columns: [
             { name: "Amount", type: "amount" },
@@ -407,7 +391,7 @@ export default function Expenses() {
                                 <Loader />
                             ) : (
                                 <>
-                                    <CustomPieChart data={dataPieChart} label={totalMonthExpenses} />
+                                    <CustomPieChart data={dataPieChart} total={totalMonthExpenses} />
                                 </>
                             )}
                         </div>

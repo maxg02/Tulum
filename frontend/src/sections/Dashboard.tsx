@@ -31,8 +31,8 @@ export default function Dashboard() {
         totalMonthIncome: number = 0,
         monthIncomeRows: JSX.Element[] = [],
         monthExpenseRows: JSX.Element[] = [],
-        monthExpensesData: pieChartSlice[] = [],
         totalMonthExpenses: number = 0,
+        dataPieChart: pieChartSlice[] = [],
         goalsProgressData: { label: string; progress: number; value: number }[] = [];
 
     const { data: incomeData, isLoading: incomeIsLoading } = useGetUserIncomesQuery();
@@ -117,9 +117,7 @@ export default function Dashboard() {
 
         //TODO refactor to dont do any of this if there is no expenses
 
-        if (monthExpenses.length === 0) {
-            monthExpensesData = [{ label: "No Data", value: 1 }];
-        } else {
+        if (monthExpenses.length > 0) {
             monthExpenseRows = monthExpenses
                 .sort((a, b) => new Date(a.date) - new Date(b.date))
                 .reverse()
@@ -147,23 +145,12 @@ export default function Dashboard() {
 
             //TODO test less than 4 categories
 
-            const monthExpensesTopData = Object.keys(monthExpensesByCategory)
+            dataPieChart = Object.keys(monthExpensesByCategory)
                 .map<pieChartSlice>((key) => ({
                     label: expenseCategoryData?.find((c) => c.id === parseInt(key))!.category,
                     value: monthExpensesByCategory[key].reduce((acc, expense) => acc + expense.amount, 0),
                 }))
-                .sort((a, b) => b.value - a.value)
-                .slice(0, 4);
-
-            monthExpensesData = [
-                ...monthExpensesTopData,
-                {
-                    label: "Others",
-                    value:
-                        totalMonthExpenses -
-                        monthExpensesTopData.reduce((acc, val) => acc + val.value, 0),
-                },
-            ];
+                .sort((a, b) => b.value - a.value);
         }
 
         const allGoalContributions = savingGoalData
@@ -202,8 +189,6 @@ export default function Dashboard() {
             <p>{gp.label}</p>
         </div>
     ));
-
-    const dataPieChart: pieChartSlice[] = monthExpensesData;
 
     return (
         <SectionContent>
@@ -247,7 +232,7 @@ export default function Dashboard() {
                             <Loader />
                         ) : (
                             <>
-                                <CustomPieChart data={dataPieChart} label={totalMonthExpenses} />
+                                <CustomPieChart data={dataPieChart} total={totalMonthExpenses} />
                             </>
                         )}
                     </div>
