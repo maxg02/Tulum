@@ -84,87 +84,87 @@ function Table({
             </tr>
         ));
 
-    const TableFilters = () =>
-        data.columns.map((item, key) => (
-            <div key={key} className="flex flex-col">
-                <label htmlFor={item.name}>{item.name}</label>
-                {item.type === "string" ? (
-                    <>
-                        <input
-                            className="w-full formInput"
-                            type="text"
-                            id={item.name}
-                            name={tablePrefix + item.name.toLocaleLowerCase()}
-                            placeholder="Details"
-                        />
-                        <span className="formDivider"></span>
-                    </>
-                ) : item.type === "amount" ? (
-                    <>
-                        <div className="flex items-center">
-                            <p className="mr-2">RD$</p>
-                            <input
-                                className="w-full formInput"
-                                type="text"
-                                id="minAmount"
-                                name={`${tablePrefix}minAmount`}
-                                placeholder="Min"
-                            />
-                            <p className="mx-2">-</p>
-                            <p className="mr-2">RD$</p>
-                            <input
-                                className="w-full formInput"
-                                type="text"
-                                id="maxAmount"
-                                name={`${tablePrefix}maxAmount`}
-                                placeholder="Max"
-                            />
-                        </div>
-                        <span className="formDivider"></span>
-                    </>
-                ) : item.type === "date" ? (
-                    <>
-                        <div className="flex items-center">
-                            <p className="mr-2">From:</p>
-                            <input
-                                className="w-full formInput"
-                                type="date"
-                                id="dateFrom"
-                                name={`${tablePrefix}dateFrom`}
-                                placeholder="Min"
-                            />
-                            <p className="mx-2">-</p>
-                            <p className="mr-2">To:</p>
-                            <input
-                                className="w-full formInput"
-                                type="date"
-                                id="dateTo"
-                                name={`${tablePrefix}dateTo`}
-                                placeholder="Max"
-                            />
-                        </div>
-                        <span className="formDivider"></span>
-                    </>
-                ) : (
-                    <>
-                        <div className="flex flex-col">
-                            {item.values?.map((value, key) => (
-                                <div key={key}>
-                                    <input
-                                        className="mr-2"
-                                        type="checkbox"
-                                        id={value}
-                                        name={tablePrefix + value.toLocaleLowerCase()}
-                                    />
-                                    <label htmlFor={value}>{value}</label>
-                                </div>
-                            ))}
-                        </div>
-                        <span className="formDivider"></span>
-                    </>
-                )}
-            </div>
-        ));
+    // const TableFilters = () =>
+    //     data.columns.map((item, key) => (
+    //         <div key={key} className="flex flex-col">
+    //             <label htmlFor={item.name}>{item.name}</label>
+    //             {item.type === "string" ? (
+    //                 <>
+    //                     <input
+    //                         className="w-full formInput"
+    //                         type="text"
+    //                         id={item.name}
+    //                         name={tablePrefix + item.name.toLocaleLowerCase()}
+    //                         placeholder="Details"
+    //                     />
+    //                     <span className="formDivider"></span>
+    //                 </>
+    //             ) : item.type === "amount" ? (
+    //                 <>
+    //                     <div className="flex items-center">
+    //                         <p className="mr-2">RD$</p>
+    //                         <input
+    //                             className="w-full formInput"
+    //                             type="text"
+    //                             id="minAmount"
+    //                             name={`${tablePrefix}minAmount`}
+    //                             placeholder="Min"
+    //                         />
+    //                         <p className="mx-2">-</p>
+    //                         <p className="mr-2">RD$</p>
+    //                         <input
+    //                             className="w-full formInput"
+    //                             type="text"
+    //                             id="maxAmount"
+    //                             name={`${tablePrefix}maxAmount`}
+    //                             placeholder="Max"
+    //                         />
+    //                     </div>
+    //                     <span className="formDivider"></span>
+    //                 </>
+    //             ) : item.type === "date" ? (
+    //                 <>
+    //                     <div className="flex items-center">
+    //                         <p className="mr-2">From:</p>
+    //                         <input
+    //                             className="w-full formInput"
+    //                             type="date"
+    //                             id="dateFrom"
+    //                             name={`${tablePrefix}dateFrom`}
+    //                             placeholder="Min"
+    //                         />
+    //                         <p className="mx-2">-</p>
+    //                         <p className="mr-2">To:</p>
+    //                         <input
+    //                             className="w-full formInput"
+    //                             type="date"
+    //                             id="dateTo"
+    //                             name={`${tablePrefix}dateTo`}
+    //                             placeholder="Max"
+    //                         />
+    //                     </div>
+    //                     <span className="formDivider"></span>
+    //                 </>
+    //             ) : (
+    //                 <>
+    //                     <div className="flex flex-col">
+    //                         {item.values?.map((value, key) => (
+    //                             <div key={key}>
+    //                                 <input
+    //                                     className="mr-2"
+    //                                     type="checkbox"
+    //                                     id={value}
+    //                                     name={tablePrefix + value.toLocaleLowerCase()}
+    //                                 />
+    //                                 <label htmlFor={value}>{value}</label>
+    //                             </div>
+    //                         ))}
+    //                     </div>
+    //                     <span className="formDivider"></span>
+    //                 </>
+    //             )}
+    //         </div>
+    //     ));
 
     return (
         <div className="flex flex-col flex-1 w-full h-full overflow-hidden overflow-y-auto">
