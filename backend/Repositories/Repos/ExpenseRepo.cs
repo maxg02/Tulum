@@ -15,6 +15,7 @@ namespace backend.Repositories.Repos
         {
             var expenses = await _context.Expenses
                 .Where(i => i.UserId == userId)
+                .OrderByDescending(i => i.Date)
                 .ToListAsync();
 
             return expenses;

@@ -92,9 +92,8 @@ export default function Savings() {
 
     //Saving goals data handling
     if (!savingGoalIsLoading && savingGoalData != undefined && savingGoalData.length > 0) {
-        allGoalContributions = savingGoalData
-            ?.map((sG) => sG.goalContributions)
-            .reduce((acc, currentValue) => acc!.concat(currentValue!), []);
+        allGoalContributions = savingGoalData?.flatMap((sG) => sG.goalContributions);
+        allGoalContributions.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
         goalContributionsRow = allGoalContributions.map((goalContribution: goalContributionDto) => ({
             id: goalContribution.id,
@@ -443,7 +442,7 @@ export default function Savings() {
                     label="Goal"
                     values={savingGoalSelectValues}
                 />
-                <DateField defaultValue={date} fieldStateHandler={setDate} />
+                <DateField fieldStateHandler={setDate} />
             </CreateModal>
             <DetailsModal
                 updateFunction={updateGoalContributionHandler}

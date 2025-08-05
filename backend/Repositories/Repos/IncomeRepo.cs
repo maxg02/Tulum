@@ -19,6 +19,7 @@ namespace backend.Repositories.Repos
         {
             var incomes = await _context.Incomes
                 .Where(i => i.UserId == userId)
+                .OrderByDescending(i => i.Date)
                 .ToListAsync();
 
             return incomes;
