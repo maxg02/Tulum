@@ -111,7 +111,7 @@ export default function Budget() {
     };
 
     // Income data handling
-    if (!incomeIsLoading && incomeData != undefined) {
+    if (!incomeIsLoading && incomeData != undefined && incomeData.length > 0) {
         incomesRow = incomeData.map((income: incomeDto) => ({
             id: income.id,
             data: [income.amount, income.details, new Date(income.date).toLocaleDateString("en-US")],

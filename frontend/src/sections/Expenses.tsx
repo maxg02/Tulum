@@ -101,55 +101,60 @@ export default function Expenses() {
         !expenseIsLoading &&
         expenseData != undefined
     ) {
-        expenseCategoriesRow = expenseCategoryData.map((expenseCategory: expenseCategoryDto) => ({
-            id: expenseCategory.id,
-            data: [expenseCategory.category],
-        }));
+        if (expenseCategoryData.length === 0) {
+            expenseCategoriesRow = expenseCategoryData.map((expenseCategory: expenseCategoryDto) => ({
+                id: expenseCategory.id,
+                data: [expenseCategory.category],
+            }));
 
-        categorySelectValues = expenseCategoryData.map((ec: expenseCategoryDto) => ({
-            id: ec.id,
-            value: ec.category,
-        }));
+            categorySelectValues = expenseCategoryData.map((ec: expenseCategoryDto) => ({
+                id: ec.id,
+                value: ec.category,
+            }));
 
-        expenseCategoriesWithBudget = expenseCategoryData.filter((ec) => ec.budgetPlan);
+            expenseCategoriesWithBudget = expenseCategoryData.filter((ec) => ec.budgetPlan);
+        }
 
-        //TODO Verificar fecha
+        if (expenseData.length) {
+            expensesRow = expenseData.map((expense: expenseDto) => ({
+                id: expense.id,
+                data: [
+                    expense.amount,
+                    expense.details,
+                    new Date(expense.date).toLocaleDateString("en-US"),
+                    expense.expenseCategoryId != null
+                        ? expenseCategoryData.find((ec) => ec.id === expense.expenseCategoryId)!.category
+                        : "otros",
+                ],
+            }));
 
-        expensesRow = expenseData.map((expense: expenseDto) => ({
-            id: expense.id,
-            data: [
-                expense.amount,
-                expense.details,
-                new Date(expense.date).toLocaleDateString("en-US"),
-                expense.expenseCategoryId != null
-                    ? expenseCategoryData.find((ec) => ec.id === expense.expenseCategoryId)!.category
-                    : "otros",
-            ],
-        }));
-
-        const yearExpenses = expenseData?.filter(
-            (expense) => new Date(expense.date).getFullYear() === currentDate.getFullYear()
-        );
-
-        const monthExpenses = yearExpenses?.filter(
-            (expense) => new Date(expense.date).getMonth() === currentDate.getMonth()
-        );
-
-        totalMonthExpenses = monthExpenses.reduce((acc, val) => acc + val.amount, 0);
-        totalYearExpenses = yearExpenses.reduce((acc, val) => acc + val.amount, 0);
-
-        if (monthExpenses.length > 0) {
-            const monthExpensesByCategory: object = Object.groupBy(
-                monthExpenses.filter((ex) => ex.expenseCategoryId),
-                (expense: expenseDto) => expense.expenseCategoryId
+            const yearExpenses = expenseData?.filter(
+                (expense) => new Date(expense.date).getFullYear() === currentDate.getFullYear()
             );
 
-            dataPieChart = Object.keys(monthExpensesByCategory)
-                .map<pieChartSlice>((key) => ({
-                    label: categorySelectValues?.find((c) => c.id === parseInt(key))!.value,
-                    value: monthExpensesByCategory[key].reduce((acc, expense) => acc + expense.amount, 0),
-                }))
-                .sort((a, b) => b.value - a.value);
+            const monthExpenses = yearExpenses?.filter(
+                (expense) => new Date(expense.date).getMonth() === currentDate.getMonth()
+            );
+
+            totalMonthExpenses = monthExpenses.reduce((acc, val) => acc + val.amount, 0);
+            totalYearExpenses = yearExpenses.reduce((acc, val) => acc + val.amount, 0);
+
+            if (monthExpenses.length > 0) {
+                const monthExpensesByCategory: object = Object.groupBy(
+                    monthExpenses.filter((ex) => ex.expenseCategoryId),
+                    (expense: expenseDto) => expense.expenseCategoryId
+                );
+
+                dataPieChart = Object.keys(monthExpensesByCategory)
+                    .map<pieChartSlice>((key) => ({
+                        label: categorySelectValues?.find((c) => c.id === parseInt(key))!.value,
+                        value: monthExpensesByCategory[key].reduce(
+                            (acc, expense) => acc + expense.amount,
+                            0
+                        ),
+                    }))
+                    .sort((a, b) => b.value - a.value);
+            }
         }
 
         budgetExpensesRow = expenseCategoriesWithBudget.map((ec) => {

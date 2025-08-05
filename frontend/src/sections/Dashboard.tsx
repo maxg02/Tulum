@@ -1,4 +1,3 @@
-import { useState } from "react";
 import SectionContent from "../components/Layout/SectionContent";
 import MoreDots from "../components/Misc/MoreDots";
 import { LineChart, markElementClasses } from "@mui/x-charts/LineChart";
@@ -33,7 +32,9 @@ export default function Dashboard() {
         monthExpenseRows: JSX.Element[] = [],
         totalMonthExpenses: number = 0,
         dataPieChart: pieChartSlice[] = [],
-        goalsProgressData: { label: string; progress: number; value: number }[] = [];
+        goalsProgressData: { label: string; progress: number; value: number }[] = [],
+        yearExpenses: expenseDto[] = [],
+        yearIncomes: incomeDto[] = [];
 
     const { data: incomeData, isLoading: incomeIsLoading } = useGetUserIncomesQuery();
     const { data: expenseCategoryData, isLoading: expenseCategoryIsLoading } =
@@ -41,25 +42,8 @@ export default function Dashboard() {
     const { data: expenseData, isLoading: expenseIsLoading } = useGetUserExpensesQuery();
     const { data: savingGoalData, isLoading: savingGoalIsLoading } = useGetSavingGoalsByUserIdQuery(1);
 
-    if (
-        !incomeIsLoading &&
-        incomeData != undefined &&
-        !expenseCategoryIsLoading &&
-        expenseCategoryData != undefined &&
-        !savingGoalIsLoading &&
-        savingGoalData != undefined &&
-        !expenseIsLoading &&
-        expenseData != undefined
-    ) {
-        const monthExpenses = expenseData?.filter(
-            (expense) =>
-                new Date(expense.date).getMonth() === currentDate.getMonth() &&
-                new Date(expense.date).getFullYear() === currentDate.getFullYear()
-        );
-
-        totalMonthExpenses = monthExpenses.reduce((acc, val) => acc + val.amount, 0);
-
-        const yearIncomes = incomeData.filter(
+    if (!incomeIsLoading && incomeData?.length) {
+        yearIncomes = incomeData.filter(
             (income) => new Date(income.date).getFullYear() === currentDate.getFullYear()
         );
 
@@ -69,57 +53,52 @@ export default function Dashboard() {
                 new Date(income.date).getFullYear() === currentDate.getFullYear()
         );
 
-        totalMonthIncome = monthIncomes.reduce((acc: number, next: incomeDto) => acc + next.amount, 0);
+        if (monthIncomes.length) {
+            totalMonthIncome = monthIncomes.reduce(
+                (acc: number, next: incomeDto) => acc + next.amount,
+                0
+            );
 
-        const yearExpenses = expenseData?.filter(
+            monthIncomeRows = monthIncomes
+                .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+                .reverse()
+                .slice(0, 3)
+                .map((income: incomeDto, key) => {
+                    const dateFormat = new Intl.DateTimeFormat("en-US", {
+                        day: "2-digit",
+                        weekday: "long",
+                    }).formatToParts(new Date(income.date));
+                    return (
+                        <div key={key} className="flex justify-between">
+                            <p>
+                                ({dateFormat.find((p) => p.type === "day")?.value}{" "}
+                                {dateFormat.find((p) => p.type === "weekday")?.value}) {income.details}
+                            </p>
+                            <p className="text-custom-accent">RD${income.amount}</p>
+                        </div>
+                    );
+                });
+        }
+    }
+
+    //TODO Get date sorted from backend
+
+    if (!expenseCategoryIsLoading && !expenseIsLoading && expenseData?.length) {
+        const monthExpenses = expenseData?.filter(
+            (expense) =>
+                new Date(expense.date).getMonth() === currentDate.getMonth() &&
+                new Date(expense.date).getFullYear() === currentDate.getFullYear()
+        );
+
+        yearExpenses = expenseData?.filter(
             (expense) => new Date(expense.date).getFullYear() === currentDate.getFullYear()
         );
 
-        dataLineChart = monthList.map((month) => ({
-            month,
-            inc: yearIncomes
-                .filter(
-                    (income: incomeDto) =>
-                        new Intl.DateTimeFormat("en-US", { month: "short" }).format(
-                            new Date(income.date)
-                        ) == month
-                )
-                .reduce((acc: number, next: incomeDto) => acc + next.amount, 0),
-            exp: yearExpenses
-                .filter(
-                    (expense: expenseDto) =>
-                        new Intl.DateTimeFormat("en-US", { month: "short" }).format(
-                            new Date(expense.date)
-                        ) == month
-                )
-                .reduce((acc: number, next: expenseDto) => acc + next.amount, 0),
-        }));
-
-        monthIncomeRows = monthIncomes
-            .sort((a, b) => new Date(a.date) - new Date(b.date))
-            .reverse()
-            .slice(0, 3)
-            .map((income: incomeDto, key) => {
-                const dateFormat = new Intl.DateTimeFormat("en-US", {
-                    day: "2-digit",
-                    weekday: "long",
-                }).formatToParts(new Date(income.date));
-                return (
-                    <div key={key} className="flex justify-between">
-                        <p>
-                            ({dateFormat.find((p) => p.type === "day")?.value}{" "}
-                            {dateFormat.find((p) => p.type === "weekday")?.value}) {income.details}
-                        </p>
-                        <p className="text-custom-accent">RD${income.amount}</p>
-                    </div>
-                );
-            });
-
-        //TODO refactor to dont do any of this if there is no expenses
-
         if (monthExpenses.length > 0) {
+            totalMonthExpenses = monthExpenses.reduce((acc, val) => acc + val.amount, 0);
+
             monthExpenseRows = monthExpenses
-                .sort((a, b) => new Date(a.date) - new Date(b.date))
+                .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
                 .reverse()
                 .slice(0, 3)
                 .map((expense: expenseDto, key) => {
@@ -143,8 +122,6 @@ export default function Dashboard() {
                 (expense: expenseDto) => expense.expenseCategoryId
             );
 
-            //TODO test less than 4 categories
-
             dataPieChart = Object.keys(monthExpensesByCategory)
                 .map<pieChartSlice>((key) => ({
                     label: expenseCategoryData?.find((c) => c.id === parseInt(key))!.category,
@@ -152,7 +129,9 @@ export default function Dashboard() {
                 }))
                 .sort((a, b) => b.value - a.value);
         }
+    }
 
+    if (!savingGoalIsLoading && savingGoalData?.length) {
         const allGoalContributions = savingGoalData
             ?.map((sG) => sG.goalContributions)
             .reduce((acc, currentValue) => acc!.concat(currentValue!), []);
@@ -180,6 +159,24 @@ export default function Dashboard() {
             .sort((a, b) => a.value - b.value)
             .reverse();
     }
+
+    dataLineChart = monthList.map((month) => ({
+        month,
+        inc: yearIncomes
+            .filter(
+                (income: incomeDto) =>
+                    new Intl.DateTimeFormat("en-US", { month: "short" }).format(new Date(income.date)) ==
+                    month
+            )
+            .reduce((acc: number, next: incomeDto) => acc + next.amount, 0),
+        exp: yearExpenses
+            .filter(
+                (expense: expenseDto) =>
+                    new Intl.DateTimeFormat("en-US", { month: "short" }).format(new Date(expense.date)) ==
+                    month
+            )
+            .reduce((acc: number, next: expenseDto) => acc + next.amount, 0),
+    }));
 
     const goalsProgressGauges = goalsProgressData.slice(0, 3).map((gp) => (
         <div className="flex flex-col items-center basis-1/3 md:basis-1/4">

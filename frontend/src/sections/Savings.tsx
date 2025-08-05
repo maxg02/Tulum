@@ -91,7 +91,7 @@ export default function Savings() {
     const [updateGoalContribution] = useUpdateGoalContributionMutation();
 
     //Saving goals data handling
-    if (!savingGoalIsLoading && savingGoalData != undefined) {
+    if (!savingGoalIsLoading && savingGoalData != undefined && savingGoalData.length > 0) {
         allGoalContributions = savingGoalData
             ?.map((sG) => sG.goalContributions)
             .reduce((acc, currentValue) => acc!.concat(currentValue!), []);
