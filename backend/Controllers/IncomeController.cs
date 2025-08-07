@@ -36,7 +36,7 @@ namespace backend.Controllers
         }
 
         [Authorize]
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> GetIncome([FromRoute] int id)
         {
             var income = await _incomeRepo.GetByIdAsync(id);
@@ -59,7 +59,7 @@ namespace backend.Controllers
         }
 
         [Authorize]
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         public async Task<IActionResult> UpdateIncome([FromRoute] int id, [FromBody] IncomeRequestDto incomeDto)
         {
             var incomeModel = await _incomeRepo.UpdateAsync(id, incomeDto);
@@ -73,7 +73,7 @@ namespace backend.Controllers
         }
 
         [Authorize]
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteIncome([FromRoute] int id)
         {
             var incomeModel = await _incomeRepo.DeleteAsync(id);
