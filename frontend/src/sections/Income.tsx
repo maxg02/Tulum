@@ -17,7 +17,7 @@ import DetailsModal from "../components/Modals/DetailsModal";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { showModal as showCreateModal } from "../reducers/createModalReducers";
 import { showModal as showDetailsModal } from "../reducers/detailsModalReducers";
-import { AmountField, DateField, DetailsField, ListField } from "../components/Modals/ModalsFields";
+import { AmountField, DateField, DetailsField } from "../components/Modals/ModalsFields";
 import Loader from "../components/Misc/Loader";
 import { AddSquareIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -30,11 +30,10 @@ import ValuePill from "../components/Misc/ValuePill";
 export default function Budget() {
     const [amount, setAmount] = useState<number>(0);
     const [details, setDetails] = useState<string>("");
-    const [date, setDate] = useState<Date>(new Date());
-    const [periodicity, setPeriodicity] = useState<number>(0);
+    const [date, setDate] = useState<Date | string>(new Date());
 
     const clearFieldValues = () => {
-        setAmount(0), setDetails(""), setDate(new Date()), setPeriodicity(0);
+        setAmount(0), setDetails(""), setDate(new Date());
     };
 
     const dispatch = useAppDispatch();
@@ -85,13 +84,29 @@ export default function Budget() {
     };
 
     // Create Income Function
-    const createIncomeHandler = () => {
+    const createIncomeHandler = async () => {
+        const errors: string[] = [];
+
+        if (amount <= 0 || !amount) errors.push("Amount must be greater than 0");
+        console.log(amount, details, date);
+        if (details.trim() === "") errors.push("Details cannot be empty");
+        if (date === null) errors.push("Date cannot be empty");
+
+        if (errors.length > 0) {
+            throw new Error(errors.join(","));
+        }
+
         const incomeData: createIncomeDto = {
             amount: amount,
             details: details,
             date: date,
         };
-        createIncome(incomeData);
+
+        await createIncome(incomeData)
+            .unwrap()
+            .catch(() => {
+                throw new Error(`Error creating income`);
+            });
     };
 
     // Delete Income Function
@@ -101,13 +116,26 @@ export default function Budget() {
     };
 
     // Update Income Function
-    const updateIncomeHandler = () => {
+    const updateIncomeHandler = async () => {
+        const errors: string[] = [];
+        if (amount <= 0 || !amount) errors.push("Amount must be greater than 0");
+        if (details.trim() === "") errors.push("Details cannot be empty");
+        if (date === null) errors.push("Date cannot be empty");
+
+        if (errors.length > 0) {
+            throw new Error(errors.join(","));
+        }
+
         const incomeData: updateIncomeDto = {
             id: detailsModalState.id!,
             data: { amount: amount, details: details, date: date },
         };
 
-        updateIncome(incomeData);
+        await updateIncome(incomeData)
+            .unwrap()
+            .catch(() => {
+                throw new Error(`Error updating income`);
+            });
     };
 
     // Income data handling

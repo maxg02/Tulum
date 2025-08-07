@@ -8,8 +8,11 @@ export type tokenDto = {
 };
 
 export type incomeDto = { id: number; amount: number; details: string; date: Date };
-export type createIncomeDto = { amount: number; details: string; date: Date };
-export type updateIncomeDto = { id: number; data: { amount: number; details: string; date: Date } };
+export type createIncomeDto = { amount: number; details: string; date: Date | string };
+export type updateIncomeDto = {
+    id: number;
+    data: { amount: number; details: string; date: Date | string };
+};
 
 export type fixedIncomeDto = { id: number; amount: number; details: string; periodicity: number };
 export type createFixedIncomeDto = { amount: number; details: string; periodicity: number };
@@ -38,12 +41,12 @@ export type expenseDto = {
 export type createExpenseDto = {
     amount: number;
     details: string;
-    date: Date;
+    date: Date | string;
     expenseCategoryId: number | null;
 };
 export type updateExpenseDto = {
     id: number;
-    data: { amount: number; details: string; date: Date; expenseCategoryId: number | null };
+    data: { amount: number; details: string; date: Date | string; expenseCategoryId: number | null };
 };
 
 export type fixedExpenseDto = {
