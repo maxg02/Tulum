@@ -45,7 +45,7 @@ import ProgressBar from "../components/Graphs/ProgressBar";
 export default function Expenses() {
     const [amount, setAmount] = useState<number>(0);
     const [details, setDetails] = useState<string>("");
-    const [date, setDate] = useState<Date>(new Date());
+    const [date, setDate] = useState<Date | string>(new Date());
     const [periodicity, setPeriodicity] = useState<number | null>(null);
     const [selectValue, setSelectValue] = useState<number | null>(0);
 
@@ -146,20 +146,23 @@ export default function Expenses() {
             totalYearExpenses = yearExpenses.reduce((acc, val) => acc + val.amount, 0);
 
             if (monthExpenses.length > 0) {
-                const monthExpensesByCategory: object = Object.groupBy(
+                const monthExpensesByCategory: Partial<Record<string, expenseDto[]>> = Object.groupBy(
                     monthExpenses.filter((ex) => ex.expenseCategoryId),
-                    (expense: expenseDto) => expense.expenseCategoryId
+                    ({ expenseCategoryId }) => expenseCategoryId!.toString()
                 );
+
+                console.log(monthExpensesByCategory);
 
                 dataPieChart = Object.keys(monthExpensesByCategory)
                     .map<pieChartSlice>((key) => ({
                         label: categorySelectValues?.find((c) => c.id === parseInt(key))!.value,
-                        value: monthExpensesByCategory[key].reduce(
-                            (acc, expense) => acc + expense.amount,
-                            0
-                        ),
+                        value: monthExpensesByCategory[
+                            key as keyof typeof monthExpensesByCategory
+                        ]!.reduce((acc, expense) => acc + expense.amount, 0),
                     }))
                     .sort((a, b) => b.value - a.value);
+
+                console.log(dataPieChart);
             }
         }
 
@@ -262,7 +265,7 @@ export default function Expenses() {
     // Create expense function
     const createExpenseHandler = async () => {
         const errors: string[] = [];
-        if (amount <= 0) errors.push("Amount must be greater than 0");
+        if (amount <= 0 || !amount) errors.push("Amount must be greater than 0");
         if (details.trim() === "") errors.push("Details cannot be empty");
         if (date === null) errors.push("Date cannot be empty");
         if (selectValue === 0) errors.push("Category must be selected");
@@ -288,7 +291,7 @@ export default function Expenses() {
     // Create budget plan function
     const createBudgetHandler = async () => {
         const errors: string[] = [];
-        if (amount <= 0) errors.push("Amount must be greater than 0");
+        if (amount <= 0 || !amount) errors.push("Amount must be greater than 0");
         if (periodicity === null) errors.push("Periodicity must be selected");
         if (selectValue === 0) errors.push("Category must be selected");
 
@@ -350,7 +353,8 @@ export default function Expenses() {
     // Update Expense Function
     const updateExpenseHandler = async () => {
         const errors: string[] = [];
-        if (amount <= 0) errors.push("Amount must be greater than 0");
+        if (amount <= 0 || !amount) errors.push("Amount must be greater than 0");
+        console.log(amount, details, date);
         if (details.trim() === "") errors.push("Details cannot be empty");
         if (date === null) errors.push("Date cannot be empty");
         if (selectValue === 0) errors.push("Category must be selected");
@@ -374,7 +378,7 @@ export default function Expenses() {
     // Update Budget Plan Function
     const updateBudgetPlanHandler = async () => {
         const errors: string[] = [];
-        if (amount <= 0 || amount !== null) errors.push("Amount must be greater than 0");
+        if (amount <= 0 || !amount) errors.push("Amount must be greater than 0");
         if (periodicity === null) errors.push("Periodicity must be selected");
 
         if (errors.length > 0) {
@@ -542,7 +546,7 @@ export default function Expenses() {
                             </button>
                         </div>
 
-                        {expenseCategoryIsLoading ? (
+                        {expenseCategoryIsLoading || expenseIsLoading ? (
                             <Loader />
                         ) : budgetExpensesData.rows.length ? (
                             <>
@@ -568,8 +572,8 @@ export default function Expenses() {
                                             <div className="w-full">
                                                 <ProgressBar
                                                     dark
-                                                    value={expenseData
-                                                        ?.filter((e) => e.expenseCategoryId === ec.id)
+                                                    value={expenseData!
+                                                        .filter((e) => e.expenseCategoryId === ec.id)
                                                         .reduce((acc, value) => (acc += value.amount), 0)}
                                                     total={ec.budgetPlan!.amount}
                                                 />
