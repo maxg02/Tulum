@@ -3,10 +3,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import React from "react";
 
 type modalBody = {
-    closingHandler: () => {
-        payload: undefined;
-        type: "createModal/hideModal" | "detailsModal/hideModal";
-    };
+    closingHandler: () => void;
     children: React.ReactNode;
     title: string;
 };

@@ -3,23 +3,28 @@ import ModalContainer from "./ModalContainer";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { hideModal } from "../../reducers/detailsModalReducers";
 import { modalTitles } from "../../Constants/Constants";
+import { useState } from "react";
 
 type detailsModal = {
     deleteFunction: () => void;
-    updateFunction: () => void;
+    updateFunction: () => Promise<void>;
     show: boolean;
     children: React.ReactNode;
 };
 
 function DetailsModal({ children, show, deleteFunction, updateFunction }: detailsModal) {
     const dispatch = useAppDispatch();
+    const [error, setError] = useState<string | null>(null);
     const detailsModalState = useAppSelector((state) => state.detailsModal.show);
 
     if (!show) {
         return null;
     }
 
-    const handleClosing = () => dispatch(hideModal());
+    const handleClosing = () => {
+        setError(null);
+        dispatch(hideModal());
+    };
 
     const handleDelete = () => {
         deleteFunction();
@@ -27,8 +32,11 @@ function DetailsModal({ children, show, deleteFunction, updateFunction }: detail
     };
 
     const handleUpdate = () => {
-        updateFunction();
-        handleClosing();
+        updateFunction()
+            .then(() => handleClosing())
+            .catch((error) => {
+                setError(error.message);
+            });
     };
 
     const currentModal = Object.keys(detailsModalState).find(
@@ -40,7 +48,16 @@ function DetailsModal({ children, show, deleteFunction, updateFunction }: detail
     return (
         <ModalContainer closingHandler={handleClosing} title={title}>
             {children}
-            <hr className="border-t-2"></hr>
+            {error && (
+                <div role="alert">
+                    {error.split(",").map((e, key) => (
+                        <p key={key} className="text-red-400 mb-0">
+                            {e}
+                        </p>
+                    ))}
+                </div>
+            )}
+            <hr className="customDivider"></hr>
             <div className="self-end flex gap-x-2">
                 <button type="reset" className="formBtn formBtnSecondary" onClick={handleClosing}>
                     <p>Cancel</p>
