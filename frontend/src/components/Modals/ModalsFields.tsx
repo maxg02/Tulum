@@ -1,25 +1,19 @@
 import React from "react";
 
-type modalField = {
-    fieldStateHandler:
-        | React.Dispatch<React.SetStateAction<number | undefined>>
-        | React.Dispatch<React.SetStateAction<number>>
-        | React.Dispatch<React.SetStateAction<string>>
-        | React.Dispatch<React.SetStateAction<Date>>;
+type modalField<T> = {
+    fieldStateHandler: React.Dispatch<React.SetStateAction<T>>;
+    defaultValue?: T;
     customLabel?: string;
+    disabled?: boolean;
 };
 
-type listModalField = modalField & { label: string; values: string[] };
-type selectModalField = modalField & {
+type listModalField<T> = modalField<T> & { label: string; values: string[] };
+type selectModalField<T> = modalField<T> & {
     label: string;
-    values: { id: number; value: string }[] | undefined;
+    values: { id: number | null; value: string }[] | undefined;
 };
 
-export function AmountField({
-    fieldStateHandler,
-    defaultValue,
-    customLabel,
-}: modalField & { defaultValue?: number }) {
+export function AmountField({ fieldStateHandler, defaultValue, customLabel }: modalField<number>) {
     return (
         <div className="flex flex-col gap-y-1">
             <label htmlFor="amount">{customLabel ?? "Amount"}</label>
@@ -36,11 +30,7 @@ export function AmountField({
     );
 }
 
-export function DetailsField({
-    fieldStateHandler,
-    defaultValue,
-    customLabel,
-}: modalField & { defaultValue?: string }) {
+export function DetailsField({ fieldStateHandler, defaultValue, customLabel }: modalField<string>) {
     return (
         <div className="flex flex-col gap-y-1">
             <label htmlFor="details">{customLabel ?? "Details"}</label>
@@ -57,12 +47,8 @@ export function DetailsField({
     );
 }
 
-export function DateField({
-    fieldStateHandler,
-    defaultValue,
-    customLabel,
-}: modalField & { defaultValue?: Date }) {
-    const defaultDate = defaultValue ? defaultValue.toString().substring(0, 16) : undefined;
+export function DateField({ fieldStateHandler, defaultValue, customLabel }: modalField<Date | string>) {
+    const defaultDate = defaultValue ? defaultValue.toString().substring(0, 10) : undefined;
 
     return (
         <div className="flex flex-col gap-y-1">
@@ -74,6 +60,7 @@ export function DateField({
                 className="formInput w-full"
                 placeholder="Date"
                 value={defaultDate}
+                onClick={(e) => e.currentTarget.showPicker()}
                 onChange={(e) => fieldStateHandler(e.target.value)}
             ></input>
         </div>
@@ -85,7 +72,7 @@ export function ListField({
     label,
     values,
     defaultValue,
-}: listModalField & { defaultValue?: number }) {
+}: listModalField<number | null>) {
     return (
         <div className="flex flex-col gap-y-1">
             <label htmlFor="date">{label}</label>
@@ -114,11 +101,7 @@ export function SelectField({
     values,
     defaultValue,
     disabled = false,
-}: selectModalField & {
-    defaultValue?: number;
-    disabled?: boolean;
-    values: { id: number; value: string }[] | undefined;
-}) {
+}: selectModalField<number | null>) {
     return (
         <div className="flex flex-col gap-y-1">
             <label htmlFor="select">{label}</label>
@@ -139,7 +122,7 @@ export function SelectField({
                         <option
                             selected={item.id === defaultValue ? true : undefined}
                             key={key}
-                            value={item.id}
+                            value={item.id ?? undefined}
                         >
                             {item.value}
                         </option>
