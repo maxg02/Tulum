@@ -12,12 +12,14 @@ namespace backend.Controllers
     public class ExpenseController : ControllerBase
     {
         private readonly IExpenseRepo _expenseRepo;
+        private readonly IExpenseCategoryRepo _expenseCategoryRepo;
         private readonly IHttpContextAccessor _httpContext;
         private readonly IClaimsAccess _claimsAccess;
 
-        public ExpenseController(IExpenseRepo expenseRepo, IHttpContextAccessor httpContext, IClaimsAccess claimsAccess)
+        public ExpenseController(IExpenseRepo expenseRepo, IHttpContextAccessor httpContext, IClaimsAccess claimsAccess, IExpenseCategoryRepo expenseCategoryRepo)
         {
             _expenseRepo = expenseRepo;
+            _expenseCategoryRepo = expenseCategoryRepo;
             _httpContext = httpContext;
             _claimsAccess = claimsAccess;
         }
@@ -37,7 +39,12 @@ namespace backend.Controllers
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateExpense([FromBody] ExpenseRequestDto expenseDto)
-        {
+        {            
+            if (expenseDto.ExpenseCategoryId != null && !await _expenseCategoryRepo.CategoryExists(expenseDto.ExpenseCategoryId!.Value))
+            {
+                return BadRequest("Category does not exist");
+            }
+
             int userId = _claimsAccess.GetUserIdFromClaims(_httpContext.HttpContext!);
             var expense = await _expenseRepo.CreateAsync(expenseDto.ToExpenseFromCreateDto(userId));
 
@@ -45,7 +52,7 @@ namespace backend.Controllers
         }
 
         [Authorize]
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         public async Task<IActionResult> UpdateExpense([FromRoute] int id, [FromBody] ExpenseRequestDto expenseDto)
         {
             var expense = await _expenseRepo.UpdateAsync(id, expenseDto);
@@ -59,7 +66,7 @@ namespace backend.Controllers
         }
 
         [Authorize]
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteExpense([FromRoute] int id)
         {
             var expense = await _expenseRepo.DeleteAsync(id);

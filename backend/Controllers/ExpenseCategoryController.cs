@@ -34,7 +34,7 @@ namespace backend.Controllers
             return Ok(expenseCategoriesDto);
         }
         
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         [Authorize]
         public async Task<IActionResult> GetExpenseCategory([FromRoute] int id)
         {
@@ -58,7 +58,7 @@ namespace backend.Controllers
             return CreatedAtAction(nameof(GetExpenseCategory), new { id = expenseCategory.Id }, expenseCategory.ToExpenseCategoryDto());
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         [Authorize]
         public async Task<IActionResult> UpdateExpenseCategory([FromRoute] int id, [FromBody] ExpenseCategoryRequestDto expenseCategoryDto)
         {
@@ -72,7 +72,7 @@ namespace backend.Controllers
             return Ok(expenseCategory.ToExpenseCategoryDto());
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         [Authorize]
         public async Task<IActionResult> DeleteExpenseCategory([FromRoute] int id)
         {

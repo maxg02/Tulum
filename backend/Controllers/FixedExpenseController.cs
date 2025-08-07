@@ -23,7 +23,7 @@ namespace backend.Controllers
             return Ok(fixedExpense);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         [Authorize]
         public async Task<IActionResult> UpdateFixedExpense([FromRoute] int id, [FromBody] CUFixedExpenseRequestDto fixedExpenseDto)
         {
@@ -37,7 +37,7 @@ namespace backend.Controllers
             return Ok(fixedExpense);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         [Authorize]
         public async Task<IActionResult> DeleteFixedExpense([FromRoute] int id)
         {

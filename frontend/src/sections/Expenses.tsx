@@ -46,23 +46,23 @@ export default function Expenses() {
     const [amount, setAmount] = useState<number>(0);
     const [details, setDetails] = useState<string>("");
     const [date, setDate] = useState<Date>(new Date());
-    const [periodicity, setPeriodicity] = useState<number>(0);
-    const [selectValue, setSelectValue] = useState<number>(0);
+    const [periodicity, setPeriodicity] = useState<number | null>(null);
+    const [selectValue, setSelectValue] = useState<number | null>(0);
 
     const currentDate: Date = new Date();
     const currentMonth: string = new Intl.DateTimeFormat("en-US", { month: "long" }).format(currentDate);
     const currentYear: number = currentDate.getFullYear();
+    const categorySelectValues:
+        | {
+              id: number | null;
+              value: string;
+          }[]
+        | undefined = [{ id: null, value: "Others" }];
     let expensesRow: tableRow[] = [];
 
     let budgetExpensesRow: tableRow[] = [],
         expenseCategoriesRow: tableRow[] = [],
         dataPieChart: pieChartSlice[] = [],
-        categorySelectValues:
-            | {
-                  id: number;
-                  value: string;
-              }[]
-            | undefined,
         expenseCategoriesWithBudget: expenseCategoryDto[] = [];
 
     let totalMonthExpenses: number = 0;
@@ -101,16 +101,22 @@ export default function Expenses() {
         !expenseIsLoading &&
         expenseData != undefined
     ) {
-        if (expenseCategoryData.length === 0) {
+        let yearExpenses: expenseDto[] = [];
+
+        let monthExpenses: expenseDto[] = [];
+
+        if (expenseCategoryData.length) {
             expenseCategoriesRow = expenseCategoryData.map((expenseCategory: expenseCategoryDto) => ({
                 id: expenseCategory.id,
                 data: [expenseCategory.category],
             }));
 
-            categorySelectValues = expenseCategoryData.map((ec: expenseCategoryDto) => ({
-                id: ec.id,
-                value: ec.category,
-            }));
+            expenseCategoryData.map((ec: expenseCategoryDto) =>
+                categorySelectValues.push({
+                    id: ec.id,
+                    value: ec.category,
+                })
+            );
 
             expenseCategoriesWithBudget = expenseCategoryData.filter((ec) => ec.budgetPlan);
         }
@@ -124,15 +130,15 @@ export default function Expenses() {
                     new Date(expense.date).toLocaleDateString("en-US"),
                     expense.expenseCategoryId != null
                         ? expenseCategoryData.find((ec) => ec.id === expense.expenseCategoryId)!.category
-                        : "otros",
+                        : "Others",
                 ],
             }));
 
-            const yearExpenses = expenseData?.filter(
+            yearExpenses = expenseData?.filter(
                 (expense) => new Date(expense.date).getFullYear() === currentDate.getFullYear()
             );
 
-            const monthExpenses = yearExpenses?.filter(
+            monthExpenses = yearExpenses?.filter(
                 (expense) => new Date(expense.date).getMonth() === currentDate.getMonth()
             );
 
@@ -254,34 +260,73 @@ export default function Expenses() {
     };
 
     // Create expense function
-    const createExpenseHandler = () => {
+    const createExpenseHandler = async () => {
+        const errors: string[] = [];
+        if (amount <= 0) errors.push("Amount must be greater than 0");
+        if (details.trim() === "") errors.push("Details cannot be empty");
+        if (date === null) errors.push("Date cannot be empty");
+        if (selectValue === 0) errors.push("Category must be selected");
+
+        if (errors.length > 0) {
+            throw new Error(errors.join(","));
+        }
+
         const expenseData: createExpenseDto = {
             amount: amount,
             details: details,
             date: date,
             expenseCategoryId: selectValue,
         };
-        createExpense(expenseData);
+
+        await createExpense(expenseData)
+            .unwrap()
+            .catch(() => {
+                throw new Error(`Error creating expense`);
+            });
     };
 
     // Create budget plan function
-    const createBudgetHandler = () => {
+    const createBudgetHandler = async () => {
+        const errors: string[] = [];
+        if (amount <= 0) errors.push("Amount must be greater than 0");
+        if (periodicity === null) errors.push("Periodicity must be selected");
+        if (selectValue === 0) errors.push("Category must be selected");
+
+        if (errors.length > 0) {
+            throw new Error(errors.join(","));
+        }
+
         const budgetPlanData: createBudgetPlanDto = {
             amount: amount,
-            expenseCategoryId: selectValue,
-            periodicity: periodicity,
+            expenseCategoryId: selectValue!,
+            periodicity: periodicity!,
         };
 
-        createBudgetPlan(budgetPlanData);
+        await createBudgetPlan(budgetPlanData)
+            .unwrap()
+            .catch(() => {
+                throw new Error(`Error creating budget`);
+            });
     };
 
     // Create expense category function
-    const createExpenseCategoryHandler = () => {
+    const createExpenseCategoryHandler = async () => {
+        const errors: string[] = [];
+        if (details.trim() === "") errors.push("Details cannot be empty");
+
+        if (errors.length > 0) {
+            throw new Error(errors.join(","));
+        }
+
         const expenseCategoryData: createExpenseCategoryDto = {
             category: details,
         };
 
-        createExpenseCategory(expenseCategoryData);
+        await createExpenseCategory(expenseCategoryData)
+            .unwrap()
+            .catch(() => {
+                throw new Error(`Error creating category`);
+            });
     };
 
     // Delete Expense Function
@@ -303,33 +348,70 @@ export default function Expenses() {
     };
 
     // Update Expense Function
-    const updateExpenseHandler = () => {
+    const updateExpenseHandler = async () => {
+        const errors: string[] = [];
+        if (amount <= 0) errors.push("Amount must be greater than 0");
+        if (details.trim() === "") errors.push("Details cannot be empty");
+        if (date === null) errors.push("Date cannot be empty");
+        if (selectValue === 0) errors.push("Category must be selected");
+
+        if (errors.length > 0) {
+            throw new Error(errors.join(","));
+        }
+
         const expenseData: updateExpenseDto = {
             id: detailsModalState.id!,
             data: { amount: amount, details: details, date: date, expenseCategoryId: selectValue },
         };
 
-        updateExpense(expenseData);
+        await updateExpense(expenseData)
+            .unwrap()
+            .catch(() => {
+                throw new Error(`Error updating expense`);
+            });
     };
 
     // Update Budget Plan Function
-    const updateBudgetPlanHandler = () => {
+    const updateBudgetPlanHandler = async () => {
+        const errors: string[] = [];
+        if (amount <= 0 || amount !== null) errors.push("Amount must be greater than 0");
+        if (periodicity === null) errors.push("Periodicity must be selected");
+
+        if (errors.length > 0) {
+            throw new Error(errors.join(","));
+        }
+
         const budgetPlanData: updateBudgetPlanDto = {
             id: detailsModalState.id!,
-            data: { amount: amount, periodicity: periodicity },
+            data: { amount: amount, periodicity: periodicity! },
         };
 
-        updateBudgetPlan(budgetPlanData);
+        await updateBudgetPlan(budgetPlanData)
+            .unwrap()
+            .catch(() => {
+                throw new Error(`Error updating budget`);
+            });
     };
 
     // Update Expense Category Function
-    const updateExpenseCategoryHandler = () => {
+    const updateExpenseCategoryHandler = async () => {
+        const errors: string[] = [];
+        if (details.trim() === "") errors.push("Details cannot be empty");
+
+        if (errors.length > 0) {
+            throw new Error(errors.join(","));
+        }
+
         const expenseCategoryData: updateExpenseCategoryDto = {
             id: detailsModalState.id!,
             data: { category: details },
         };
 
-        updateExpenseCategory(expenseCategoryData);
+        await updateExpenseCategory(expenseCategoryData)
+            .unwrap()
+            .catch(() => {
+                throw new Error(`Error updating category`);
+            });
     };
 
     const expensesData: dataObject = {
@@ -368,13 +450,15 @@ export default function Expenses() {
                     <p className="font-bold">RD${e.amount}</p>
                 </div>
                 <div className="flex justify-between">
-                    <p>{expenseCategoryData?.find((ec) => ec.id == e.expenseCategoryId)?.category}</p>
+                    <p>
+                        {e.expenseCategoryId != null
+                            ? expenseCategoryData?.find((ec) => ec.id === e.expenseCategoryId)!.category
+                            : "Others"}
+                    </p>
                     <p>{new Date(e.date).toDateString()}</p>
                 </div>
             </button>
         ));
-
-    // TODO Crder things by date
 
     return (
         <>
@@ -473,8 +557,8 @@ export default function Expenses() {
                                     />
                                 </div>
                                 <div className="w-full flex flex-col gap-y-2 md:hidden max-md:max-h-96 max-md:overflow-y-auto">
-                                    {expenseCategoriesWithBudget.map((ec) => (
-                                        <div className="flex flex-col w-full">
+                                    {expenseCategoriesWithBudget.map((ec, key) => (
+                                        <div className="flex flex-col w-full" key={key}>
                                             <p>
                                                 {ec.category} -{" "}
                                                 <span className="opacity-60">
@@ -485,7 +569,7 @@ export default function Expenses() {
                                                 <ProgressBar
                                                     dark
                                                     value={expenseData
-                                                        .filter((e) => e.expenseCategoryId === ec.id)
+                                                        ?.filter((e) => e.expenseCategoryId === ec.id)
                                                         .reduce((acc, value) => (acc += value.amount), 0)}
                                                     total={ec.budgetPlan!.amount}
                                                 />
@@ -581,7 +665,8 @@ export default function Expenses() {
                     fieldStateHandler={setSelectValue}
                     label="Category"
                     values={categorySelectValues?.filter(
-                        (cs) => !expenseCategoriesWithBudget.map((ec) => ec.id).includes(cs.id)
+                        (cs) =>
+                            cs.id !== null && !expenseCategoriesWithBudget.some((ec) => ec.id === cs.id)
                     )}
                 />
                 <ListField

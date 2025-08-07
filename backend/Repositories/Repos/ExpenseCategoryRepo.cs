@@ -73,5 +73,12 @@ namespace backend.Repositories.Repos
 
             return expenseCategory;
         }
+
+        public async Task<bool> CategoryExists(int id)
+        {
+            var expenseCategory = await GetByIdAsync(id);
+
+            return expenseCategory != null;
+        }
     }
 }
