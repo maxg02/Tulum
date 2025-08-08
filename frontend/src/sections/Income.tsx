@@ -10,7 +10,7 @@ import {
     incomeDto,
     updateIncomeDto,
     createIncomeDto,
-} from "../../api/apiSlice";
+} from "../api/apiSlice";
 import { monthList } from "../Constants/Constants";
 import CreateModal from "../components/Modals/CreateModal";
 import DetailsModal from "../components/Modals/DetailsModal";

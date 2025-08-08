@@ -21,7 +21,7 @@ import {
     useCreateExpenseCategoryMutation,
     createExpenseCategoryDto,
     updateExpenseCategoryDto,
-} from "../../api/apiSlice";
+} from "../api/apiSlice";
 import Loader from "../components/Misc/Loader";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { showModal as showCreateModal } from "../reducers/createModalReducers";
@@ -146,12 +146,10 @@ export default function Expenses() {
             totalYearExpenses = yearExpenses.reduce((acc, val) => acc + val.amount, 0);
 
             if (monthExpenses.length > 0) {
-                const monthExpensesByCategory: Partial<Record<string, expenseDto[]>> = Object.groupBy(
+                const monthExpensesByCategory = Object.groupBy(
                     monthExpenses.filter((ex) => ex.expenseCategoryId),
                     ({ expenseCategoryId }) => expenseCategoryId!.toString()
                 );
-
-                console.log(monthExpensesByCategory);
 
                 dataPieChart = Object.keys(monthExpensesByCategory)
                     .map<pieChartSlice>((key) => ({
@@ -161,8 +159,6 @@ export default function Expenses() {
                         ]!.reduce((acc, expense) => acc + expense.amount, 0),
                     }))
                     .sort((a, b) => b.value - a.value);
-
-                console.log(dataPieChart);
             }
         }
 

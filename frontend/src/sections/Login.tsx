@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useGetUserMutation } from "../../api/apiSlice";
+import { useGetUserMutation } from "../api/apiSlice";
 import { setUserInfo } from "../reducers/userReducers";
 
 import { useNavigate } from "react-router-dom";

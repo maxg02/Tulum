@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useRegisterUserMutation } from "../../api/apiSlice";
+import { useRegisterUserMutation } from "../api/apiSlice";
 import { useNavigate } from "react-router-dom";
 import loginImage from "../assets/loginImage.jpg";
 

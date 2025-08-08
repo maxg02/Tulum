@@ -10,7 +10,7 @@ import {
     useGetUserIncomesQuery,
     useGetSavingGoalsByUserIdQuery,
     useGetUserExpensesQuery,
-} from "../../api/apiSlice";
+} from "../api/apiSlice";
 import Loader from "../components/Misc/Loader";
 import { Invoice02Icon, MoneyReceiveSquareIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -81,9 +81,12 @@ export default function Dashboard() {
         }
     }
 
-    //TODO Get date sorted from backend
-
-    if (!expenseCategoryIsLoading && !expenseIsLoading && expenseData?.length) {
+    if (
+        !expenseCategoryIsLoading &&
+        !expenseIsLoading &&
+        expenseData?.length &&
+        expenseCategoryData != undefined
+    ) {
         const monthExpenses = expenseData?.filter(
             (expense) =>
                 new Date(expense.date).getMonth() === currentDate.getMonth() &&
@@ -117,15 +120,18 @@ export default function Dashboard() {
                     );
                 });
 
-            const monthExpensesByCategory: object = Object.groupBy(
+            const monthExpensesByCategory = Object.groupBy(
                 monthExpenses.filter((ex) => ex.expenseCategoryId),
-                (expense: expenseDto) => expense.expenseCategoryId
+                ({ expenseCategoryId }) => expenseCategoryId!.toString()
             );
 
             dataPieChart = Object.keys(monthExpensesByCategory)
                 .map<pieChartSlice>((key) => ({
-                    label: expenseCategoryData?.find((c) => c.id === parseInt(key))!.category,
-                    value: monthExpensesByCategory[key].reduce((acc, expense) => acc + expense.amount, 0),
+                    label: expenseCategoryData.find((c) => c.id === parseInt(key))!.category,
+                    value: monthExpensesByCategory[key as keyof typeof monthExpensesByCategory]!.reduce(
+                        (acc, expense) => acc + expense.amount,
+                        0
+                    ),
                 }))
                 .sort((a, b) => b.value - a.value);
         }
@@ -136,22 +142,25 @@ export default function Dashboard() {
             ?.map((sG) => sG.goalContributions)
             .reduce((acc, currentValue) => acc!.concat(currentValue!), []);
 
-        const goalContributionsBySavings: object = Object.groupBy(
+        const goalContributionsBySavings = Object.groupBy(
             allGoalContributions,
             (gC: goalContributionDto) => gC.savingGoalId
         );
 
         goalsProgressData = savingGoalData
             .map((sg) => {
-                const progress = goalContributionsBySavings[sg.id.toString()]
-                    ? goalContributionsBySavings[sg.id.toString()].reduce(
-                          (acc: number, gC: goalContributionDto) => acc + gC.amount,
-                          0
-                      )
+                const progress = goalContributionsBySavings[
+                    sg.id as keyof typeof goalContributionsBySavings
+                ]
+                    ? goalContributionsBySavings[
+                          sg.id as keyof typeof goalContributionsBySavings
+                      ]!.reduce((acc: number, gC: goalContributionDto) => acc + gC.amount, 0)
                     : 0;
 
                 return {
                     label: sg!.details,
+                    id: sg!.id,
+                    total: sg!.goal,
                     progress: progress,
                     value: (progress * 100) / sg!.goal,
                 };
@@ -258,7 +267,7 @@ export default function Dashboard() {
                                         min: 0,
                                         domainLimit: "nice",
                                         valueFormatter: (value: number) =>
-                                            value < 1000 ? value : `${value / 1000}K`,
+                                            value < 1000 ? value.toString() : `${value / 1000}K`,
                                         width: 40,
                                     },
                                 ]}

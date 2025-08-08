@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { apiSlice } from "../api/apiSlice.ts";
+import { apiSlice } from "./api/apiSlice.ts";
 import detailsModalReducer from "../src/reducers/detailsModalReducers";
 import createModalReducer from "../src/reducers/createModalReducers";
 import userReducer from "./reducers/userReducers.tsx";

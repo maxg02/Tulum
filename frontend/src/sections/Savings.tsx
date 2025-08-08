@@ -16,7 +16,7 @@ import {
     useGetSavingGoalsByUserIdQuery,
     useUpdateGoalContributionMutation,
     useUpdateSavingGoalMutation,
-} from "../../api/apiSlice";
+} from "../api/apiSlice";
 import Loader from "../components/Misc/Loader";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { showModal as showCreateModal } from "../reducers/createModalReducers";

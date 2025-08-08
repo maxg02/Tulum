@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from "@reduxjs/toolkit/query";
-import { logOut, refreshUserToken } from "../src/reducers/userReducers";
+import { logOut, refreshUserToken } from "../reducers/userReducers";
+import type { RootState } from "../store";
 
 export type tokenDto = {
     accessToken: string;
@@ -127,7 +128,7 @@ const baseQuery = fetchBaseQuery({
     baseUrl: "http://127.0.0.1:5085/api",
     prepareHeaders: (headers, { getState }) => {
         headers.set("Content-Type", "application/json");
-        const token = getState().user.tokens?.accessToken;
+        const token = (getState() as RootState).user.tokens?.accessToken;
 
         if (token) {
             headers.set("Authorization", `Bearer ${token}`);
@@ -144,8 +145,7 @@ const BaseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
 ) => {
     let result = await baseQuery(args, api, extraOptions);
     if (result.error && result.error.status === 401) {
-        const refreshToken = api.getState().user.tokens?.refreshToken;
-        console.log("refrescando");
+        const refreshToken = (api.getState() as RootState).user.tokens?.refreshToken;
         //try to get new token
         const refreshResult = await baseQuery(
             { url: "/auth/refreshaccesstoken/", method: "POST", body: { refreshToken: refreshToken } },
@@ -154,8 +154,7 @@ const BaseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
         );
         if (refreshResult.data) {
             // store new token
-            console.log("refrescado", refreshResult.data);
-            api.dispatch(refreshUserToken(refreshResult.data));
+            api.dispatch(refreshUserToken(refreshResult.data as tokenDto));
             result = await baseQuery(args, api, extraOptions);
         } else {
             api.dispatch(logOut());
