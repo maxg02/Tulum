@@ -351,15 +351,15 @@ export default function Savings() {
                 onClick={() => showDetailsSavingGoalModal(item.id)}
             >
                 <p>{item.label}</p>
-                <ProgressBar value={item.value} total={item.total} />
+                <ProgressBar value={item.progress} total={item.total} />
             </button>
         ));
 
     return (
         <>
             <SectionContent>
-                <div className="grid grid-cols-1 gap-8 overflow-x-hidden overflow-y-auto auto-rows-auto 2xl:grid-rows-11 2xl:grid-cols-11 2xl:flex-1 2xl:max-h-[1100px]">
-                    <div className="flex gap-3 2xl:col-span-4 2xl:flex-col 2xl:row-span-4">
+                <div className="grid grid-cols-1 gap-8 overflow-x-hidden overflow-y-auto auto-rows-auto xl:max-2xl:gap-5 xl:max-2xl:grid-rows-12 xl:flex-1 xl:max-h-[1000px] xl:grid-cols-11 2xl:grid-rows-11">
+                    <div className="flex gap-3 overflow-hidden xl:col-span-7 xl:row-span-3 2xl:row-span-4 2xl:flex-col 2xl:col-span-4">
                         <div className="flex-1">
                             <ValuePill title={currentMonth} value={totalMonthSavings} />
                         </div>
@@ -368,7 +368,7 @@ export default function Savings() {
                         </div>
                     </div>
                     <hr className="border-t-2 md:hidden"></hr>
-                    <div className="infoContainer1 2xl:col-span-7 2xl:flex-col 2xl:row-span-11">
+                    <div className="infoContainer1 xl:col-span-7 xl:flex-col xl:row-span-9 xl:max-2xl:order-3 2xl:row-span-11">
                         <div className="flex justify-center w-full relative">
                             <p className="text-nowrap">Saving Goals</p>
                             <button
@@ -382,15 +382,15 @@ export default function Savings() {
                                 />
                             </button>
                         </div>
-                        <div className="flex flex-1 w-full max-h-[40rem] lg:max-h-96 2xl:max-h-none overflow-hidden">
+                        <div className="flex flex-1 w-full max-h-[40rem] lg:max-h-96 xl:max-h-none overflow-hidden">
                             {savingGoalIsLoading ? (
                                 <Loader />
                             ) : savingGoalData && savingGoalData.length ? (
                                 <>
-                                    <div className="w-100 flex flex-col gap-y-2 md:hidden max-md:max-h-96 max-md:overflow-y-auto">
+                                    <div className="w-full flex flex-col gap-y-2 md:hidden max-md:max-h-96 max-md:overflow-y-auto">
                                         {goalProgressBars()}
                                     </div>
-                                    <div className="hidden md:flex overflow-y-auto gap-7 flex-wrap justify-center max-h-96 2xl:max-h-none">
+                                    <div className="hidden w-full md:flex overflow-y-auto gap-7 flex-wrap justify-center max-h-96 xl:max-h-none">
                                         {goalProgressGauges()}
                                     </div>
                                 </>
@@ -407,7 +407,7 @@ export default function Savings() {
                             )}
                         </div>
                     </div>
-                    <div className="infoContainer2 2xl:col-span-4 2xl:row-span-7">
+                    <div className="infoContainer2 xl:col-span-4 xl:row-span-12 xl:max-2xl:order-2 2xl:row-span-7">
                         <div className="flex justify-center w-full relative">
                             <p className="text-nowrap">Goals Contributions</p>
                             <button
@@ -421,7 +421,7 @@ export default function Savings() {
                                 />
                             </button>
                         </div>
-                        <div className="flex flex-1 w-full max-h-[40rem] lg:max-h-96 2xl:max-h-none overflow-hidden">
+                        <div className="flex flex-1 w-full max-h-[40rem] lg:max-h-96 xl:max-h-none overflow-hidden">
                             {savingGoalIsLoading ? (
                                 <Loader />
                             ) : savingGoalData && goalsContributionsTableData.rows.length ? (
@@ -431,6 +431,7 @@ export default function Savings() {
                                         showDetailsGoalContributionModal(gCId)
                                     }
                                     dark
+                                    filters={false}
                                 />
                             ) : (
                                 <div className="text-gray-400 py-12 flex items-center gap-x-1 h-full w-full justify-center">

@@ -463,7 +463,7 @@ export default function Expenses() {
     return (
         <>
             <SectionContent>
-                <div className="grid grid-cols-2 auto-rows-auto gap-8 overflow-x-hidden overflow-y-auto md:grid-cols-5 xl:grid-cols-7 2xl:max-h-[1000px] 2xl:flex-1 2xl:grid-rows-12">
+                <div className="grid grid-cols-2 auto-rows-auto gap-8 overflow-x-hidden overflow-y-auto md:grid-cols-5 xl:grid-cols-7 xl:max-2xl:gap-5 xl:flex-1 xl:grid-rows-12 2xl:max-h-[1000px]">
                     <div className="flex col-span-2 gap-3 md:hidden">
                         <div className="flex-1">
                             <ValuePill title={currentMonth} value={totalMonthExpenses} />
@@ -473,7 +473,7 @@ export default function Expenses() {
                         </div>
                     </div>
                     <hr className="col-span-2 border-t-2 md:hidden"></hr>
-                    <div className="infoContainer1 max-md:hidden md:col-span-3 xl:col-span-3 2xl:row-span-5">
+                    <div className="infoContainer1 max-md:hidden md:col-span-3 xl:col-span-3 xl:row-span-6 2xl:row-span-5">
                         <p>{`${currentMonth} Expenses`}</p>
                         <div className="w-full md:h-52 2xl:flex-1 overflow-y-hidden">
                             {expenseCategoryIsLoading ? (
@@ -485,7 +485,7 @@ export default function Expenses() {
                             )}
                         </div>
                     </div>
-                    <div className="infoContainer1 col-span-2 md:col-span-5 md:order-3 xl:col-span-4 2xl:row-span-7">
+                    <div className="infoContainer1 col-span-2 md:col-span-5 md:order-3 xl:col-span-4 xl:row-span-6 2xl:row-span-7">
                         <div className="flex justify-center relative w-full">
                             <p className="text-nowrap">Expenses</p>
                             <button
@@ -513,12 +513,13 @@ export default function Expenses() {
                             </div>
                         ) : (
                             <>
-                                <div className="flex flex-1 w-full max-h-[40rem] max-md:hidden xl:max-h-96 2xl:max-h-none overflow-hidden">
+                                <div className="flex flex-1 w-full max-h-[40rem] max-md:hidden xl:max-h-none overflow-hidden">
                                     <Table
                                         data={expensesData}
                                         detailsFunction={(expenseId: number) =>
                                             showDetailsExpenseModal(expenseId)
                                         }
+                                        filters={false}
                                     />
                                 </div>
                                 <div className="flex flex-col w-full overflow-x-hidden gap-4 max-h-[40rem] overflow-y-auto md:hidden">
@@ -527,7 +528,7 @@ export default function Expenses() {
                             </>
                         )}
                     </div>
-                    <div className="infoContainer2 col-span-2 md:col-span-5 md:order-4 xl:order-2 xl:col-span-4 2xl:row-span-5">
+                    <div className="infoContainer2 col-span-2 md:col-span-5 md:order-4 xl:order-2 xl:col-span-4 xl:row-span-6 2xl:row-span-5">
                         <div className="flex justify-center w-full relative">
                             <p className="text-nowrap">Budgets</p>
                             <button
@@ -546,7 +547,7 @@ export default function Expenses() {
                             <Loader />
                         ) : budgetExpensesData.rows.length ? (
                             <>
-                                <div className=" max-md:hidden flex flex-1 w-full max-h-[40rem] xl:max-h-52 2xl:max-h-none overflow-hidden">
+                                <div className=" max-md:hidden flex flex-1 w-full max-h-[40rem] xl:max-h-none overflow-hidden">
                                     <Table
                                         dark
                                         detailsFunction={(budgetId: number) =>
@@ -590,11 +591,11 @@ export default function Expenses() {
                             </div>
                         )}
                     </div>
-                    <div className="infoContainer2 col-span-2 md:col-span-2 md:order-2 xl:col-span-3 xl:order-4 2xl:row-span-7">
+                    <div className="infoContainer2 col-span-2 md:col-span-2 md:order-2 xl:col-span-3 xl:order-4 xl:row-span-6 2xl:row-span-7">
                         <div className="flex justify-center relative w-full">
                             <p className="text-nowrap">Expense Categories</p>
                             <button
-                                className="absolute right-0 top-0 tableButton flex gap-x-2 p-0 items-center 2xl:opacity-70 hover:opacity-100"
+                                className="absolute right-0 top-0 tableButton flex gap-x-2 p-0 items-center xl:opacity-70 hover:opacity-100"
                                 onClick={showCreateExpenseCategoryModal}
                             >
                                 <HugeiconsIcon
@@ -604,7 +605,7 @@ export default function Expenses() {
                                 />
                             </button>
                         </div>
-                        <div className="flex flex-1 w-full max-h-96 md:max-h-52 xl:max-h-96 2xl:max-h-none overflow-hidden">
+                        <div className="flex flex-1 w-full max-h-96 md:max-h-52 xl:max-h-none overflow-hidden">
                             {expenseCategoryIsLoading ? (
                                 <Loader />
                             ) : expenseCategoryData && expenseCategoryData?.length === 0 ? (

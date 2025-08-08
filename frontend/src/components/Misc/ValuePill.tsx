@@ -4,7 +4,7 @@ function ValuePill({ title, value }: { title: string; value: number }) {
             <p className="max-xl:hidden self-start">{`${title}`}</p>
             <div className="border-s-4 border-custom-secondary self-start ps-2 py-1 xl:h-full xl:my-2 xl:flex xl:border-s-[6px]">
                 <p className="xl:hidden">{`${title}`}</p>
-                <h1 className="text-xl font-normal xl:my-auto xl:text-4xl">RD${value}</h1>
+                <h1 className="text-xl font-normal xl:my-auto xl:text-3xl">RD${value}</h1>
             </div>
         </div>
     );

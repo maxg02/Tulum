@@ -205,20 +205,20 @@ export default function Budget() {
     return (
         <>
             <SectionContent>
-                <div className="grid grid-cols-2 auto-rows-auto gap-3 overflow-x-hidden overflow-y-auto 2xl:max-h-[1000px] md:grid-cols-6 md:gap-6 2xl:flex-1 2xl:grid-rows-12">
-                    <div className="flex-1 md:col-span-2 2xl:row-span-2">
+                <div className="grid grid-cols-2 auto-rows-auto gap-3 overflow-x-hidden overflow-y-auto md:grid-cols-6 md:gap-6 xl:gap-5 xl:grid-rows-12 xl:flex-1 2xl:gap-8 2xl:max-h-[1000px]">
+                    <div className="flex-1 md:col-span-2 xl:row-span-3 2xl:row-span-2">
                         <ValuePill title={currentMonth} value={totalMonthIncome} />
                     </div>
-                    <div className="flex-1 md:col-span-2 2xl:row-span-2">
+                    <div className="flex-1 md:col-span-2 xl:row-span-3 2xl:row-span-2">
                         <ValuePill title={currentYear.toString()} value={totalYearIncome} />
                     </div>
-                    <div className="flex-1 col-span-2 2xl:row-span-2">
+                    <div className="flex-1 col-span-2 xl:row-span-3 2xl:row-span-2">
                         <ValuePill title="Total" value={totalIncome} />
                     </div>
 
                     <hr className="col-span-2 my-4 border-t-2 md:hidden"></hr>
 
-                    <div className="infoContainer1 flex-1 col-span-2 mb-6 md:col-span-6 md:mb-0 xl:col-span-3 2xl:row-span-10">
+                    <div className="infoContainer1 flex-1 col-span-2 mb-6 md:col-span-6 md:mb-0 xl:col-span-3 xl:row-span-9 2xl:row-span-10">
                         <div className="flex justify-center relative w-full">
                             <p className="text-nowrap">Income</p>
                             <button
@@ -244,7 +244,7 @@ export default function Budget() {
                             </div>
                         ) : (
                             <>
-                                <div className="flex items-start flex-1 w-full max-h-[40rem] max-md:hidden lg:max-h-[30rem] 2xl:max-h-none overflow-hidden">
+                                <div className="flex items-start flex-1 w-full max-h-[40rem] max-md:hidden lg:max-h-[30rem] xl:max-h-none overflow-hidden">
                                     {incomeIsLoading ? (
                                         <Loader />
                                     ) : (
@@ -263,9 +263,9 @@ export default function Budget() {
                         )}
                     </div>
 
-                    <div className="infoContainer2 flex-1 col-span-2 md:col-span-6 xl:col-span-3 2xl:row-span-10">
+                    <div className="infoContainer2 flex-1 col-span-2 md:col-span-6 xl:col-span-3 xl:row-span-9 2xl:row-span-10">
                         <p className="col-start-2 mx-auto">Income Summary {currentYear}</p>
-                        <div className="flex h-96 w-full xl:h-[30rem] 2xl:h-full">
+                        <div className="flex h-96 w-full xl:h-full">
                             {incomeIsLoading ? (
                                 <Loader />
                             ) : yearIncomes.length ? (
@@ -282,6 +282,7 @@ export default function Budget() {
                                         {
                                             valueFormatter: (value: number) =>
                                                 value > 1000 ? `${value / 1000}K` : `${value}`,
+                                            domainLimit: "strict",
                                         },
                                     ]}
                                     yAxis={[{ scaleType: "band", dataKey: "month", width: 35 }]}

@@ -198,7 +198,7 @@ export default function Dashboard() {
 
     return (
         <SectionContent>
-            <div className="grid grid-cols-1 gap-8 overflow-x-hidden overflow-y-auto auto-rows-auto md:grid-cols-5 xl:grid-cols-11 xl:grid-rows-11 xl:flex-1 xl:gap-5 2xl:gap-8 max-h-[1000px]">
+            <div className="grid grid-cols-1 gap-8 overflow-x-hidden overflow-y-auto auto-rows-auto md:grid-cols-5 xl:grid-cols-11 xl:grid-rows-11 xl:flex-1 xl:max-2xl:gap-5 xl:max-h-[1000px]">
                 <div className="flex flex-col gap-6 border-b-2 md:hidden">
                     <p className="self-center">{currentMonth} Balance</p>
                     <div className="flex gap-9 px-4 mb-8">
