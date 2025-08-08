@@ -115,12 +115,12 @@ export type goalContributionDto = {
 };
 export type createGoalContributionDto = {
     amount: number;
-    date: Date;
+    date: Date | string;
     savingGoalId: number;
 };
 export type updateGoalContributionDto = {
     id: number;
-    data: { amount: number; date: Date; savingGoalId: number };
+    data: { amount: number; date: Date | string; savingGoalId: number };
 };
 
 const baseQuery = fetchBaseQuery({

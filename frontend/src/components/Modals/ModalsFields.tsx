@@ -95,13 +95,13 @@ export function ListField({
     );
 }
 
-export function SelectField({
+export function SelectField<T extends number | null>({
     fieldStateHandler,
     label,
     values,
     defaultValue,
     disabled = false,
-}: selectModalField<number | null>) {
+}: selectModalField<T>) {
     return (
         <div className="flex flex-col gap-y-1">
             <label htmlFor="select">{label}</label>
@@ -109,21 +109,18 @@ export function SelectField({
                 id="select"
                 name={`select ${label}`}
                 className="formInput bg-custom-ly2 border-none cursor-pointer"
-                onChange={(e) => fieldStateHandler(parseInt(e.target.value))}
+                onChange={(e) => fieldStateHandler(parseInt(e.target.value) as T)}
                 disabled={disabled}
+                defaultValue={defaultValue ?? ""}
             >
                 {defaultValue ?? (
-                    <option selected disabled value="">
+                    <option disabled value="">
                         Select {label}
                     </option>
                 )}
                 {values &&
                     values.map((item, key) => (
-                        <option
-                            selected={item.id === defaultValue ? true : undefined}
-                            key={key}
-                            value={item.id ?? undefined}
-                        >
+                        <option key={key} value={item.id ?? undefined}>
                             {item.value}
                         </option>
                     ))}

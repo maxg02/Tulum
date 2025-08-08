@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import SectionContent from "../components/Layout/SectionContent";
 import CustomGauge from "../components/Graphs/CustomGauge";
 import Table, { dataObject, tableRow } from "../components/Misc/Table";
@@ -17,19 +17,12 @@ import {
     useUpdateGoalContributionMutation,
     useUpdateSavingGoalMutation,
 } from "../../api/apiSlice";
-import { periodicityValues } from "../Constants/Constants";
 import Loader from "../components/Misc/Loader";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { showModal as showCreateModal } from "../reducers/createModalReducers";
 import { showModal as showDetailsModal } from "../reducers/detailsModalReducers";
 import CreateModal from "../components/Modals/CreateModal";
-import {
-    AmountField,
-    DateField,
-    DetailsField,
-    ListField,
-    SelectField,
-} from "../components/Modals/ModalsFields";
+import { AmountField, DateField, DetailsField, SelectField } from "../components/Modals/ModalsFields";
 import DetailsModal from "../components/Modals/DetailsModal";
 import ValuePill from "../components/Misc/ValuePill";
 import ProgressBar from "../components/Graphs/ProgressBar";
@@ -48,7 +41,7 @@ export default function Savings() {
     const [amount, setAmount] = useState<number>(0);
     const [amountFC, setAmountFC] = useState<number | undefined>(undefined);
     const [details, setDetails] = useState<string>("");
-    const [date, setDate] = useState<Date>(new Date());
+    const [date, setDate] = useState<Date | string>(new Date());
     const [periodicity, setPeriodicity] = useState<number | undefined>(undefined);
     const [selectValue, setSelectValue] = useState<number>(0);
 
@@ -129,18 +122,19 @@ export default function Savings() {
             0
         );
 
-        const goalContributionsBySavings: object = Object.groupBy(
+        const goalContributionsBySavings = Object.groupBy(
             allGoalContributions,
             (gC: goalContributionDto) => gC.savingGoalId
         );
 
         goalsProgressData = savingGoalData
             .map<goalsProgress>((sg) => {
-                const progress = goalContributionsBySavings[sg.id.toString()]
-                    ? goalContributionsBySavings[sg.id.toString()].reduce(
-                          (acc: number, gC: goalContributionDto) => acc + gC.amount,
-                          0
-                      )
+                const progress = goalContributionsBySavings[
+                    sg.id as keyof typeof goalContributionsBySavings
+                ]
+                    ? goalContributionsBySavings[
+                          sg.id as keyof typeof goalContributionsBySavings
+                      ]!.reduce((acc: number, gC: goalContributionDto) => acc + gC.amount, 0)
                     : 0;
 
                 return {
@@ -219,7 +213,15 @@ export default function Savings() {
     };
 
     // Create Saving Goal function
-    const createSavingGoalHandler = () => {
+    const createSavingGoalHandler = async () => {
+        const errors: string[] = [];
+        if (amount <= 0 || !amount) errors.push("Amount must be greater than 0");
+        if (details.trim() === "") errors.push("Details cannot be empty");
+
+        if (errors.length > 0) {
+            throw new Error(errors.join(","));
+        }
+
         const savingGoalData: createSavingGoalDto = {
             goal: amount,
             details: details,
@@ -227,18 +229,35 @@ export default function Savings() {
             fixedContribution: amountFC,
         };
 
-        createSavingGoal(savingGoalData);
+        await createSavingGoal(savingGoalData)
+            .unwrap()
+            .catch(() => {
+                throw new Error(`Error creating goal`);
+            });
     };
 
     // Create Goal Contribution function
-    const createGoalContributionHandler = () => {
+    const createGoalContributionHandler = async () => {
+        const errors: string[] = [];
+        if (amount <= 0 || !amount) errors.push("Amount must be greater than 0");
+        if (selectValue === 0) errors.push("Goal must be selected");
+        if (date === null) errors.push("Date cannot be empty");
+
+        if (errors.length > 0) {
+            throw new Error(errors.join(","));
+        }
+
         const goalContributionData: createGoalContributionDto = {
             amount: amount,
             date: date,
             savingGoalId: selectValue,
         };
 
-        createGoalContribution(goalContributionData);
+        await createGoalContribution(goalContributionData)
+            .unwrap()
+            .catch(() => {
+                throw new Error(`Error creating goal contribution`);
+            });
     };
 
     // Delete Saving Goal Function
@@ -254,7 +273,15 @@ export default function Savings() {
     };
 
     // Update Saving Goal Function
-    const updateSavingGoalHandler = () => {
+    const updateSavingGoalHandler = async () => {
+        const errors: string[] = [];
+        if (amount <= 0 || !amount) errors.push("Amount must be greater than 0");
+        if (details.trim() === "") errors.push("Details cannot be empty");
+
+        if (errors.length > 0) {
+            throw new Error(errors.join(","));
+        }
+
         const savingGoalData: updateSavingGoalDto = {
             id: detailsModalState.id!,
             data: {
@@ -265,11 +292,24 @@ export default function Savings() {
             },
         };
 
-        updateSavingGoal(savingGoalData);
+        await updateSavingGoal(savingGoalData)
+            .unwrap()
+            .catch(() => {
+                throw new Error(`Error updating saving goal`);
+            });
     };
 
     // Update Goal Contribution Function
-    const updateGoalContributionHandler = () => {
+    const updateGoalContributionHandler = async () => {
+        const errors: string[] = [];
+        if (amount <= 0 || !amount) errors.push("Amount must be greater than 0");
+        if (selectValue === 0) errors.push("Goal must be selected");
+        if (date === null) errors.push("Date cannot be empty");
+
+        if (errors.length > 0) {
+            throw new Error(errors.join(","));
+        }
+
         const goalContributionData: updateGoalContributionDto = {
             id: detailsModalState.id!,
             data: {
@@ -279,7 +319,11 @@ export default function Savings() {
             },
         };
 
-        updateGoalContribution(goalContributionData);
+        await updateGoalContribution(goalContributionData)
+            .unwrap()
+            .catch(() => {
+                throw new Error(`Error updating goal contribution`);
+            });
     };
 
     const goalsProgress = goalsProgressData;
@@ -403,16 +447,12 @@ export default function Savings() {
                     </div>
                 </div>
             </SectionContent>
+            {/* // Create Saving Goal Modal */}
             <CreateModal show={createModalState.savingGoal} createFunction={createSavingGoalHandler}>
                 <DetailsField fieldStateHandler={setDetails} />
                 <AmountField fieldStateHandler={setAmount} />
-                <AmountField fieldStateHandler={setAmountFC} customLabel="Fixed Contribution" />
-                <ListField
-                    fieldStateHandler={setPeriodicity}
-                    label="Periodicity"
-                    values={periodicityValues}
-                />
             </CreateModal>
+            {/* // Saving Goal Details Modal */}
             <DetailsModal
                 updateFunction={updateSavingGoalHandler}
                 deleteFunction={deleteSavingGoalHandler}
@@ -420,18 +460,8 @@ export default function Savings() {
             >
                 <DetailsField defaultValue={details} fieldStateHandler={setDetails} />
                 <AmountField defaultValue={amount} fieldStateHandler={setAmount} />
-                <AmountField
-                    defaultValue={amountFC}
-                    customLabel="Fixed Contribution"
-                    fieldStateHandler={setAmountFC}
-                />
-                <ListField
-                    fieldStateHandler={setPeriodicity}
-                    label="Periodicity"
-                    values={periodicityValues}
-                    defaultValue={periodicity}
-                />
             </DetailsModal>
+            {/* // Create Goal Contribution Modal */}
             <CreateModal
                 show={createModalState.goalContribution}
                 createFunction={createGoalContributionHandler}
@@ -444,6 +474,7 @@ export default function Savings() {
                 />
                 <DateField fieldStateHandler={setDate} />
             </CreateModal>
+            {/* // Goal Contribution Details Modal */}
             <DetailsModal
                 updateFunction={updateGoalContributionHandler}
                 deleteFunction={deleteGoalContributionHandler}

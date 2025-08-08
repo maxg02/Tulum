@@ -44,7 +44,7 @@ namespace backend.Controllers
             return Created();
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         [Authorize]
         public async Task<IActionResult> UpdateSavingGoal([FromRoute] int id, [FromBody] SavingGoalRequestDto savingGoalDto)
         {
@@ -58,7 +58,7 @@ namespace backend.Controllers
             return Ok();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         [Authorize]
         public async Task<IActionResult> DeleteSavingGoal([FromRoute] int id)
         {
