@@ -5,7 +5,6 @@ export type userInfo = {
     userInfo: {
         fullName: string;
         email: string;
-        profileImage: string;
     } | null;
     tokens: { accessToken: string; refreshToken: string } | null;
 };
@@ -26,20 +25,29 @@ const claims = {
     userId: "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
 };
 
+type tokenInfo = {
+    aud: string;
+    iss: string;
+    exp: number;
+    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name": string;
+    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier": number;
+    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress": string;
+    iat: number;
+    nbf: number;
+};
+
 export const userSlice = createSlice({
     name: "user",
     initialState,
     reducers: {
         setUserInfo: (state, action: PayloadAction<tokensDto>) => {
             const tokens = action.payload;
-            const tokenInfo = decodeToken(tokens.accessToken);
+            const tokenInfo: tokenInfo = decodeToken(tokens.accessToken) as tokenInfo;
 
             const userInfo: userInfo = {
                 userInfo: {
-                    fullName: tokenInfo[claims.name],
-                    email: tokenInfo[claims.email],
-                    profileImage:
-                        "https://media.gq.com.mx/photos/5f6ce732bc946e88f6c96320/16:9/w_2560%2Cc_limit/goky%2520ultra%2520instinto.jpg",
+                    fullName: tokenInfo[claims.name as keyof tokenInfo] as string,
+                    email: tokenInfo[claims.email as keyof tokenInfo] as string,
                 },
                 tokens: {
                     accessToken: tokens.accessToken,
