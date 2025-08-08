@@ -189,7 +189,7 @@ export default function Dashboard() {
 
     const goalsProgressGauges = goalsProgressData.slice(0, 3).map((gp, key) => (
         <div className="flex flex-col items-center basis-[28%] md:basis-1/5 2xl:basis-1/4" key={key}>
-            <div className="w-full aspect-square md:mb-2">
+            <div className="w-full mb-2 h-auto aspect-square overflow-hidden">
                 <CustomGauge value={gp.value} label={`${Math.round(gp.value)}%`} />
             </div>
             <p>{gp.label}</p>
