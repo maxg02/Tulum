@@ -69,5 +69,12 @@ namespace backend.Repositories.Repos
 
             return savingGoal;
         }
+
+        public async Task<bool> SavingGoalExists(int id)
+        {
+            var savingGoal = await GetByIdAsync(id);
+
+            return savingGoal != null;
+        }
     }
 }

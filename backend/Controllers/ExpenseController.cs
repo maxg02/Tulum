@@ -55,6 +55,11 @@ namespace backend.Controllers
         [HttpPut("{id:int}")]
         public async Task<IActionResult> UpdateExpense([FromRoute] int id, [FromBody] ExpenseRequestDto expenseDto)
         {
+            if (expenseDto.ExpenseCategoryId != null && !await _expenseCategoryRepo.CategoryExists(expenseDto.ExpenseCategoryId!.Value))
+            {
+                return BadRequest("Category does not exist");
+            }
+
             var expense = await _expenseRepo.UpdateAsync(id, expenseDto);
 
             if (expense == null)
