@@ -187,9 +187,9 @@ export default function Dashboard() {
             .reduce((acc: number, next: expenseDto) => acc + next.amount, 0),
     }));
 
-    const goalsProgressGauges = goalsProgressData.slice(0, 3).map((gp) => (
-        <div className="flex flex-col items-center basis-1/3 md:basis-1/4">
-            <div className="w-full aspect-square mb-1">
+    const goalsProgressGauges = goalsProgressData.slice(0, 3).map((gp, key) => (
+        <div className="flex flex-col items-center basis-[28%] md:basis-1/5 2xl:basis-1/4" key={key}>
+            <div className="w-full aspect-square md:mb-2">
                 <CustomGauge value={gp.value} label={`${Math.round(gp.value)}%`} />
             </div>
             <p>{gp.label}</p>
@@ -198,7 +198,7 @@ export default function Dashboard() {
 
     return (
         <SectionContent>
-            <div className="grid grid-cols-1 md:grid-cols-5 xl:grid-cols-9 2xl:grid-cols-11 gap-8 overflow-x-hidden overflow-y-auto auto-rows-auto 2xl:grid-rows-11 2xl:flex-1 max-h-[1200px]">
+            <div className="grid grid-cols-1 gap-8 overflow-x-hidden overflow-y-auto auto-rows-auto md:grid-cols-5 xl:grid-cols-11 xl:grid-rows-11 xl:flex-1 xl:gap-5 2xl:gap-8 max-h-[1000px]">
                 <div className="flex flex-col gap-6 border-b-2 md:hidden">
                     <p className="self-center">{currentMonth} Balance</p>
                     <div className="flex gap-9 px-4 mb-8">
@@ -213,27 +213,27 @@ export default function Dashboard() {
                     </div>
                 </div>
 
-                <div className="infoContainer1 hidden col-span-2 md:flex xl:col-span-5 2xl:row-span-5">
-                    <div className="grid grid-cols-3 w-full">
-                        <p className="col-start-2 mx-auto">{currentMonth} Income</p>
-                        <div className="ml-auto">
+                <div className="infoContainer1 hidden col-span-2 md:flex xl:col-span-4 xl:row-span-4 2xl:row-span-5 2xl:col-span-5">
+                    <div className="flex justify-center relative w-full">
+                        <p className="text-nowrap">{currentMonth} Income</p>
+                        <div className="absolute right-0 top-0 tableButton flex gap-x-2 p-0 items-center xl:opacity-70 hover:opacity-100">
                             <MoreDots section="/income" />
                         </div>
                     </div>
-                    <h1 className="font-light text-5xl my-auto">RD${totalMonthIncome}</h1>
+                    <h1 className="font-light text-4xl 2xl:text-5xl my-auto">RD${totalMonthIncome}</h1>
                     <div className="2xl:flex flex-col self-stretch justify-between border-t-2 py-3 hidden">
                         {monthIncomeRows}
                     </div>
                 </div>
 
-                <div className="infoContainer1 flex-1 hidden col-span-3 md:flex xl:col-span-4 2xl:row-span-6 2xl:col-span-6">
-                    <div className="grid grid-cols-3 w-full">
-                        <p className="col-start-2 mx-auto">{currentMonth} Expenses</p>
-                        <div className="ml-auto">
+                <div className="infoContainer1 flex-1 hidden col-span-3 md:flex xl:col-span-4 xl:row-span-7 xl:order-3 2xl:row-span-6 2xl:col-span-5">
+                    <div className="flex justify-center relative w-full">
+                        <p className="text-nowrap">{currentMonth} Expenses</p>
+                        <div className="absolute right-0 top-0 tableButton flex gap-x-2 p-0 items-center xl:opacity-70 hover:opacity-100">
                             <MoreDots section="/expenses" />
                         </div>
                     </div>
-                    <div className="w-full md:h-52 2xl:flex-1 overflow-y-hidden">
+                    <div className="w-full md:h-52 xl:flex-1 overflow-y-hidden">
                         {expenseCategoryIsLoading ? (
                             <Loader />
                         ) : (
@@ -243,14 +243,14 @@ export default function Dashboard() {
                         )}
                     </div>
 
-                    <div className="2xl:flex flex-col self-stretch justify-between border-t-2 py-3 hidden">
+                    <div className="xl:flex flex-col self-stretch justify-between border-t-2 py-3 hidden">
                         {monthExpenseRows}
                     </div>
                 </div>
 
-                <div className="infoContainer2 md:col-span-5 xl:col-span-9 2xl:row-span-6 2xl:col-span-5">
+                <div className="infoContainer2 md:col-span-5 xl:col-span-7 xl:row-span-6 xl:order-2 2xl:row-span-6 2xl:col-span-6">
                     <p>{currentDate.getFullYear()} Summary</p>
-                    <div className="w-full h-52 2xl:flex-1">
+                    <div className="w-full h-52 xl:flex-1">
                         {incomeIsLoading || expenseCategoryIsLoading ? (
                             <Loader />
                         ) : dataLineChart.some((x) => x.exp > 0 || x.inc > 0) ? (
@@ -342,10 +342,10 @@ export default function Dashboard() {
                     </div>
                 </div>
 
-                <div className="infoContainer1 md:col-span-5 xl:col-span-9 2xl:row-span-5 2xl:col-span-6">
-                    <div className="grid grid-cols-3 w-full">
-                        <p className="col-start-2 mx-auto">Saving Goals</p>
-                        <div className="ml-auto">
+                <div className="infoContainer1 md:col-span-5 xl:col-span-7 xl:order-4 xl:row-span-5 2xl:row-span-5 2xl:col-span-6">
+                    <div className="flex justify-center relative w-full">
+                        <p className="text-nowrap">Saving Goals</p>
+                        <div className="absolute right-0 top-0 tableButton flex gap-x-2 p-0 items-center xl:opacity-70 hover:opacity-100">
                             <MoreDots section="/savings" />
                         </div>
                     </div>

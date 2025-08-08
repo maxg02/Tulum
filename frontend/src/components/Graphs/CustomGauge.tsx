@@ -81,6 +81,7 @@ function CustomGauge({ value, label }: { value: number; label: string }) {
                     valueArc: "fill-[#69AA95]",
                     valueText: "hidden",
                 }}
+                margin={{ top: 0, bottom: 0, left: 0, right: 0 }}
             >
                 <GaugeGradient />
                 <GaugeInnerBorder />

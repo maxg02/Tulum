@@ -76,12 +76,12 @@ export default function Sidebar() {
 
     return (
         <div
-            className={`fixed h-full xl:sticky xl:top-0 xl:left-0 overflow-hidden xl:visible w-dvw xl:w-fit xl:h-fit bg-black bg-opacity-65 xl:bg-opacity-50 z-50 ${
+            className={`fixed h-full overflow-hidden w-dvw z-50 bg-black bg-opacity-65 xl:visible xl:sticky xl:top-0 xl:left-0 xl:w-fit xl:h-fit xl:bg-opacity-50 ${
                 sidebarOpen ? "visible" : "invisible"
             }`}
         >
             <div
-                className={`bg-custom-ly1 py-5 xl:w-64 h-dvh relative transition-all duration-300 flex flex-col ${
+                className={`bg-custom-ly1 py-5 h-dvh relative transition-all duration-300 flex flex-col xl:w-52 2xl:w-60 ${
                     sidebarOpen ? "w-5/6 md:w-2/5 lg:w-1/3" : "w-0"
                 }`}
             >
@@ -118,7 +118,7 @@ export default function Sidebar() {
                     <div className="flex items-center">
                         <HugeiconsIcon className="max-xl:hidden" size={30} icon={UserSquareIcon} />
                         <HugeiconsIcon className="xl:hidden" size={40} icon={UserSquareIcon} />
-                        <span className="mx-2 text-2xl text-white xl:text-xl text-nowrap overflow-hidden text-ellipsis">
+                        <span className="mx-2 text-2xl text-white xl:text-base text-nowrap overflow-hidden text-ellipsis">
                             {userInfo!.fullName}
                         </span>
                         <button
