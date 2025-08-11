@@ -1,24 +1,31 @@
 import { useState } from "react";
-import { useRegisterUserMutation } from "../api/apiSlice";
+import { useRegisterUserMutation, validationError } from "../api/apiSlice";
 import { useNavigate } from "react-router-dom";
 import loginImage from "../assets/loginImage.jpg";
 
 export default function Register() {
     const [email, setEmail] = useState<string>("");
-    const [passwordHash, setPasswordHash] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
     const [name, setName] = useState<string>("");
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<string[] | null>(null);
 
     const [registerUser] = useRegisterUserMutation();
     const navigate = useNavigate();
 
     const handleRegister = async () => {
-        try {
-            await registerUser({ email, passwordHash, name });
-            navigate("/login");
-        } catch (error) {
-            setError(error.data.error);
-        }
+        await registerUser({ email, password, name })
+            .unwrap()
+            .then(() => {
+                navigate("/login");
+            })
+            .catch((error) => {
+                const validationError = error.data as validationError;
+                if (validationError.errors) {
+                    setError(Object.values(validationError.errors).flat());
+                } else {
+                    setError(["An unexpected error occurred. Please try again."]);
+                }
+            });
     };
 
     return (
@@ -71,7 +78,7 @@ export default function Register() {
                                     id="password"
                                     type="password"
                                     className="formInput"
-                                    onChange={(e) => setPasswordHash(e.target.value)}
+                                    onChange={(e) => setPassword(e.target.value)}
                                     required
                                 />
                             </div>

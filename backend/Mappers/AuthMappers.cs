@@ -15,7 +15,7 @@ namespace backend.Mappers
 
             };
 
-            user.PasswordHash = new PasswordHasher<User>().HashPassword(user, UserDto.PasswordHash);
+            user.PasswordHash = new PasswordHasher<User>().HashPassword(user, UserDto.Password);
 
             return user;
         }

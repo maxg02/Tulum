@@ -16,11 +16,11 @@ namespace backend.Controllers
             _userRepo = userRepo;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         [Authorize]
         public async Task<IActionResult> GetUserById([FromRoute] int id)
         {
-            var user = await _userRepo.GetByIdAsync(id);
+            var user = await _userRepo.GetByIdAsync(id);       
 
             if (user == null)
             {

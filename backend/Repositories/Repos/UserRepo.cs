@@ -20,5 +20,11 @@ namespace backend.Repositories.Repos
 
             return user;
         }
+
+        public async Task<bool> UserExists(string email)
+        {
+            User? user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            return user != null;
+        }
     }
 }

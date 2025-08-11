@@ -8,6 +8,14 @@ export type tokenDto = {
     refreshToken: string;
 };
 
+export type validationError = {
+    type: string;
+    title: string;
+    status: number;
+    errors: Record<string, string[]>;
+    traceId: string;
+};
+
 export type incomeDto = { id: number; amount: number; details: string; date: Date };
 export type createIncomeDto = { amount: number; details: string; date: Date | string };
 export type updateIncomeDto = {
@@ -176,7 +184,7 @@ export const apiSlice = createApi({
                 body: userData,
             }),
         }),
-        registerUser: builder.mutation<tokenDto, { email: string; passwordHash: string; name: string }>({
+        registerUser: builder.mutation<tokenDto, { email: string; password: string; name: string }>({
             query: (userData) => ({
                 url: "auth/register",
                 method: "Post",

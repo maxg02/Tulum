@@ -8,6 +8,8 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Security.Claims;
+using backend.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Controllers
 {
@@ -16,15 +18,26 @@ namespace backend.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthRepo _authRepo;
+        private readonly IUserRepo _userRepo;
 
-        public AuthController (IAuthRepo authRepo)
+        public AuthController(IAuthRepo authRepo, IUserRepo userRepo)
         {
             _authRepo = authRepo;
+            _userRepo = userRepo;
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] UserRegisterRequestDto userDto)
         {
+            if (await _userRepo.UserExists(userDto.Email))
+            {
+                ModelState.AddModelError("Email", "There is already an account associated with this email");
+            }
+
+            if (!ModelState.IsValid) {
+                return ValidationProblem(ModelState);
+            }
+
             User user = await _authRepo.RegisterAsync(userDto.ToUserFromRegisterDto());
             return Ok(user.ToUserDto());
         }
