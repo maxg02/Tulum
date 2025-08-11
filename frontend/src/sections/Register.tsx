@@ -2,17 +2,24 @@ import { useState } from "react";
 import { useRegisterUserMutation, validationError } from "../api/apiSlice";
 import { useNavigate } from "react-router-dom";
 import loginImage from "../assets/loginImage.jpg";
+import ErrorMessage from "../components/Misc/ErrorMessage";
 
 export default function Register() {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
+    const [confirmPassword, setConfirmPassword] = useState<string>("");
     const [name, setName] = useState<string>("");
-    const [error, setError] = useState<string[] | null>(null);
+    const [error, setError] = useState<string[]>([]);
 
     const [registerUser] = useRegisterUserMutation();
     const navigate = useNavigate();
 
     const handleRegister = async () => {
+        if (password !== confirmPassword) {
+            setError(["Passwords do not match."]);
+            return;
+        }
+
         await registerUser({ email, password, name })
             .unwrap()
             .then(() => {
@@ -35,7 +42,7 @@ export default function Register() {
                 background: "linear-gradient(137deg,rgba(45, 57, 52, 1) 27%, rgba(51, 79, 71, 1) 100%)",
             }}
         >
-            <div className="m-auto infoContainer1 w-full flex-row max-xl:max-w-96 max-xl:max-h-[30rem] xl:h-2/3 xl:w-2/3 xl:p-6 xl:gap-x-6 2xl:max-w-5xl 2xl:max-h-[40rem]">
+            <div className="m-auto infoContainer1 w-full flex-row max-xl:max-w-96 xl:w-2/3 xl:p-6 xl:gap-x-6 2xl:max-w-5xl 2xl:max-h-[40rem]">
                 <div className="flex flex-col h-full w-full xl:w-1/2">
                     <div className="flex-1 w-full flex flex-col items-center py-11">
                         <h1 className="text-3xl mb-8">Sign Up</h1>
@@ -82,7 +89,19 @@ export default function Register() {
                                     required
                                 />
                             </div>
-                            {error && <p className="text-red-400">{error}</p>}
+                            <div className="flex flex-col gap-y-1">
+                                <label htmlFor="confirmPassword">
+                                    <p>Confirm Password</p>
+                                </label>
+                                <input
+                                    name="confirmPassword"
+                                    id="confirmPassword"
+                                    type="confirmPassword"
+                                    className="formInput"
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    required
+                                />
+                            </div>
                             <button
                                 className="formBtn formBtnPrimary w-full mt-6"
                                 onClick={() => handleRegister()}
@@ -98,11 +117,13 @@ export default function Register() {
                         </a>
                     </p>
                 </div>
-                <div className="max-xl:hidden w-1/2 h-full flex items-center justify-center overflow-hidden">
-                    <img className="object-cover w-full h-full rounded-xl" src={loginImage} />
-                </div>
+                <div
+                    className="max-xl:hidden w-1/2 min-h-0 flex items-center justify-center overflow-hidden self-stretch rounded-xl bg-cover bg-center"
+                    style={{ backgroundImage: `url(${loginImage})` }}
+                ></div>
             </div>
             <span className="fixed bottom-0 mb-3">Design and Built By Max Garcia</span>
+            <ErrorMessage error={error} />
         </div>
     );
 }
