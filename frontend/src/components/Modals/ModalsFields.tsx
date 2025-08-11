@@ -111,10 +111,12 @@ export function SelectField<T extends number | null>({
                 className="formInput bg-custom-ly2 border-none cursor-pointer"
                 onChange={(e) => fieldStateHandler(parseInt(e.target.value) as T)}
                 disabled={disabled}
-                defaultValue={defaultValue ?? ""}
+                defaultValue={
+                    defaultValue === undefined ? 0 : defaultValue === null ? undefined : defaultValue
+                }
             >
-                {defaultValue ?? (
-                    <option disabled value="">
+                {defaultValue === undefined && (
+                    <option disabled value={0}>
                         Select {label}
                     </option>
                 )}
