@@ -1,8 +1,11 @@
-﻿using backend.Dtos.GoalContribution;
+﻿using backend.Dtos.Expense;
+using backend.Dtos.GoalContribution;
 using backend.Mappers;
 using backend.Repositories.Interfaces;
+using backend.Repositories.Repos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace backend.Controllers
 {
@@ -11,13 +14,28 @@ namespace backend.Controllers
     public class GoalContributionController : ControllerBase
     {
         private readonly IGoalContributionRepo _goalContributionRepo;
+        private readonly ISavingGoalRepo _savingGoalRepo;
 
-        public GoalContributionController(IGoalContributionRepo goalContributionRepo) => _goalContributionRepo = goalContributionRepo;
+        public GoalContributionController(IGoalContributionRepo goalContributionRepo, ISavingGoalRepo savingGoalRepo)
+        {
+            _goalContributionRepo = goalContributionRepo;
+            _savingGoalRepo = savingGoalRepo;
+        }
 
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> CreateGoalContribution([FromBody] GoalContributionRequestDto goalContributionDto)
         {
+            if (!await _savingGoalRepo.SavingGoalExists(goalContributionDto.SavingGoalId))
+            {
+                ModelState.AddModelError("SavingGoalId","Saving goal does not exist");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return ValidationProblem(ModelState);
+            }
+
             var goalContribution = await _goalContributionRepo.CreateAsync(goalContributionDto.ToGoalContributionFromCreateDto());
 
             return Created();
@@ -27,6 +45,16 @@ namespace backend.Controllers
         [Authorize]
         public async Task<IActionResult> UpdateGoalContribution([FromRoute] int id, [FromBody] GoalContributionRequestDto goalContributionDto)
         {
+            if (!await _savingGoalRepo.SavingGoalExists(goalContributionDto.SavingGoalId))
+            {
+                ModelState.AddModelError("SavingGoalId", "Saving goal does not exist");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return ValidationProblem(ModelState);
+            }
+
             var goalContribution = await _goalContributionRepo.UpdateAsync(id, goalContributionDto);
 
             if (goalContribution == null)
