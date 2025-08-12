@@ -42,7 +42,12 @@ namespace backend.Controllers
         {            
             if (expenseDto.ExpenseCategoryId != null && !await _expenseCategoryRepo.CategoryExists(expenseDto.ExpenseCategoryId!.Value))
             {
-                return BadRequest("Category does not exist");
+                ModelState.AddModelError("ExpenseCategoryId", "Category does not exist");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return ValidationProblem(ModelState);
             }
 
             int userId = _claimsAccess.GetUserIdFromClaims(_httpContext.HttpContext!);
@@ -57,7 +62,12 @@ namespace backend.Controllers
         {
             if (expenseDto.ExpenseCategoryId != null && !await _expenseCategoryRepo.CategoryExists(expenseDto.ExpenseCategoryId!.Value))
             {
-                return BadRequest("Category does not exist");
+                ModelState.AddModelError("ExpenseCategoryId", "Category does not exist");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return ValidationProblem(ModelState);
             }
 
             var expense = await _expenseRepo.UpdateAsync(id, expenseDto);
