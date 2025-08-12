@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from "../../hooks";
 import { hideModal } from "../../reducers/createModalReducers";
 import { useState } from "react";
 import ModalContainer from "./ModalContainer";
+import ErrorMessage from "../Misc/ErrorMessage";
 
 type createModal = {
     show: boolean;
@@ -13,10 +14,10 @@ type createModal = {
 function CreateModal({ children, show, createFunction }: createModal) {
     const dispatch = useAppDispatch();
     const createModalState = useAppSelector((state) => state.createModal.show);
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<string[]>([]);
 
     const handleClosing = () => {
-        setError(null);
+        setError([]);
         dispatch(hideModal());
     };
 
@@ -34,22 +35,13 @@ function CreateModal({ children, show, createFunction }: createModal) {
         createFunction()
             .then(() => handleClosing())
             .catch((error) => {
-                setError(error.message);
+                setError(error as string[]);
             });
     };
 
     return (
         <ModalContainer closingHandler={handleClosing} title={title}>
             {children}
-            {error && (
-                <div role="alert">
-                    {error.split(",").map((e, key) => (
-                        <p key={key} className="text-red-400 mb-0">
-                            {e}
-                        </p>
-                    ))}
-                </div>
-            )}
             <hr className="customDivider"></hr>
             <div className="self-end flex gap-x-2">
                 <button type="reset" className="formBtn formBtnSecondary" onClick={handleClosing}>
@@ -59,6 +51,7 @@ function CreateModal({ children, show, createFunction }: createModal) {
                     <p>Create</p>
                 </button>
             </div>
+            <ErrorMessage error={error} />
         </ModalContainer>
     );
 }

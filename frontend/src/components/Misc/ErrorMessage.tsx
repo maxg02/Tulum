@@ -1,5 +1,6 @@
 import { AlertCircleIcon, Cancel01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import React from "react";
 
 function Error({ error }: { error: string }) {
     return (
@@ -21,7 +22,15 @@ function Error({ error }: { error: string }) {
 function ErrorMessage({ error }: { error: string[] }) {
     const Errors = () =>
         error.map((err, index) => (
-            <div key={index}>
+            <div
+                key={index}
+                style={{
+                    transform: `translateY(-30px)`,
+                    opacity: 0,
+                    animationDelay: `${index * 0.1}s`,
+                }}
+                className="slideIn"
+            >
                 <Error error={err} />
             </div>
         ));
@@ -33,4 +42,4 @@ function ErrorMessage({ error }: { error: string[] }) {
     );
 }
 
-export default ErrorMessage;
+export default React.memo(ErrorMessage);

@@ -267,7 +267,7 @@ export default function Expenses() {
         if (selectValue === 0) errors.push("Category must be selected");
 
         if (errors.length > 0) {
-            throw new Error(errors.join(","));
+            throw errors;
         }
 
         const expenseData: createExpenseDto = {
@@ -280,7 +280,7 @@ export default function Expenses() {
         await createExpense(expenseData)
             .unwrap()
             .catch(() => {
-                throw new Error(`Error creating expense`);
+                throw [`Error creating expense`];
             });
     };
 
@@ -292,7 +292,7 @@ export default function Expenses() {
         if (selectValue === 0) errors.push("Category must be selected");
 
         if (errors.length > 0) {
-            throw new Error(errors.join(","));
+            throw errors;
         }
 
         const budgetPlanData: createBudgetPlanDto = {
@@ -304,7 +304,7 @@ export default function Expenses() {
         await createBudgetPlan(budgetPlanData)
             .unwrap()
             .catch(() => {
-                throw new Error(`Error creating budget`);
+                throw [`Error creating budget`];
             });
     };
 
@@ -314,7 +314,7 @@ export default function Expenses() {
         if (details.trim() === "") errors.push("Details cannot be empty");
 
         if (errors.length > 0) {
-            throw new Error(errors.join(","));
+            throw errors;
         }
 
         const expenseCategoryData: createExpenseCategoryDto = {
@@ -324,7 +324,7 @@ export default function Expenses() {
         await createExpenseCategory(expenseCategoryData)
             .unwrap()
             .catch(() => {
-                throw new Error(`Error creating category`);
+                throw [`Error creating category`];
             });
     };
 
@@ -356,7 +356,7 @@ export default function Expenses() {
         if (selectValue === 0) errors.push("Category must be selected");
 
         if (errors.length > 0) {
-            throw new Error(errors.join(","));
+            throw errors;
         }
 
         const expenseData: updateExpenseDto = {
@@ -367,7 +367,7 @@ export default function Expenses() {
         await updateExpense(expenseData)
             .unwrap()
             .catch(() => {
-                throw new Error(`Error updating expense`);
+                throw [`Error updating expense`];
             });
     };
 
@@ -378,7 +378,7 @@ export default function Expenses() {
         if (periodicity === null) errors.push("Periodicity must be selected");
 
         if (errors.length > 0) {
-            throw new Error(errors.join(","));
+            throw errors;
         }
 
         const budgetPlanData: updateBudgetPlanDto = {
@@ -389,7 +389,7 @@ export default function Expenses() {
         await updateBudgetPlan(budgetPlanData)
             .unwrap()
             .catch(() => {
-                throw new Error(`Error updating budget`);
+                throw [`Error updating budget`];
             });
     };
 
@@ -399,7 +399,7 @@ export default function Expenses() {
         if (details.trim() === "") errors.push("Details cannot be empty");
 
         if (errors.length > 0) {
-            throw new Error(errors.join(","));
+            throw errors;
         }
 
         const expenseCategoryData: updateExpenseCategoryDto = {
@@ -410,7 +410,7 @@ export default function Expenses() {
         await updateExpenseCategory(expenseCategoryData)
             .unwrap()
             .catch(() => {
-                throw new Error(`Error updating category`);
+                throw [`Error updating category`];
             });
     };
 

@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from "../../hooks";
 import { hideModal } from "../../reducers/detailsModalReducers";
 import { modalTitles } from "../../Constants/Constants";
 import { useState } from "react";
+import ErrorMessage from "../Misc/ErrorMessage";
 
 type detailsModal = {
     deleteFunction: () => void;
@@ -14,7 +15,7 @@ type detailsModal = {
 
 function DetailsModal({ children, show, deleteFunction, updateFunction }: detailsModal) {
     const dispatch = useAppDispatch();
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<string[]>([]);
     const detailsModalState = useAppSelector((state) => state.detailsModal.show);
 
     if (!show) {
@@ -22,7 +23,7 @@ function DetailsModal({ children, show, deleteFunction, updateFunction }: detail
     }
 
     const handleClosing = () => {
-        setError(null);
+        setError([]);
         dispatch(hideModal());
     };
 
@@ -35,7 +36,7 @@ function DetailsModal({ children, show, deleteFunction, updateFunction }: detail
         updateFunction()
             .then(() => handleClosing())
             .catch((error) => {
-                setError(error.message);
+                setError(error);
             });
     };
 
@@ -48,15 +49,6 @@ function DetailsModal({ children, show, deleteFunction, updateFunction }: detail
     return (
         <ModalContainer closingHandler={handleClosing} title={title}>
             {children}
-            {error && (
-                <div role="alert">
-                    {error.split(",").map((e, key) => (
-                        <p key={key} className="text-red-400 mb-0">
-                            {e}
-                        </p>
-                    ))}
-                </div>
-            )}
             <hr className="customDivider"></hr>
             <div className="self-end flex gap-x-2">
                 <button type="reset" className="formBtn formBtnSecondary" onClick={handleClosing}>
@@ -69,6 +61,7 @@ function DetailsModal({ children, show, deleteFunction, updateFunction }: detail
                     <p>Save</p>
                 </button>
             </div>
+            <ErrorMessage error={error} />
         </ModalContainer>
     );
 }

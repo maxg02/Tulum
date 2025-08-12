@@ -219,7 +219,7 @@ export default function Savings() {
         if (details.trim() === "") errors.push("Details cannot be empty");
 
         if (errors.length > 0) {
-            throw new Error(errors.join(","));
+            throw errors;
         }
 
         const savingGoalData: createSavingGoalDto = {
@@ -232,7 +232,7 @@ export default function Savings() {
         await createSavingGoal(savingGoalData)
             .unwrap()
             .catch(() => {
-                throw new Error(`Error creating goal`);
+                throw [`Error creating goal`];
             });
     };
 
@@ -244,7 +244,7 @@ export default function Savings() {
         if (date === null) errors.push("Date cannot be empty");
 
         if (errors.length > 0) {
-            throw new Error(errors.join(","));
+            throw errors;
         }
 
         const goalContributionData: createGoalContributionDto = {
@@ -256,7 +256,7 @@ export default function Savings() {
         await createGoalContribution(goalContributionData)
             .unwrap()
             .catch(() => {
-                throw new Error(`Error creating goal contribution`);
+                throw [`Error creating goal contribution`];
             });
     };
 
@@ -279,7 +279,7 @@ export default function Savings() {
         if (details.trim() === "") errors.push("Details cannot be empty");
 
         if (errors.length > 0) {
-            throw new Error(errors.join(","));
+            throw errors;
         }
 
         const savingGoalData: updateSavingGoalDto = {
@@ -295,7 +295,7 @@ export default function Savings() {
         await updateSavingGoal(savingGoalData)
             .unwrap()
             .catch(() => {
-                throw new Error(`Error updating saving goal`);
+                throw [`Error updating saving goal`];
             });
     };
 
@@ -307,7 +307,7 @@ export default function Savings() {
         if (date === null) errors.push("Date cannot be empty");
 
         if (errors.length > 0) {
-            throw new Error(errors.join(","));
+            throw errors;
         }
 
         const goalContributionData: updateGoalContributionDto = {
@@ -322,7 +322,7 @@ export default function Savings() {
         await updateGoalContribution(goalContributionData)
             .unwrap()
             .catch(() => {
-                throw new Error(`Error updating goal contribution`);
+                throw [`Error updating goal contribution`];
             });
     };
 

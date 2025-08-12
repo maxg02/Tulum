@@ -88,12 +88,11 @@ export default function Budget() {
         const errors: string[] = [];
 
         if (amount <= 0 || !amount) errors.push("Amount must be greater than 0");
-        console.log(amount, details, date);
         if (details.trim() === "") errors.push("Details cannot be empty");
         if (date === null) errors.push("Date cannot be empty");
 
         if (errors.length > 0) {
-            throw new Error(errors.join(","));
+            throw errors;
         }
 
         const incomeData: createIncomeDto = {
@@ -105,7 +104,7 @@ export default function Budget() {
         await createIncome(incomeData)
             .unwrap()
             .catch(() => {
-                throw new Error(`Error creating income`);
+                throw [`Error creating income`];
             });
     };
 
@@ -123,7 +122,7 @@ export default function Budget() {
         if (date === null) errors.push("Date cannot be empty");
 
         if (errors.length > 0) {
-            throw new Error(errors.join(","));
+            throw errors;
         }
 
         const incomeData: updateIncomeDto = {
@@ -134,7 +133,7 @@ export default function Budget() {
         await updateIncome(incomeData)
             .unwrap()
             .catch(() => {
-                throw new Error(`Error updating income`);
+                throw [`Error updating income`];
             });
     };
 
