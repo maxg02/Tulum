@@ -31,7 +31,7 @@ namespace backend.Controllers
         {
             if (await _userRepo.UserExists(userDto.Email))
             {
-                ModelState.AddModelError("Email", "There is already an account associated with this email");
+                
             }
 
             if (!ModelState.IsValid) {
@@ -49,13 +49,23 @@ namespace backend.Controllers
 
             if (user == null)
             {
-                return NotFound(new { error = "User Not Found" });
+                ModelState.AddModelError("User", "Incorrect email or password");
             }
 
-            if(new PasswordHasher<User>().VerifyHashedPassword(user, user.PasswordHash, userDto.Password) == PasswordVerificationResult.Failed)
+            if (!ModelState.IsValid)
             {
-                return BadRequest(new {error = "Invalid Password"});
-            }         
+                return ValidationProblem(ModelState);
+            }
+
+            if (new PasswordHasher<User>().VerifyHashedPassword(user!, user!.PasswordHash, userDto.Password) == PasswordVerificationResult.Failed)
+            {
+                ModelState.AddModelError("User", "Incorrect email or password");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return ValidationProblem(ModelState);
+            }
 
             return Ok(new TokenDto()
             {

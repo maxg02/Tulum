@@ -1,16 +1,17 @@
-import React, { useState } from "react";
-import { useGetUserMutation } from "../api/apiSlice";
+import { useState } from "react";
+import { useGetUserMutation, validationError } from "../api/apiSlice";
 import { setUserInfo } from "../reducers/userReducers";
 
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../hooks";
 
 import loginImage from "../assets/loginImage.jpg";
+import ErrorMessage from "../components/Misc/ErrorMessage";
 
 export default function Login() {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<string[]>([]);
 
     const dispatch = useAppDispatch();
 
@@ -18,13 +19,20 @@ export default function Login() {
     const navigate = useNavigate();
 
     const handleLogin = async () => {
-        try {
-            const tokens = await logUser({ email, password }).unwrap();
-            dispatch(setUserInfo(tokens));
-            navigate("/");
-        } catch (error) {
-            setError(error.data.error);
-        }
+        await logUser({ email, password })
+            .unwrap()
+            .then((tokens) => {
+                dispatch(setUserInfo(tokens));
+                navigate("/");
+            })
+            .catch((error) => {
+                const validationError = error.data as validationError;
+                if (validationError.errors) {
+                    setError(Object.values(validationError.errors).flat());
+                } else {
+                    setError(["An unexpected error occurred. Please try again."]);
+                }
+            });
     };
 
     return (
@@ -68,7 +76,6 @@ export default function Login() {
                                     required
                                 />
                             </div>
-                            {error && <p className="text-red-400">{error}</p>}
                             <button
                                 className="formBtn formBtnPrimary w-full mt-6"
                                 onClick={() => handleLogin()}
@@ -89,6 +96,7 @@ export default function Login() {
                 </div>
             </div>
             <span className="fixed bottom-0 mb-3">Design and Built By Max Garcia</span>
+            <ErrorMessage error={error} />
         </div>
     );
 }
