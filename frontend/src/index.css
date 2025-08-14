@@ -128,6 +128,17 @@ body {
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.433);
 }
 
+@keyframes slideIn {
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.slideIn {
+    animation: slideIn 0.8s ease-in-out forwards;
+}
+
 #goalsCarrousell {
     top: 0;
     transition: top 1s;
