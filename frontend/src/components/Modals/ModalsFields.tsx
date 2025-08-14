@@ -2,18 +2,18 @@ import React from "react";
 
 type modalField<T> = {
     fieldStateHandler: React.Dispatch<React.SetStateAction<T>>;
-    defaultValue?: T;
+    value?: T;
     customLabel?: string;
     disabled?: boolean;
 };
 
-type listModalField<T> = modalField<T> & { label: string; values: string[] };
+type listModalField<T> = modalField<T> & { label: string; options: string[] };
 type selectModalField<T> = modalField<T> & {
     label: string;
-    values: { id: number | null; value: string }[] | undefined;
+    options: { id: number; value: string }[] | undefined;
 };
 
-export function AmountField({ fieldStateHandler, defaultValue, customLabel }: modalField<number>) {
+export function AmountField({ fieldStateHandler, value, customLabel }: modalField<number>) {
     return (
         <div className="flex flex-col gap-y-1">
             <label htmlFor="amount">{customLabel ?? "Amount"}</label>
@@ -23,14 +23,14 @@ export function AmountField({ fieldStateHandler, defaultValue, customLabel }: mo
                 name="amount"
                 className="formInput w-full"
                 placeholder="Amount"
-                value={defaultValue ?? undefined}
+                value={value ?? undefined}
                 onChange={(e) => fieldStateHandler(parseInt(e.target.value))}
             ></input>
         </div>
     );
 }
 
-export function DetailsField({ fieldStateHandler, defaultValue, customLabel }: modalField<string>) {
+export function DetailsField({ fieldStateHandler, value, customLabel }: modalField<string>) {
     return (
         <div className="flex flex-col gap-y-1">
             <label htmlFor="details">{customLabel ?? "Details"}</label>
@@ -40,15 +40,15 @@ export function DetailsField({ fieldStateHandler, defaultValue, customLabel }: m
                 name="details"
                 className="formInput w-full"
                 placeholder="Details"
-                value={defaultValue ?? undefined}
+                value={value ?? undefined}
                 onChange={(e) => fieldStateHandler(e.target.value)}
             ></input>
         </div>
     );
 }
 
-export function DateField({ fieldStateHandler, defaultValue, customLabel }: modalField<Date | string>) {
-    const defaultDate = defaultValue ? defaultValue.toString().substring(0, 10) : undefined;
+export function DateField({ fieldStateHandler, value, customLabel }: modalField<Date | string>) {
+    const defaultDate = value ? value.toString().substring(0, 10) : undefined;
 
     return (
         <div className="flex flex-col gap-y-1">
@@ -70,13 +70,13 @@ export function DateField({ fieldStateHandler, defaultValue, customLabel }: moda
 export function ListField({
     fieldStateHandler,
     label,
-    values,
-    defaultValue,
-}: listModalField<number | null>) {
+    options,
+    value,
+}: listModalField<number | undefined>) {
     return (
         <div className="flex flex-col gap-y-1">
             <label htmlFor="date">{label}</label>
-            {values.map((item, key) => (
+            {options.map((item, key) => (
                 <div key={key} className="flex gap-x-2 justify-start">
                     <input
                         type="radio"
@@ -86,7 +86,7 @@ export function ListField({
                         placeholder="Date"
                         value={key}
                         onChange={(e) => fieldStateHandler(parseInt(e.target.value))}
-                        checked={defaultValue !== undefined ? key === defaultValue : undefined}
+                        checked={value !== undefined && key === value}
                     ></input>
                     <label htmlFor={"list" + key}>{item}</label>
                 </div>
@@ -95,11 +95,11 @@ export function ListField({
     );
 }
 
-export function SelectField<T extends number | null>({
+export function SelectField<T>({
     fieldStateHandler,
     label,
-    values,
-    defaultValue,
+    options,
+    value,
     disabled = false,
 }: selectModalField<T>) {
     return (
@@ -111,18 +111,16 @@ export function SelectField<T extends number | null>({
                 className="formInput bg-custom-ly2 border-none cursor-pointer"
                 onChange={(e) => fieldStateHandler(parseInt(e.target.value) as T)}
                 disabled={disabled}
-                defaultValue={
-                    defaultValue === undefined ? 0 : defaultValue === null ? undefined : defaultValue
-                }
+                value={(value as number | undefined) ?? 0}
             >
-                {defaultValue === undefined && (
+                {value === undefined && (
                     <option disabled value={0}>
                         Select {label}
                     </option>
                 )}
-                {values &&
-                    values.map((item, key) => (
-                        <option key={key} value={item.id ?? undefined}>
+                {options &&
+                    options.map((item, key) => (
+                        <option key={key} value={item.id}>
                             {item.value}
                         </option>
                     ))}

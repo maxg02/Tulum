@@ -1,8 +1,8 @@
 import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../hooks";
-import { setUserInfo } from "../reducers/userReducers";
-import Sidebar from "../components/Layout/Sidebar";
+import { useAppDispatch, useAppSelector } from "../../Hooks/stateHooks";
+import { setUserInfo } from "../../features/Auth/reducers";
+import Sidebar from "./Sidebar";
 
 export default function RootLayout() {
     const dispatch = useAppDispatch();

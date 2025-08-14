@@ -1,32 +1,24 @@
-import SectionContent from "../components/Layout/SectionContent";
-import MoreDots from "../components/Misc/MoreDots";
-import { LineChart, markElementClasses } from "@mui/x-charts/LineChart";
-import CustomGauge from "../components/Graphs/CustomGauge";
-import {
-    expenseDto,
-    goalContributionDto,
-    incomeDto,
-    useGetUserExpenseCategoriesQuery,
-    useGetUserIncomesQuery,
-    useGetSavingGoalsByUserIdQuery,
-    useGetUserExpensesQuery,
-} from "../api/apiSlice";
-import Loader from "../components/Misc/Loader";
+import SectionContent from "../../components/Layout/SectionContent";
+import MoreDots from "../../components/Misc/MoreDots";
+import CustomGauge from "../../components/Graphs/CustomGauge";
+import Loader from "../../components/Misc/Loader";
 import { Invoice02Icon, MoneyReceiveSquareIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { axisClasses, chartsGridClasses } from "@mui/x-charts";
-import { chartsAxisHighlightClasses } from "@mui/x-charts/ChartsAxisHighlight";
-import { monthList } from "../Constants/Constants";
-import CustomPieChart, { pieChartSlice } from "../components/Graphs/CustomPieChart";
+import { monthList } from "../../Constants/Constants";
+import CustomPieChart, { pieChartSlice } from "../../components/Graphs/CustomPieChart";
+import { SummaryLineChart } from "@/features/Dashboard/Components";
+import { dataSummaryLineChart } from "@/features/Dashboard/types";
+import { expenseDto } from "@/features/Expenses/types";
+import { useGetUserExpenseCategoriesQuery, useGetUserExpensesQuery } from "@/features/Expenses/api";
+import { useGetUserIncomesQuery } from "@/features/Income/api";
+import { incomeDto } from "@/features/Income/types";
+import { useGetSavingGoalsByUserIdQuery } from "@/features/Savings/api";
+import { goalContributionDto } from "@/features/Savings/types";
 
 export default function Dashboard() {
     const currentDate: Date = new Date();
     const currentMonth: string = new Intl.DateTimeFormat("en-US", { month: "long" }).format(currentDate);
-    let dataLineChart: {
-            month: string;
-            inc: number;
-            exp: number;
-        }[] = [],
+    let dataLineChart: dataSummaryLineChart = [],
         totalMonthIncome: number = 0,
         monthIncomeRows: JSX.Element[] = [],
         monthExpenseRows: JSX.Element[] = [],
@@ -127,7 +119,7 @@ export default function Dashboard() {
 
             dataPieChart = Object.keys(monthExpensesByCategory)
                 .map<pieChartSlice>((key) => ({
-                    label: expenseCategoryData.find((c) => c.id === parseInt(key))!.category,
+                    label: expenseCategoryData.find((c) => c.id === parseInt(key))?.category ?? "Others",
                     value: monthExpensesByCategory[key as keyof typeof monthExpensesByCategory]!.reduce(
                         (acc, expense) => acc + expense.amount,
                         0
@@ -254,86 +246,7 @@ export default function Dashboard() {
                         {incomeIsLoading || expenseCategoryIsLoading ? (
                             <Loader />
                         ) : dataLineChart.some((x) => x.exp > 0 || x.inc > 0) ? (
-                            <LineChart
-                                xAxis={[
-                                    {
-                                        dataKey: "month",
-                                        scaleType: "point",
-                                    },
-                                ]}
-                                margin={{ left: 0, top: 20, bottom: 0, right: 10 }}
-                                yAxis={[
-                                    {
-                                        min: 0,
-                                        domainLimit: "nice",
-                                        valueFormatter: (value: number) =>
-                                            value < 1000 ? value.toString() : `${value / 1000}K`,
-                                        width: 40,
-                                    },
-                                ]}
-                                series={[
-                                    {
-                                        dataKey: "inc",
-                                        label: "Income",
-                                        color: "#78d2b5",
-                                        curve: "linear",
-                                        valueFormatter: (value) =>
-                                            value == null ? "RD$0" : `RD$${value}`,
-                                        labelMarkType: "circle",
-                                    },
-                                    {
-                                        dataKey: "exp",
-                                        label: "Expenses",
-                                        color: "#d96533",
-                                        curve: "linear",
-                                        valueFormatter: (value) =>
-                                            value == null ? "RD$0" : `RD$${value}`,
-                                        labelMarkType: "circle",
-                                    },
-                                ]}
-                                dataset={dataLineChart}
-                                grid={{ vertical: true, horizontal: true }}
-                                slotProps={{
-                                    legend: {
-                                        position: {
-                                            horizontal: "center",
-                                            vertical: "bottom",
-                                        },
-                                        sx: {
-                                            color: "white",
-                                            fontSize: 13,
-                                            fontFamily: "Karla, sans-serif",
-                                        },
-                                    },
-                                }}
-                                sx={{
-                                    [`& .${markElementClasses.root}`]: {
-                                        fill: "#394942",
-                                        strokeWidth: 2,
-                                    },
-                                    [`.${axisClasses.root}`]: {
-                                        [`.${axisClasses.tick}, .${axisClasses.line}`]: {
-                                            stroke: "white",
-                                            strokeWidth: 2,
-                                            opacity: 0.3,
-                                        },
-                                        [`.${axisClasses.tickLabel}`]: {
-                                            fill: "white",
-                                            opacity: 0.5,
-                                        },
-                                    },
-                                    [`.${chartsAxisHighlightClasses.root}`]: {
-                                        fill: "white",
-                                        stroke: "white",
-                                        opacity: 0.5,
-                                    },
-                                    [`.${chartsGridClasses.line}`]: {
-                                        fill: "white",
-                                        stroke: "white",
-                                        opacity: 0.1,
-                                    },
-                                }}
-                            />
+                            <SummaryLineChart dataLineChart={dataLineChart} />
                         ) : (
                             <div className="flex items-center justify-center h-full">
                                 <p className="text-gray-400">No data available for this year.</p>

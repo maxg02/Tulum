@@ -1,12 +1,13 @@
 import { useState } from "react";
-import { useGetUserMutation, validationError } from "../api/apiSlice";
-import { setUserInfo } from "../reducers/userReducers";
+import { useGetUserMutation } from "@/features/Auth/api";
+import { validationError } from "@/types/types.ts";
+import { setUserInfo } from "@/features/Auth/reducers";
 
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch } from "../hooks";
+import { useAppDispatch } from "@/Hooks/stateHooks";
 
-import loginImage from "../assets/loginImage.jpg";
-import ErrorMessage from "../components/Misc/ErrorMessage";
+import loginImage from "@/features/Auth/assets/loginImage.jpg";
+import ErrorMessage from "@/components/Misc/ErrorMessage";
 
 export default function Login() {
     const [email, setEmail] = useState<string>("");

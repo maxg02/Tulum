@@ -1,5 +1,5 @@
 import { modalTitles } from "../../Constants/Constants";
-import { useAppDispatch, useAppSelector } from "../../hooks";
+import { useAppDispatch, useAppSelector } from "../../Hooks/stateHooks";
 import { hideModal } from "../../reducers/createModalReducers";
 import { useState } from "react";
 import ModalContainer from "./ModalContainer";

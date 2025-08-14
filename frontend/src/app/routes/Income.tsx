@@ -1,41 +1,19 @@
-import { useState } from "react";
-import SectionContent from "../components/Layout/SectionContent";
-import Table, { tableRow } from "../components/Misc/Table";
-import { dataObject } from "../components/Misc/Table";
-import {
-    useGetUserIncomesQuery,
-    useCreateIncomeMutation,
-    useDeleteIncomeMutation,
-    useUpdateIncomeMutation,
-    incomeDto,
-    updateIncomeDto,
-    createIncomeDto,
-} from "../api/apiSlice";
-import { monthList } from "../Constants/Constants";
-import CreateModal from "../components/Modals/CreateModal";
-import DetailsModal from "../components/Modals/DetailsModal";
-import { useAppDispatch, useAppSelector } from "../hooks";
-import { showModal as showCreateModal } from "../reducers/createModalReducers";
-import { showModal as showDetailsModal } from "../reducers/detailsModalReducers";
-import { AmountField, DateField, DetailsField } from "../components/Modals/ModalsFields";
-import Loader from "../components/Misc/Loader";
+import SectionContent from "@/components/Layout/SectionContent";
+import Table, { tableRow } from "@/components/Misc/Table";
+import { dataObject } from "@/components/Misc/Table";
+import { monthList } from "@/Constants/Constants";
+import { useAppDispatch, useAppSelector } from "@/Hooks/stateHooks";
+import { showModal as showCreateModal } from "@/reducers/createModalReducers";
+import { showModal as showDetailsModal } from "@/reducers/detailsModalReducers";
+import Loader from "@/components/Misc/Loader";
 import { AddSquareIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { BarChart } from "@mui/x-charts/BarChart";
-import { axisClasses, chartsGridClasses } from "@mui/x-charts";
-import { chartsAxisHighlightClasses } from "@mui/x-charts/ChartsAxisHighlight";
-import { basicColors } from "../Constants/Colors";
-import ValuePill from "../components/Misc/ValuePill";
+import ValuePill from "@/components/Misc/ValuePill";
+import { useGetUserIncomesQuery } from "@/features/Income/api";
+import { dataYearBarChart, incomeDto } from "@/features/Income/types";
+import { CreateIncome, DetailsIncome, YearBarChart } from "@/features/Income/Components";
 
 export default function Budget() {
-    const [amount, setAmount] = useState<number>(0);
-    const [details, setDetails] = useState<string>("");
-    const [date, setDate] = useState<Date | string>(new Date());
-
-    const clearFieldValues = () => {
-        setAmount(0), setDetails(""), setDate(new Date());
-    };
-
     const dispatch = useAppDispatch();
     const createModalState = useAppSelector((state) => state.createModal.show);
     const detailsModalState = useAppSelector((state) => state.detailsModal);
@@ -48,20 +26,13 @@ export default function Budget() {
     let yearIncomes: incomeDto[] = [];
     let totalMonthIncome: number = 0;
     let totalYearIncome: number = 0;
-    let dataBarChart: {
-        month: string;
-        income: number;
-    }[] = [];
+    let dataBarChart: dataYearBarChart = [];
 
     //Income Fetching
     const { data: incomeData, isLoading: incomeIsLoading } = useGetUserIncomesQuery();
-    const [createIncome] = useCreateIncomeMutation();
-    const [deleteIncome] = useDeleteIncomeMutation();
-    const [updateIncome] = useUpdateIncomeMutation();
 
     // Show create Income Modal
     const showCreateIncomeModal = () => {
-        clearFieldValues();
         const newState = { ...createModalState };
         newState.income = true;
 
@@ -70,71 +41,12 @@ export default function Budget() {
 
     // Show details Income Modal
     const showDetailsIncomeModal = (incomeId: number) => {
-        clearFieldValues();
-        const newState = { ...detailsModalState };
-        newState.id = incomeId;
-        newState.show = { ...detailsModalState.show, income: true };
-
         const selectedIncomeData: incomeDto = incomeData!.filter((i: incomeDto) => i.id === incomeId)[0];
 
-        setAmount(selectedIncomeData.amount);
-        setDetails(selectedIncomeData.details);
-        setDate(selectedIncomeData.date);
+        const newState = { ...detailsModalState };
+        newState.show = { ...detailsModalState.show, income: true };
+        newState.data = selectedIncomeData;
         dispatch(showDetailsModal(newState));
-    };
-
-    // Create Income Function
-    const createIncomeHandler = async () => {
-        const errors: string[] = [];
-
-        if (amount <= 0 || !amount) errors.push("Amount must be greater than 0");
-        if (details.trim() === "") errors.push("Details cannot be empty");
-        if (date === null) errors.push("Date cannot be empty");
-
-        if (errors.length > 0) {
-            throw errors;
-        }
-
-        const incomeData: createIncomeDto = {
-            amount: amount,
-            details: details,
-            date: date,
-        };
-
-        await createIncome(incomeData)
-            .unwrap()
-            .catch(() => {
-                throw [`Error creating income`];
-            });
-    };
-
-    // Delete Income Function
-    const deleteIncomeHandler = () => {
-        const incomeId = detailsModalState.id;
-        deleteIncome(incomeId!);
-    };
-
-    // Update Income Function
-    const updateIncomeHandler = async () => {
-        const errors: string[] = [];
-        if (amount <= 0 || !amount) errors.push("Amount must be greater than 0");
-        if (details.trim() === "") errors.push("Details cannot be empty");
-        if (date === null) errors.push("Date cannot be empty");
-
-        if (errors.length > 0) {
-            throw errors;
-        }
-
-        const incomeData: updateIncomeDto = {
-            id: detailsModalState.id!,
-            data: { amount: amount, details: details, date: date },
-        };
-
-        await updateIncome(incomeData)
-            .unwrap()
-            .catch(() => {
-                throw [`Error updating income`];
-            });
     };
 
     // Income data handling
@@ -268,60 +180,7 @@ export default function Budget() {
                             {incomeIsLoading ? (
                                 <Loader />
                             ) : yearIncomes.length ? (
-                                <BarChart
-                                    dataset={dataBarChart}
-                                    borderRadius={5}
-                                    barLabel={(item) =>
-                                        item.value ?? 0 > 1000
-                                            ? `${(item.value! / 1000).toFixed(2)}K`
-                                            : `${item.value}`
-                                    }
-                                    margin={{ left: 0 }}
-                                    xAxis={[
-                                        {
-                                            valueFormatter: (value: number) =>
-                                                value > 1000 ? `${value / 1000}K` : `${value}`,
-                                            domainLimit: "strict",
-                                        },
-                                    ]}
-                                    yAxis={[{ scaleType: "band", dataKey: "month", width: 35 }]}
-                                    series={[
-                                        {
-                                            dataKey: "income",
-                                            valueFormatter: (v) => `RD$${v}`,
-                                            color: basicColors.secondary,
-                                        },
-                                    ]}
-                                    layout="horizontal"
-                                    grid={{ vertical: true }}
-                                    sx={{
-                                        [`.${axisClasses.root}`]: {
-                                            [`.${axisClasses.tick}, .${axisClasses.line}`]: {
-                                                stroke: "white",
-                                                strokeWidth: 2,
-                                                opacity: 0.3,
-                                            },
-                                            [`.${axisClasses.tickLabel}`]: {
-                                                fill: "white",
-                                                opacity: 0.5,
-                                            },
-                                        },
-                                        [`.${chartsAxisHighlightClasses.root}`]: {
-                                            fill: "white",
-                                            stroke: "white",
-                                            opacity: 0.5,
-                                        },
-                                        "& .MuiBarLabel-root": {
-                                            fill: "white",
-                                            fontFamily: "Karla, sans-serif",
-                                        },
-                                        [`.${chartsGridClasses.line}`]: {
-                                            fill: "white",
-                                            stroke: "white",
-                                            opacity: 0.1,
-                                        },
-                                    }}
-                                />
+                                <YearBarChart dataBarChart={dataBarChart} />
                             ) : (
                                 <div className="flex items-center justify-center h-full w-full">
                                     <p className="text-gray-400">No data available for this year.</p>
@@ -332,21 +191,9 @@ export default function Budget() {
                 </div>
             </SectionContent>
             {/* Create Income Modal */}
-            <CreateModal show={createModalState.income} createFunction={createIncomeHandler}>
-                <AmountField fieldStateHandler={setAmount} />
-                <DetailsField fieldStateHandler={setDetails} />
-                <DateField fieldStateHandler={setDate} />
-            </CreateModal>
+            <CreateIncome />
             {/* Details Income Modal */}
-            <DetailsModal
-                updateFunction={updateIncomeHandler}
-                deleteFunction={deleteIncomeHandler}
-                show={detailsModalState.show.income}
-            >
-                <AmountField defaultValue={amount} fieldStateHandler={setAmount} />
-                <DetailsField defaultValue={details} fieldStateHandler={setDetails} />
-                <DateField defaultValue={date} fieldStateHandler={setDate} />
-            </DetailsModal>
+            <DetailsIncome />
         </>
     );
 }

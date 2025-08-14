@@ -1,6 +1,6 @@
 import React from "react";
 import ModalContainer from "./ModalContainer";
-import { useAppDispatch, useAppSelector } from "../../hooks";
+import { useAppDispatch, useAppSelector } from "../../Hooks/stateHooks";
 import { hideModal } from "../../reducers/detailsModalReducers";
 import { modalTitles } from "../../Constants/Constants";
 import { useState } from "react";

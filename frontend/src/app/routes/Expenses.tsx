@@ -1,63 +1,41 @@
-import { useState } from "react";
-import SectionContent from "../components/Layout/SectionContent";
-import Table, { dataObject, tableRow } from "../components/Misc/Table";
-import {
-    expenseDto,
-    createExpenseDto,
-    expenseCategoryDto,
-    updateExpenseDto,
-    useGetUserExpensesQuery,
-    useCreateExpenseMutation,
-    useDeleteExpenseMutation,
-    useGetUserExpenseCategoriesQuery,
-    useUpdateExpenseMutation,
-    updateBudgetPlanDto,
-    createBudgetPlanDto,
-    useCreateBudgetPlanMutation,
-    useDeleteBudgetPlanMutation,
-    useUpdateBudgetPlanMutation,
-    useUpdateExpenseCategoryMutation,
-    useDeleteExpenseCategoryMutation,
-    useCreateExpenseCategoryMutation,
-    createExpenseCategoryDto,
-    updateExpenseCategoryDto,
-} from "../api/apiSlice";
-import Loader from "../components/Misc/Loader";
-import { useAppDispatch, useAppSelector } from "../hooks";
-import { showModal as showCreateModal } from "../reducers/createModalReducers";
-import { showModal as showDetailsModal } from "../reducers/detailsModalReducers";
-import CreateModal from "../components/Modals/CreateModal";
-import {
-    AmountField,
-    DateField,
-    DetailsField,
-    ListField,
-    SelectField,
-} from "../components/Modals/ModalsFields";
-import DetailsModal from "../components/Modals/DetailsModal";
-import { periodicityValues } from "../Constants/Constants";
-import CustomPieChart, { pieChartSlice } from "../components/Graphs/CustomPieChart";
-import ValuePill from "../components/Misc/ValuePill";
+import SectionContent from "@/components/Layout/SectionContent";
+import Table, { dataObject, tableRow } from "@/components/Misc/Table";
+import { useGetUserExpensesQuery, useGetUserExpenseCategoriesQuery } from "@/features/Expenses/api";
+import { expenseDto, expenseCategoryDto } from "@/features/Expenses/types";
+import Loader from "@/components/Misc/Loader";
+import { useAppDispatch, useAppSelector } from "@/Hooks/stateHooks";
+import { showModal as showCreateModal } from "@/reducers/createModalReducers";
+import { showModal as showDetailsModal } from "@/reducers/detailsModalReducers";
+import { periodicityValues } from "@/Constants/Constants";
+import CustomPieChart, { pieChartSlice } from "@/components/Graphs/CustomPieChart";
+import ValuePill from "@/components/Misc/ValuePill";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { AddSquareIcon } from "@hugeicons/core-free-icons";
-import ProgressBar from "../components/Graphs/ProgressBar";
+import ProgressBar from "@/components/Graphs/ProgressBar";
+import {
+    ExpenseCard,
+    CreateExpense,
+    CreateBudget,
+    CreateCategory,
+    DetailsExpense,
+    DetailsBudget,
+    DetailsCategory,
+} from "@/features/Expenses/Components";
 
 export default function Expenses() {
-    const [amount, setAmount] = useState<number>(0);
-    const [details, setDetails] = useState<string>("");
-    const [date, setDate] = useState<Date | string>(new Date());
-    const [periodicity, setPeriodicity] = useState<number | null>(null);
-    const [selectValue, setSelectValue] = useState<number | null>(0);
+    const dispatch = useAppDispatch();
+    const createModalState = useAppSelector((state) => state.createModal.show);
+    const detailsModalState = useAppSelector((state) => state.detailsModal);
 
     const currentDate: Date = new Date();
     const currentMonth: string = new Intl.DateTimeFormat("en-US", { month: "long" }).format(currentDate);
     const currentYear: number = currentDate.getFullYear();
     const categorySelectValues:
         | {
-              id: number | null;
+              id: number;
               value: string;
           }[]
-        | undefined = [{ id: null, value: "Others" }];
+        | undefined = [{ id: -1, value: "Others" }];
     let expensesRow: tableRow[] = [];
 
     let budgetExpensesRow: tableRow[] = [],
@@ -68,31 +46,12 @@ export default function Expenses() {
     let totalMonthExpenses: number = 0;
     let totalYearExpenses: number = 0;
 
-    const clearFieldValues = () => {
-        setAmount(0), setDetails(""), setDate(new Date()), setPeriodicity(0), setSelectValue(0);
-    };
-
-    const dispatch = useAppDispatch();
-    const createModalState = useAppSelector((state) => state.createModal.show);
-    const detailsModalState = useAppSelector((state) => state.detailsModal);
-
     //Expense Category Fetching
     const { data: expenseCategoryData, isLoading: expenseCategoryIsLoading } =
         useGetUserExpenseCategoriesQuery();
-    const [createExpenseCategory] = useCreateExpenseCategoryMutation();
-    const [deleteExpenseCategory] = useDeleteExpenseCategoryMutation();
-    const [updateExpenseCategory] = useUpdateExpenseCategoryMutation();
 
     //Expense Fetching
     const { data: expenseData, isLoading: expenseIsLoading } = useGetUserExpensesQuery();
-    const [createExpense] = useCreateExpenseMutation();
-    const [deleteExpense] = useDeleteExpenseMutation();
-    const [updateExpense] = useUpdateExpenseMutation();
-
-    //Budget Plan Expense Fetching
-    const [createBudgetPlan] = useCreateBudgetPlanMutation();
-    const [deleteBudgetPlan] = useDeleteBudgetPlanMutation();
-    const [updateBudgetPlan] = useUpdateBudgetPlanMutation();
 
     // Expenses Category Data handling
     if (
@@ -128,7 +87,7 @@ export default function Expenses() {
                     expense.amount,
                     expense.details,
                     new Date(expense.date).toLocaleDateString("en-US"),
-                    expense.expenseCategoryId != null
+                    expense.expenseCategoryId != -1
                         ? expenseCategoryData.find((ec) => ec.id === expense.expenseCategoryId)!.category
                         : "Others",
                 ],
@@ -183,7 +142,6 @@ export default function Expenses() {
 
     // Show create Expense Modal
     const showCreateExpenseModal = () => {
-        clearFieldValues();
         const newState = { ...createModalState };
         newState.expense = true;
 
@@ -192,7 +150,6 @@ export default function Expenses() {
 
     // Show create Expense Category Modal
     const showCreateExpenseCategoryModal = () => {
-        clearFieldValues();
         const newState = { ...createModalState };
         newState.expenseCategory = true;
 
@@ -201,7 +158,6 @@ export default function Expenses() {
 
     // Show create budget planning Modal
     const showCreateBudgetModal = () => {
-        clearFieldValues();
         const newState = { ...createModalState };
         newState.budgetPlanning = true;
 
@@ -210,208 +166,34 @@ export default function Expenses() {
 
     //Show details Expense Modal
     const showDetailsExpenseModal = (expenseId: number) => {
-        clearFieldValues();
-        const newState = { ...detailsModalState };
-        newState.id = expenseId;
-        newState.show = { ...detailsModalState.show, expense: true };
-
         const selectedExpenseData = expenseData!.find((exp) => exp.id === expenseId);
-
-        setAmount(selectedExpenseData!.amount);
-        setDetails(selectedExpenseData!.details);
-        setDate(selectedExpenseData!.date);
-        setSelectValue(selectedExpenseData!.expenseCategoryId);
+        const newState = { ...detailsModalState };
+        newState.show = { ...detailsModalState.show, expense: true };
+        newState.data = selectedExpenseData;
         dispatch(showDetailsModal(newState));
     };
 
     // Show details Budget Plan Modal
     const showDetailsBudgetPlanningModal = (budgetId: number) => {
-        clearFieldValues();
-        const newState = { ...detailsModalState };
-        newState.id = budgetId;
-        newState.show = { ...detailsModalState.show, budgetPlanning: true };
-
         const selectedBudgetPlan = expenseCategoriesWithBudget.find(
             (ec) => ec.budgetPlan!.id == budgetId
         )!.budgetPlan;
-
-        setAmount(selectedBudgetPlan!.amount);
-        setSelectValue(selectedBudgetPlan!.expenseCategoryId);
-        setPeriodicity(selectedBudgetPlan!.periodicity);
-
+        const newState = { ...detailsModalState };
+        newState.show = { ...detailsModalState.show, budgetPlanning: true };
+        newState.data = selectedBudgetPlan;
         dispatch(showDetailsModal(newState));
     };
 
     // Show details Expense Category Modal
     const showDetailsExpenseCategoryModal = (expenseCategoryId: number) => {
-        clearFieldValues();
-        const newState = { ...detailsModalState };
-        newState.id = expenseCategoryId;
-        newState.show = { ...detailsModalState.show, expenseCategory: true };
-
-        const selectedExpenseCategoryData: expenseCategoryDto = expenseCategoryData!.filter(
+        const selectedExpenseCategoryData: expenseCategoryDto = expenseCategoryData!.find(
             (ec: expenseCategoryDto) => ec.id === expenseCategoryId
-        )[0];
+        )!;
 
-        setDetails(selectedExpenseCategoryData.category);
-
+        const newState = { ...detailsModalState };
+        newState.show = { ...detailsModalState.show, expenseCategory: true };
+        newState.data = selectedExpenseCategoryData;
         dispatch(showDetailsModal(newState));
-    };
-
-    // Create expense function
-    const createExpenseHandler = async () => {
-        const errors: string[] = [];
-        if (amount <= 0 || !amount) errors.push("Amount must be greater than 0");
-        if (details.trim() === "") errors.push("Details cannot be empty");
-        if (date === null) errors.push("Date cannot be empty");
-        if (selectValue === 0) errors.push("Category must be selected");
-
-        if (errors.length > 0) {
-            throw errors;
-        }
-
-        const expenseData: createExpenseDto = {
-            amount: amount,
-            details: details,
-            date: date,
-            expenseCategoryId: selectValue,
-        };
-
-        await createExpense(expenseData)
-            .unwrap()
-            .catch(() => {
-                throw [`Error creating expense`];
-            });
-    };
-
-    // Create budget plan function
-    const createBudgetHandler = async () => {
-        const errors: string[] = [];
-        if (amount <= 0 || !amount) errors.push("Amount must be greater than 0");
-        if (periodicity === null) errors.push("Periodicity must be selected");
-        if (selectValue === 0) errors.push("Category must be selected");
-
-        if (errors.length > 0) {
-            throw errors;
-        }
-
-        const budgetPlanData: createBudgetPlanDto = {
-            amount: amount,
-            expenseCategoryId: selectValue!,
-            periodicity: periodicity!,
-        };
-
-        await createBudgetPlan(budgetPlanData)
-            .unwrap()
-            .catch(() => {
-                throw [`Error creating budget`];
-            });
-    };
-
-    // Create expense category function
-    const createExpenseCategoryHandler = async () => {
-        const errors: string[] = [];
-        if (details.trim() === "") errors.push("Details cannot be empty");
-
-        if (errors.length > 0) {
-            throw errors;
-        }
-
-        const expenseCategoryData: createExpenseCategoryDto = {
-            category: details,
-        };
-
-        await createExpenseCategory(expenseCategoryData)
-            .unwrap()
-            .catch(() => {
-                throw [`Error creating category`];
-            });
-    };
-
-    // Delete Expense Function
-    const deleteExpenseHandler = () => {
-        const expenseId = detailsModalState.id;
-        deleteExpense(expenseId!);
-    };
-
-    // Delete Budget Plan Function
-    const deleteBudgetPlanHandler = () => {
-        const budgetPlanId = detailsModalState.id;
-        deleteBudgetPlan(budgetPlanId!);
-    };
-
-    // Delete Expense Category Function
-    const deleteExpenseCategoryHandler = () => {
-        const expenseCategoryId = detailsModalState.id;
-        deleteExpenseCategory(expenseCategoryId!);
-    };
-
-    // Update Expense Function
-    const updateExpenseHandler = async () => {
-        const errors: string[] = [];
-        if (amount <= 0 || !amount) errors.push("Amount must be greater than 0");
-        console.log(amount, details, date);
-        if (details.trim() === "") errors.push("Details cannot be empty");
-        if (date === null) errors.push("Date cannot be empty");
-        if (selectValue === 0) errors.push("Category must be selected");
-
-        if (errors.length > 0) {
-            throw errors;
-        }
-
-        const expenseData: updateExpenseDto = {
-            id: detailsModalState.id!,
-            data: { amount: amount, details: details, date: date, expenseCategoryId: selectValue },
-        };
-
-        await updateExpense(expenseData)
-            .unwrap()
-            .catch(() => {
-                throw [`Error updating expense`];
-            });
-    };
-
-    // Update Budget Plan Function
-    const updateBudgetPlanHandler = async () => {
-        const errors: string[] = [];
-        if (amount <= 0 || !amount) errors.push("Amount must be greater than 0");
-        if (periodicity === null) errors.push("Periodicity must be selected");
-
-        if (errors.length > 0) {
-            throw errors;
-        }
-
-        const budgetPlanData: updateBudgetPlanDto = {
-            id: detailsModalState.id!,
-            data: { amount: amount, periodicity: periodicity! },
-        };
-
-        await updateBudgetPlan(budgetPlanData)
-            .unwrap()
-            .catch(() => {
-                throw [`Error updating budget`];
-            });
-    };
-
-    // Update Expense Category Function
-    const updateExpenseCategoryHandler = async () => {
-        const errors: string[] = [];
-        if (details.trim() === "") errors.push("Details cannot be empty");
-
-        if (errors.length > 0) {
-            throw errors;
-        }
-
-        const expenseCategoryData: updateExpenseCategoryDto = {
-            id: detailsModalState.id!,
-            data: { category: details },
-        };
-
-        await updateExpenseCategory(expenseCategoryData)
-            .unwrap()
-            .catch(() => {
-                throw [`Error updating category`];
-            });
     };
 
     const expensesData: dataObject = {
@@ -440,24 +222,12 @@ export default function Expenses() {
 
     const ExpenseCards = () =>
         expenseData?.map((e) => (
-            <button
-                className="border-2 rounded-md p-2"
+            <ExpenseCard
                 key={e.id}
-                onClick={() => showDetailsExpenseModal(e.id)}
-            >
-                <div className="flex justify-between gap-16">
-                    <p className="font-bold text-ellipsis overflow-hidden text-nowrap">{e.details}</p>
-                    <p className="font-bold">RD${e.amount}</p>
-                </div>
-                <div className="flex justify-between">
-                    <p>
-                        {e.expenseCategoryId != null
-                            ? expenseCategoryData?.find((ec) => ec.id === e.expenseCategoryId)!.category
-                            : "Others"}
-                    </p>
-                    <p>{new Date(e.date).toDateString()}</p>
-                </div>
-            </button>
+                expense={e}
+                expenseCategoryData={expenseCategoryData}
+                showDetailsExpenseModal={showDetailsExpenseModal}
+            />
         ));
 
     return (
@@ -633,85 +403,21 @@ export default function Expenses() {
                 </div>
             </SectionContent>
             {/* Create Expense Modal */}
-            <CreateModal show={createModalState.expense} createFunction={createExpenseHandler}>
-                <AmountField fieldStateHandler={setAmount} />
-                <SelectField
-                    fieldStateHandler={setSelectValue}
-                    label="Category"
-                    values={categorySelectValues}
-                />
-                <DetailsField fieldStateHandler={setDetails} />
-                <DateField fieldStateHandler={setDate} />
-            </CreateModal>
-            {/* Expense Details Modal */}
-            <DetailsModal
-                updateFunction={updateExpenseHandler}
-                deleteFunction={deleteExpenseHandler}
-                show={detailsModalState.show.expense}
-            >
-                <AmountField defaultValue={amount} fieldStateHandler={setAmount} />
-                <DetailsField defaultValue={details} fieldStateHandler={setDetails} />
-                <DateField defaultValue={date} fieldStateHandler={setDate} />
-                <SelectField
-                    defaultValue={selectValue}
-                    fieldStateHandler={setSelectValue}
-                    label="Category"
-                    values={categorySelectValues!}
-                />
-            </DetailsModal>
+            <CreateExpense categories={categorySelectValues} />
+            {/* Details Expense Modal */}
+            <DetailsExpense categories={categorySelectValues} />
             {/* Create Budget Modal */}
-            <CreateModal show={createModalState.budgetPlanning} createFunction={createBudgetHandler}>
-                <AmountField fieldStateHandler={setAmount} />
-                <SelectField
-                    fieldStateHandler={setSelectValue}
-                    label="Category"
-                    values={categorySelectValues?.filter(
-                        (cs) =>
-                            cs.id !== null && !expenseCategoriesWithBudget.some((ec) => ec.id === cs.id)
-                    )}
-                />
-                <ListField
-                    fieldStateHandler={setPeriodicity}
-                    label="Periodicity"
-                    values={periodicityValues}
-                />
-            </CreateModal>
-            {/* Create Expense Category Modal */}
-            <CreateModal
-                show={createModalState.expenseCategory}
-                createFunction={createExpenseCategoryHandler}
-            >
-                <DetailsField fieldStateHandler={setDetails} />
-            </CreateModal>
+            <CreateBudget
+                categories={categorySelectValues?.filter(
+                    (cs) => cs.id !== -1 && !expenseCategoriesWithBudget.some((ec) => ec.id === cs.id)
+                )}
+            />
             {/* Details Budget Planning Modal */}
-            <DetailsModal
-                updateFunction={updateBudgetPlanHandler}
-                deleteFunction={deleteBudgetPlanHandler}
-                show={detailsModalState.show.budgetPlanning}
-            >
-                <AmountField defaultValue={amount} fieldStateHandler={setAmount} />
-                <SelectField
-                    defaultValue={selectValue}
-                    fieldStateHandler={setSelectValue}
-                    label="Category"
-                    values={categorySelectValues!}
-                    disabled
-                />
-                <ListField
-                    fieldStateHandler={setPeriodicity}
-                    label="Periodicity"
-                    values={periodicityValues}
-                    defaultValue={periodicity}
-                />
-            </DetailsModal>
+            <DetailsBudget categories={categorySelectValues} />
+            {/* Create Expense Category Modal */}
+            <CreateCategory />
             {/* Details Expense Category Modal */}
-            <DetailsModal
-                updateFunction={updateExpenseCategoryHandler}
-                deleteFunction={deleteExpenseCategoryHandler}
-                show={detailsModalState.show.expenseCategory}
-            >
-                <DetailsField defaultValue={details} fieldStateHandler={setDetails} />
-            </DetailsModal>
+            <DetailsCategory />
         </>
     );
 }

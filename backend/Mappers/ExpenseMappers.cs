@@ -24,7 +24,7 @@ namespace backend.Mappers
                 Amount = expense.Amount,
                 Date = expense.Date,
                 Details = expense.Details,
-                ExpenseCategoryId = expense.ExpenseCategoryId,
+                ExpenseCategoryId = expense.ExpenseCategoryId ?? -1,
             };
         }
     }

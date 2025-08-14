@@ -1,22 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { decodeToken } from "react-jwt";
-
-export type userInfo = {
-    userInfo: {
-        fullName: string;
-        email: string;
-    } | null;
-    tokens: { accessToken: string; refreshToken: string } | null;
-};
+import { tokenDto, tokenInfo, userInfo } from "./types";
 
 const initialState: userInfo = {
     userInfo: null,
     tokens: null,
-};
-
-export type tokensDto = {
-    accessToken: string;
-    refreshToken: string;
 };
 
 const claims = {
@@ -25,22 +13,11 @@ const claims = {
     userId: "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
 };
 
-type tokenInfo = {
-    aud: string;
-    iss: string;
-    exp: number;
-    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name": string;
-    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier": number;
-    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress": string;
-    iat: number;
-    nbf: number;
-};
-
-export const userSlice = createSlice({
-    name: "user",
+export const authSlice = createSlice({
+    name: "auth",
     initialState,
     reducers: {
-        setUserInfo: (state, action: PayloadAction<tokensDto>) => {
+        setUserInfo: (state, action: PayloadAction<tokenDto>) => {
             const tokens = action.payload;
             const tokenInfo: tokenInfo = decodeToken(tokens.accessToken) as tokenInfo;
 
@@ -60,7 +37,7 @@ export const userSlice = createSlice({
             state.tokens = userInfo.tokens;
             state.userInfo = userInfo.userInfo;
         },
-        refreshUserToken: (state, action: PayloadAction<tokensDto>) => {
+        refreshUserToken: (state, action: PayloadAction<tokenDto>) => {
             state.tokens!.accessToken = action.payload.accessToken;
             state.tokens!.refreshToken = action.payload.refreshToken;
             const userInStorage = JSON.parse(localStorage.getItem("userInfo")!);
@@ -76,6 +53,6 @@ export const userSlice = createSlice({
     },
 });
 
-export const { setUserInfo, logOut, refreshUserToken } = userSlice.actions;
+export const { setUserInfo, logOut, refreshUserToken } = authSlice.actions;
 
-export default userSlice.reducer;
+export default authSlice.reducer;

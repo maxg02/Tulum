@@ -1,9 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { apiSlice } from "./api/apiSlice.ts";
-import detailsModalReducer from "../src/reducers/detailsModalReducers";
-import createModalReducer from "../src/reducers/createModalReducers";
-import userReducer from "./reducers/userReducers.tsx";
-import utilitiesReducer from "./reducers/utilitiesReducers";
+import { apiSlice } from "../api/apiSlice.ts";
+import detailsModalReducer from "../reducers/detailsModalReducers.tsx";
+import createModalReducer from "../reducers/createModalReducers.tsx";
+import userReducer from "../features/Auth/reducers.tsx";
+import utilitiesReducer from "../reducers/utilitiesReducers.tsx";
 
 export const store = configureStore({
     reducer: {

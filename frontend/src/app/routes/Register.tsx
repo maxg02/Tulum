@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { useRegisterUserMutation, validationError } from "../api/apiSlice";
 import { useNavigate } from "react-router-dom";
-import loginImage from "../assets/loginImage.jpg";
-import ErrorMessage from "../components/Misc/ErrorMessage";
+import loginImage from "@/features/Auth/assets/loginImage.jpg";
+import ErrorMessage from "@/components/Misc/ErrorMessage";
+import { useRegisterUserMutation } from "@/features/Auth/api";
+import { validationError } from "@/types/types.ts";
 
 export default function Register() {
     const [email, setEmail] = useState<string>("");
