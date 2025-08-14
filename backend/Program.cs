@@ -71,11 +71,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddScoped<IIncomeRepo, IncomeRepo>();
-builder.Services.AddScoped<IFixedIncomeRepo, FixedIncomeRepo>();
 builder.Services.AddScoped<IExpenseCategoryRepo, ExpenseCategoryRepo>();
 builder.Services.AddScoped<IBudgetPlanRepo, BudgetPlanRepo>();
 builder.Services.AddScoped<IExpenseRepo, ExpenseRepo>();
-builder.Services.AddScoped<IFixedExpenseRepo, FixedExpenseRepo>();
 builder.Services.AddScoped<ISavingGoalRepo, SavingGoalRepo>();
 builder.Services.AddScoped<IGoalContributionRepo, GoalContributionRepo>();
 builder.Services.AddScoped<IAuthRepo, AuthRepo>();

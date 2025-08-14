@@ -1,13 +1,6 @@
 import { apiSlice } from "@/api/apiSlice";
 
-import {
-    incomeDto,
-    updateIncomeDto,
-    createIncomeDto,
-    fixedIncomeDto,
-    createFixedIncomeDto,
-    updateFixedIncomeDto,
-} from "./types";
+import { incomeDto, updateIncomeDto, createIncomeDto } from "./types";
 
 export const incomeApi = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
@@ -39,35 +32,6 @@ export const incomeApi = apiSlice.injectEndpoints({
             }),
             invalidatesTags: ["Income"],
         }),
-
-        //Fixed Income endpoints
-        getUserFixedIncomes: builder.query<fixedIncomeDto[], void>({
-            query: () => `fixedincomes`,
-            providesTags: ["FixedIncome"],
-        }),
-        createFixedIncome: builder.mutation({
-            query: (fixedIncomeData: createFixedIncomeDto) => ({
-                url: "fixedincomes/",
-                method: "POST",
-                body: fixedIncomeData,
-            }),
-            invalidatesTags: ["FixedIncome"],
-        }),
-        updateFixedIncome: builder.mutation({
-            query: (fixedIncomeData: updateFixedIncomeDto) => ({
-                url: `fixedincomes/${fixedIncomeData.id}`,
-                method: "PUT",
-                body: fixedIncomeData.data,
-            }),
-            invalidatesTags: ["FixedIncome"],
-        }),
-        deleteFixedIncome: builder.mutation({
-            query: (Id: number) => ({
-                url: `fixedincomes/${Id}`,
-                method: "DELETE",
-            }),
-            invalidatesTags: ["FixedIncome"],
-        }),
     }),
 });
 
@@ -76,9 +40,4 @@ export const {
     useCreateIncomeMutation,
     useUpdateIncomeMutation,
     useDeleteIncomeMutation,
-
-    useGetUserFixedIncomesQuery,
-    useCreateFixedIncomeMutation,
-    useUpdateFixedIncomeMutation,
-    useDeleteFixedIncomeMutation,
 } = incomeApi;

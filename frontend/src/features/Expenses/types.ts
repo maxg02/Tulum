@@ -16,24 +16,6 @@ export type updateExpenseDto = {
     data: { amount: number; details: string; date: Date | string; expenseCategoryId: number | null };
 };
 
-export type fixedExpenseDto = {
-    id: number;
-    amount: number;
-    details: string;
-    periodicity: number;
-    category: number;
-};
-export type createFixedExpenseDto = {
-    amount: number;
-    details: string;
-    periodicity: number;
-    category: number;
-};
-export type updateFixedExpenseDto = {
-    id: number;
-    data: { amount: number; details: string; periodicity: number; category: number };
-};
-
 export type createBudgetPlanDto = {
     amount: number;
     expenseCategoryId: number;

@@ -289,7 +289,6 @@ export default function Expenses() {
                                         detailsFunction={(expenseId: number) =>
                                             showDetailsExpenseModal(expenseId)
                                         }
-                                        filters={false}
                                     />
                                 </div>
                                 <div className="flex flex-col w-full overflow-x-hidden gap-4 max-h-[40rem] overflow-y-auto md:hidden">
@@ -324,7 +323,6 @@ export default function Expenses() {
                                             showDetailsBudgetPlanningModal(budgetId)
                                         }
                                         data={budgetExpensesData}
-                                        filters={false}
                                     />
                                 </div>
                                 <div className="w-full flex flex-col gap-y-2 md:hidden max-md:max-h-96 max-md:overflow-y-auto">
@@ -395,7 +393,6 @@ export default function Expenses() {
                                         showDetailsExpenseCategoryModal(expenseCategoryId)
                                     }
                                     dark
-                                    filters={false}
                                 />
                             )}
                         </div>

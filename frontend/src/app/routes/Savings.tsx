@@ -267,7 +267,6 @@ export default function Savings() {
                                         showDetailsGoalContributionModal(gCId)
                                     }
                                     dark
-                                    filters={false}
                                 />
                             ) : (
                                 <div className="text-gray-400 py-12 flex items-center gap-x-1 h-full w-full justify-center">

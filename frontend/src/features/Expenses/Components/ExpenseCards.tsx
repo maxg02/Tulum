@@ -1,4 +1,3 @@
-import React from "react";
 import { expenseCategoryDto, expenseDto } from "../types";
 
 type expenseCardProps = {

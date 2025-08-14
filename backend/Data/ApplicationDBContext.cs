@@ -12,9 +12,7 @@ namespace backend.Data
 
         public DbSet<User> Users { get; set; }
         public DbSet<Income> Incomes { get; set; }
-        public DbSet<FixedIncome> FixedIncomes { get; set; }
         public DbSet<Expense> Expenses {get; set;}
-        public DbSet<FixedExpense> FixedExpenses {get; set;}
         public DbSet<ExpenseCategory> ExpenseCategories { get; set; }
         public DbSet<SavingGoal> SavingGoals { get; set; }
         public DbSet<GoalContribution> GoalContributions { get; set; }

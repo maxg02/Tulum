@@ -5,13 +5,6 @@ export type updateIncomeDto = {
     data: { amount: number; details: string; date: Date | string };
 };
 
-export type fixedIncomeDto = { id: number; amount: number; details: string; periodicity: number };
-export type createFixedIncomeDto = { amount: number; details: string; periodicity: number };
-export type updateFixedIncomeDto = {
-    id: number;
-    data: { amount: number; details: string; periodicity: number };
-};
-
 export type dataYearBarChart = {
     month: string;
     income: number;

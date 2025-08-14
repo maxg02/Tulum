@@ -8,9 +8,6 @@ import {
     expenseDto,
     createExpenseDto,
     updateExpenseDto,
-    fixedExpenseDto,
-    createFixedExpenseDto,
-    updateFixedExpenseDto,
 } from "./types";
 
 export const expensesApi = apiSlice.injectEndpoints({
@@ -97,35 +94,6 @@ export const expensesApi = apiSlice.injectEndpoints({
             }),
             invalidatesTags: ["Expense"],
         }),
-
-        //Fixed Expense endpoints
-        getUserFixedExpenses: builder.query<fixedExpenseDto[], void>({
-            query: () => `fixedexpenses/`,
-            providesTags: ["FixedExpense"],
-        }),
-        createFixedExpense: builder.mutation({
-            query: (fixedExpenseData: createFixedExpenseDto) => ({
-                url: "fixedexpenses/",
-                method: "POST",
-                body: fixedExpenseData,
-            }),
-            invalidatesTags: ["FixedExpense"],
-        }),
-        updateFixedExpense: builder.mutation({
-            query: (fixedExpenseData: updateFixedExpenseDto) => ({
-                url: `fixedexpenses/${fixedExpenseData.id}`,
-                method: "PUT",
-                body: fixedExpenseData.data,
-            }),
-            invalidatesTags: ["FixedExpense"],
-        }),
-        deleteFixedExpense: builder.mutation({
-            query: (Id: number) => ({
-                url: `fixedexpenses/${Id}`,
-                method: "DELETE",
-            }),
-            invalidatesTags: ["FixedExpense"],
-        }),
     }),
 });
 
@@ -143,9 +111,4 @@ export const {
     useCreateExpenseMutation,
     useUpdateExpenseMutation,
     useDeleteExpenseMutation,
-
-    useGetUserFixedExpensesQuery,
-    useCreateFixedExpenseMutation,
-    useUpdateFixedExpenseMutation,
-    useDeleteFixedExpenseMutation,
 } = expensesApi;
