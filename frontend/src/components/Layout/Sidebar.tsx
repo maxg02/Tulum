@@ -14,9 +14,9 @@ import {
 } from "@hugeicons/core-free-icons";
 
 import type { ReactNode } from "react";
-import { useAppDispatch, useAppSelector } from "../../Hooks/stateHooks";
-import { toggleSidebar, toggleActiveSection } from "../../reducers/utilitiesReducers";
-import { logOut } from "../../features/Auth/reducers";
+import { useAppDispatch, useAppSelector } from "@/Hooks/stateHooks";
+import { toggleSidebar, toggleActiveSection } from "@/reducers/utilitiesReducers";
+import { logOut } from "@/features/Auth/reducers";
 
 enum routes {
     Dashboard = "/",

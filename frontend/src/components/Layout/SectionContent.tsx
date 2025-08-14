@@ -1,8 +1,8 @@
 import type { ReactElement } from "react";
-import { useAppDispatch, useAppSelector } from "../../Hooks/stateHooks";
+import { useAppDispatch, useAppSelector } from "@/Hooks/stateHooks";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Menu01Icon } from "@hugeicons/core-free-icons";
-import { toggleSidebar } from "../../reducers/utilitiesReducers";
+import { toggleSidebar } from "@/reducers/utilitiesReducers";
 
 function SectionContent({ children }: { children: ReactElement }) {
     const dispatch = useAppDispatch();

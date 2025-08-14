@@ -1,5 +1,5 @@
 import { useDrawingArea } from "@mui/x-charts/hooks";
-import { gradientColors } from "../../Constants/Colors";
+import { gradientColors } from "@/Constants/Colors";
 import { PieChart } from "@mui/x-charts/PieChart";
 import { styled } from "@mui/material/styles";
 

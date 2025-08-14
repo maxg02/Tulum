@@ -1,7 +1,6 @@
-import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../Hooks/stateHooks";
-import { setUserInfo } from "../../features/Auth/reducers";
+import { useAppDispatch, useAppSelector } from "@/Hooks/stateHooks";
+import { setUserInfo } from "@/features/Auth/reducers";
 import Sidebar from "./Sidebar";
 
 export default function RootLayout() {

@@ -1,11 +1,11 @@
-import SectionContent from "../../components/Layout/SectionContent";
-import MoreDots from "../../components/Misc/MoreDots";
-import CustomGauge from "../../components/Graphs/CustomGauge";
-import Loader from "../../components/Misc/Loader";
+import SectionContent from "@//components/Layout/SectionContent";
+import MoreDots from "@//components/Misc/MoreDots";
+import CustomGauge from "@//components/Graphs/CustomGauge";
+import Loader from "@//components/Misc/Loader";
 import { Invoice02Icon, MoneyReceiveSquareIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { monthList } from "../../Constants/Constants";
-import CustomPieChart, { pieChartSlice } from "../../components/Graphs/CustomPieChart";
+import { monthList } from "@//Constants/Constants";
+import CustomPieChart, { pieChartSlice } from "@//components/Graphs/CustomPieChart";
 import { SummaryLineChart } from "@/features/Dashboard/Components";
 import { dataSummaryLineChart } from "@/features/Dashboard/types";
 import { expenseDto } from "@/features/Expenses/types";
