@@ -297,12 +297,8 @@ __pycache__/
 # Cake - Uncomment if you are using it
 # tools/
 
-# Sqlite3 database
-
-db.sqlite3
-
-#profile_images
-
-./backend/media/profile_images/*
+appsettings.Development.json
+appsettings.Production.json
+appsettings.Staging.json
 
 # End of https://www.toptal.com/developers/gitignore/api/aspnetcore
