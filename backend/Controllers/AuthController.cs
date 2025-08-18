@@ -8,8 +8,8 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Security.Claims;
-using backend.Data;
-using Microsoft.EntityFrameworkCore;
+using backend.Utilities.Classes;
+using Microsoft.Extensions.Options;
 
 namespace backend.Controllers
 {
@@ -19,11 +19,13 @@ namespace backend.Controllers
     {
         private readonly IAuthRepo _authRepo;
         private readonly IUserRepo _userRepo;
+        private readonly JwtInfo _jwtInfo;
 
-        public AuthController(IAuthRepo authRepo, IUserRepo userRepo)
+        public AuthController(IAuthRepo authRepo, IUserRepo userRepo, IOptions<JwtInfo> jwtInfo)
         {
             _authRepo = authRepo;
             _userRepo = userRepo;
+            _jwtInfo = jwtInfo.Value;
         }
 
         [HttpPost("register")]
@@ -91,7 +93,7 @@ namespace backend.Controllers
             });
         }
 
-        private static string CreateAccessToken(User user)
+        private string CreateAccessToken(User user)
         {
             Dictionary<string, object> claims = new()
             {
@@ -100,15 +102,15 @@ namespace backend.Controllers
                 {ClaimTypes.Email, user.Email},
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("lavidaesunalentejatulatomaoladejalavidaesunalentejaasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfadsfasdfasdfasdfadsfadsfasdfadsfadsf"));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtInfo.SigningKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
 
             var tokenDescriptor = new SecurityTokenDescriptor()
             {
                 Claims = claims,
                 Expires = DateTime.Now.AddMinutes(60),
-                Issuer = "MyApp",
-                Audience = "MyUsers",
+                Issuer = _jwtInfo.Issuer,
+                Audience = _jwtInfo.Audience,
                 SigningCredentials = creds
             };
 

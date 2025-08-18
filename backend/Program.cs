@@ -1,11 +1,13 @@
 using backend.Data;
 using backend.Repositories.Interfaces;
 using backend.Repositories.Repos;
+using backend.Utilities.Classes;
 using backend.Utilities.Interfaces;
 using backend.Utilities.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Build.Evaluation;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -54,6 +56,9 @@ builder.Services.AddDbContext<ApplicationDBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+builder.Services.Configure<JwtInfo>(builder.Configuration.GetSection("Jwt"));
+var jwtInfo = builder.Configuration.GetSection("Jwt").Get<JwtInfo>();
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -64,9 +69,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateLifetime = true,
             ClockSkew = TimeSpan.Zero,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = "MyApp",
-            ValidAudience = "MyUsers",
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("lavidaesunalentejatulatomaoladejalavidaesunalentejaasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfadsfasdfasdfasdfadsfadsfasdfadsfadsf"))
+            ValidIssuer = jwtInfo!.Issuer,
+            ValidAudience = jwtInfo!.Audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtInfo!.SigningKey))
         };
     });
 
