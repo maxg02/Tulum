@@ -6,7 +6,7 @@ import { logOut, refreshUserToken } from "../features/Auth/reducers";
 import { tokenDto } from "@/features/Auth/types";
 
 const baseQuery = fetchBaseQuery({
-    baseUrl: "http://127.0.0.1:5085/api",
+    baseUrl: import.meta.env.VITE_API_URL,
     prepareHeaders: (headers, { getState }) => {
         headers.set("Content-Type", "application/json");
         const token = (getState() as RootState).user.tokens?.accessToken;
