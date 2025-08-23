@@ -28,7 +28,7 @@ export default function Login() {
             })
             .catch((error) => {
                 const validationError = error.data as validationError;
-                if (validationError.errors) {
+                if (validationError?.errors) {
                     setError(Object.values(validationError.errors).flat());
                 } else {
                     setError(["An unexpected error occurred. Please try again."]);

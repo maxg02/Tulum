@@ -28,7 +28,7 @@ export default function Register() {
             })
             .catch((error) => {
                 const validationError = error.data as validationError;
-                if (validationError.errors) {
+                if (validationError?.errors) {
                     setError(Object.values(validationError.errors).flat());
                 } else {
                     setError(["An unexpected error occurred. Please try again."]);
@@ -97,7 +97,7 @@ export default function Register() {
                                 <input
                                     name="confirmPassword"
                                     id="confirmPassword"
-                                    type="confirmPassword"
+                                    type="password"
                                     className="formInput"
                                     onChange={(e) => setConfirmPassword(e.target.value)}
                                     required
