@@ -10,7 +10,7 @@ import {
 export const savingsApi = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         //Saving Goal endpoints
-        getSavingGoalsByUserId: builder.query<savingGoalDto[], number>({
+        getUserSavingGoals: builder.query<savingGoalDto[], void>({
             query: () => `savinggoal`,
             providesTags: ["SavingGoal"],
         }),
@@ -66,7 +66,7 @@ export const savingsApi = apiSlice.injectEndpoints({
 });
 
 export const {
-    useGetSavingGoalsByUserIdQuery,
+    useGetUserSavingGoalsQuery,
     useCreateSavingGoalMutation,
     useUpdateSavingGoalMutation,
     useDeleteSavingGoalMutation,
