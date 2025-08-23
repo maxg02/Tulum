@@ -302,3 +302,4 @@ appsettings.Production.json
 appsettings.Staging.json
 
 # End of https://www.toptal.com/developers/gitignore/api/aspnetcore
+frontend/tsconfig.tsbuildinfo
