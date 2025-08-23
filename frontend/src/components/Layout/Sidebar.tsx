@@ -17,12 +17,13 @@ import type { ReactNode } from "react";
 import { useAppDispatch, useAppSelector } from "@/Hooks/stateHooks";
 import { toggleSidebar, toggleActiveSection } from "@/reducers/utilitiesReducers";
 import { logOut } from "@/features/Auth/reducers";
+import appLogo from "/appLogo.png";
 
 enum routes {
-    Dashboard = "/",
-    Income = "/income",
-    Expenses = "/expenses",
-    Savings = "/savings",
+    Dashboard = "",
+    Income = "income",
+    Expenses = "expenses",
+    Savings = "savings",
 }
 
 export type SectionType = keyof typeof routes;
@@ -49,9 +50,9 @@ export default function Sidebar() {
     useEffect(() => {
         //Get url subdirectory
         const url = window.location.pathname;
-        const section = Object.keys(routes).find((key) => routes[key as keyof typeof routes] === url) as
-            | SectionType
-            | undefined;
+        const section = Object.keys(routes).find(
+            (key) => import.meta.env.BASE_URL + routes[key as SectionType] === url
+        ) as SectionType | undefined;
         if (section) {
             handleActiveSection(section);
         }
@@ -92,7 +93,7 @@ export default function Sidebar() {
                     <HugeiconsIcon size={35} icon={ArrowLeft01Icon} />
                 </button>
                 <div className="flex flex-col items-center mb-9 overflow-hidden">
-                    <img className="w-28 max-w-none" src="/appLogo.png" alt="App Logo" />
+                    <img className="w-28 max-w-none" src={appLogo} alt="App Logo" />
                     <h2 className="text-4xl">AppName</h2>
                 </div>
 
