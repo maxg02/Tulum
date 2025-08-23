@@ -33,7 +33,7 @@ namespace backend.Controllers
         {
             if (await _userRepo.UserExists(userDto.Email))
             {
-                
+                ModelState.AddModelError("User", "The email address is already in use");
             }
 
             if (!ModelState.IsValid) {
