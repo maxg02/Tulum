@@ -9,7 +9,7 @@ import ValuePill from "@//components/Misc/ValuePill";
 import ProgressBar from "@//components/Graphs/ProgressBar";
 import { AddSquareIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { useGetSavingGoalsByUserIdQuery } from "@/features/Savings/api";
+import { useGetUserSavingGoalsQuery } from "@/features/Savings/api";
 import { goalContributionDto, savingGoalDto } from "@/features/Savings/types";
 import {
     CreateContribution,
@@ -46,7 +46,7 @@ export default function Savings() {
     const detailsModalState = useAppSelector((state) => state.detailsModal);
 
     //Saving Goal Fetching
-    const { data: savingGoalData, isLoading: savingGoalIsLoading } = useGetSavingGoalsByUserIdQuery(1);
+    const { data: savingGoalData, isLoading: savingGoalIsLoading } = useGetUserSavingGoalsQuery();
 
     //Saving goals data handling
     if (!savingGoalIsLoading && savingGoalData != undefined && savingGoalData.length > 0) {

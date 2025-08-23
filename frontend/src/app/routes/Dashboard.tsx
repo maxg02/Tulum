@@ -12,7 +12,7 @@ import { expenseDto } from "@/features/Expenses/types";
 import { useGetUserExpenseCategoriesQuery, useGetUserExpensesQuery } from "@/features/Expenses/api";
 import { useGetUserIncomesQuery } from "@/features/Income/api";
 import { incomeDto } from "@/features/Income/types";
-import { useGetSavingGoalsByUserIdQuery } from "@/features/Savings/api";
+import { useGetUserSavingGoalsQuery } from "@/features/Savings/api";
 import { goalContributionDto } from "@/features/Savings/types";
 
 export default function Dashboard() {
@@ -32,7 +32,7 @@ export default function Dashboard() {
     const { data: expenseCategoryData, isLoading: expenseCategoryIsLoading } =
         useGetUserExpenseCategoriesQuery();
     const { data: expenseData, isLoading: expenseIsLoading } = useGetUserExpensesQuery();
-    const { data: savingGoalData, isLoading: savingGoalIsLoading } = useGetSavingGoalsByUserIdQuery(1);
+    const { data: savingGoalData, isLoading: savingGoalIsLoading } = useGetUserSavingGoalsQuery();
 
     if (!incomeIsLoading && incomeData?.length) {
         yearIncomes = incomeData.filter(
