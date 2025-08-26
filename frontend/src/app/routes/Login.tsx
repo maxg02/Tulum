@@ -3,7 +3,7 @@ import { useGetUserMutation } from "@/features/Auth/api";
 import { validationError } from "@/types/types.ts";
 import { setUserInfo } from "@/features/Auth/reducers";
 
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch } from "@/Hooks/stateHooks";
 
 import loginImage from "@/features/Auth/assets/loginImage.jpg";
@@ -87,9 +87,9 @@ export default function Login() {
                     </div>
                     <p className="text-sm text-gray-400 text-center">
                         Don't have an account?{" "}
-                        <a className="text-custom-accent cursor-pointer" href="/register">
+                        <Link className="text-custom-accent cursor-pointer" to="/register">
                             Sign Up
-                        </a>
+                        </Link>
                     </p>
                 </div>
                 <div className="max-xl:hidden w-1/2 h-full flex items-center justify-center overflow-hidden">
