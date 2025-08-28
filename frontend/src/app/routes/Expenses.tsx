@@ -3,9 +3,6 @@ import Table, { dataObject, tableRow } from "@/components/Misc/Table";
 import { useGetUserExpensesQuery, useGetUserExpenseCategoriesQuery } from "@/features/Expenses/api";
 import { expenseDto, expenseCategoryDto } from "@/features/Expenses/types";
 import Loader from "@/components/Misc/Loader";
-import { useAppDispatch, useAppSelector } from "@/Hooks/stateHooks";
-import { showModal as showCreateModal } from "@/reducers/createModalReducers";
-import { showModal as showDetailsModal } from "@/reducers/detailsModalReducers";
 import { periodicityValues } from "@/Constants/Constants";
 import CustomPieChart, { pieChartSlice } from "@/components/Graphs/CustomPieChart";
 import ValuePill from "@/components/Misc/ValuePill";
@@ -21,180 +18,141 @@ import {
     DetailsBudget,
     DetailsCategory,
 } from "@/features/Expenses/Components";
+import { useMemo } from "react";
+import useModal from "@/Hooks/useModal";
 
 export default function Expenses() {
-    const dispatch = useAppDispatch();
-    const createModalState = useAppSelector((state) => state.createModal.show);
-    const detailsModalState = useAppSelector((state) => state.detailsModal);
+    const { openCreationModal, openDetailsModal } = useModal();
 
-    const currentDate: Date = new Date();
-    const currentMonth: string = new Intl.DateTimeFormat("en-US", { month: "long" }).format(currentDate);
-    const currentYear: number = currentDate.getFullYear();
-    const categorySelectValues:
-        | {
-              id: number;
-              value: string;
-          }[]
-        | undefined = [{ id: -1, value: "Others" }];
-    let expensesRow: tableRow[] = [];
-
-    let budgetExpensesRow: tableRow[] = [],
-        expenseCategoriesRow: tableRow[] = [],
-        dataPieChart: pieChartSlice[] = [],
-        expenseCategoriesWithBudget: expenseCategoryDto[] = [];
-
-    let totalMonthExpenses: number = 0;
-    let totalYearExpenses: number = 0;
+    const currentMonth: number = new Date().getMonth();
+    const currentYear: number = new Date().getFullYear();
 
     //Expense Category Fetching
     const { data: expenseCategoryData, isLoading: expenseCategoryIsLoading } =
         useGetUserExpenseCategoriesQuery();
 
+    const categorySelectValues:
+        | {
+              id: number;
+              value: string;
+          }[]
+        | undefined = useMemo(
+        () => [
+            { id: -1, value: "Others" },
+            ...(expenseCategoryData?.map((ec: expenseCategoryDto) => ({
+                id: ec.id,
+                value: ec.category,
+            })) ?? []),
+        ],
+        [expenseCategoryData]
+    );
+
+    const expenseCategoriesRow: tableRow[] = useMemo(
+        () =>
+            expenseCategoryData
+                ? expenseCategoryData.map((expenseCategory: expenseCategoryDto) => ({
+                      id: expenseCategory.id,
+                      data: [expenseCategory.category],
+                  }))
+                : [],
+        [expenseCategoryData]
+    );
+
+    const expenseCategoriesWithBudget = useMemo(
+        () => expenseCategoryData?.filter((ec) => ec.budgetPlan) ?? [],
+        [expenseCategoryData]
+    );
+
     //Expense Fetching
-    const { data: expenseData, isLoading: expenseIsLoading } = useGetUserExpensesQuery();
+    const {
+        data: expenseData,
+        isFetching: expenseIsFetching,
+        isLoading: expenseIsLoading,
+    } = useGetUserExpensesQuery();
 
-    // Expenses Category Data handling
-    if (
-        !expenseCategoryIsLoading &&
-        expenseCategoryData != undefined &&
-        !expenseIsLoading &&
-        expenseData != undefined
-    ) {
-        let yearExpenses: expenseDto[] = [];
+    const expensesRow: tableRow[] = useMemo(
+        () =>
+            expenseData && expenseCategoryData
+                ? expenseData.map((expense: expenseDto) => ({
+                      id: expense.id,
+                      data: [
+                          expense.amount,
+                          expense.details,
+                          new Date(expense.date).toLocaleDateString("en-US"),
+                          expense.expenseCategoryId != -1
+                              ? expenseCategoryData.find((ec) => ec.id === expense.expenseCategoryId)
+                                    ?.category ?? "Others"
+                              : "Others",
+                      ],
+                  }))
+                : [],
+        [expenseData, expenseCategoryData]
+    );
 
-        let monthExpenses: expenseDto[] = [];
+    const yearExpenses = useMemo(
+        () =>
+            expenseData?.filter((expense) => new Date(expense.date).getFullYear() === currentYear) ?? [],
+        [expenseData, currentYear]
+    );
+    const monthExpenses = useMemo(
+        () => yearExpenses?.filter((expense) => new Date(expense.date).getMonth() === currentMonth) ?? [],
+        [yearExpenses, currentMonth]
+    );
 
-        if (expenseCategoryData.length) {
-            expenseCategoriesRow = expenseCategoryData.map((expenseCategory: expenseCategoryDto) => ({
-                id: expenseCategory.id,
-                data: [expenseCategory.category],
-            }));
+    const monthExpensesByCategory = useMemo(
+        () =>
+            Object.groupBy(
+                monthExpenses.filter((ex) => ex.expenseCategoryId),
+                ({ expenseCategoryId }) => expenseCategoryId!.toString()
+            ),
+        [monthExpenses]
+    );
 
-            expenseCategoryData.map((ec: expenseCategoryDto) =>
-                categorySelectValues.push({
-                    id: ec.id,
-                    value: ec.category,
-                })
-            );
+    const dataPieChart = useMemo(
+        () =>
+            expenseCategoryData
+                ? Object.keys(monthExpensesByCategory).map<pieChartSlice>((key) => ({
+                      label:
+                          expenseCategoryData!.find((c) => c.id === parseInt(key))?.category ?? "Others",
+                      value: monthExpensesByCategory[key as keyof typeof monthExpensesByCategory]!.reduce(
+                          (acc, expense) => acc + expense.amount,
+                          0
+                      ),
+                  }))
+                : [],
+        [monthExpensesByCategory, expenseCategoryData]
+    );
 
-            expenseCategoriesWithBudget = expenseCategoryData.filter((ec) => ec.budgetPlan);
-        }
+    const totalMonthExpenses = useMemo(
+        () => monthExpenses.reduce((acc, val) => acc + val.amount, 0),
+        [monthExpenses]
+    );
+    const totalYearExpenses = useMemo(
+        () => yearExpenses.reduce((acc, val) => acc + val.amount, 0),
+        [yearExpenses]
+    );
 
-        if (expenseData.length) {
-            expensesRow = expenseData.map((expense: expenseDto) => ({
-                id: expense.id,
-                data: [
-                    expense.amount,
-                    expense.details,
-                    new Date(expense.date).toLocaleDateString("en-US"),
-                    expense.expenseCategoryId != -1
-                        ? expenseCategoryData.find((ec) => ec.id === expense.expenseCategoryId)!.category
-                        : "Others",
-                ],
-            }));
+    const budgetExpensesRow = useMemo(
+        () =>
+            expenseCategoriesWithBudget.map((ec) => {
+                const budgetExpenses = ec.budgetPlan!.periodicity === 0 ? monthExpenses : yearExpenses;
 
-            yearExpenses = expenseData?.filter(
-                (expense) => new Date(expense.date).getFullYear() === currentDate.getFullYear()
-            );
-
-            monthExpenses = yearExpenses?.filter(
-                (expense) => new Date(expense.date).getMonth() === currentDate.getMonth()
-            );
-
-            totalMonthExpenses = monthExpenses.reduce((acc, val) => acc + val.amount, 0);
-            totalYearExpenses = yearExpenses.reduce((acc, val) => acc + val.amount, 0);
-
-            if (monthExpenses.length > 0) {
-                const monthExpensesByCategory = Object.groupBy(
-                    monthExpenses.filter((ex) => ex.expenseCategoryId),
-                    ({ expenseCategoryId }) => expenseCategoryId!.toString()
-                );
-
-                dataPieChart = Object.keys(monthExpensesByCategory)
-                    .map<pieChartSlice>((key) => ({
-                        label: categorySelectValues?.find((c) => c.id === parseInt(key))!.value,
-                        value: monthExpensesByCategory[
-                            key as keyof typeof monthExpensesByCategory
-                        ]!.reduce((acc, expense) => acc + expense.amount, 0),
-                    }))
-                    .sort((a, b) => b.value - a.value);
-            }
-        }
-
-        budgetExpensesRow = expenseCategoriesWithBudget.map((ec) => {
-            const budgetExpenses = ec.budgetPlan!.periodicity === 0 ? monthExpenses : yearExpenses;
-
-            return {
-                id: ec.budgetPlan!.id,
-                data: [
-                    ec.category,
-                    periodicityValues[ec.budgetPlan!.periodicity],
-                    {
-                        value: budgetExpenses
-                            .filter((e) => e.expenseCategoryId === ec.id)
-                            .reduce((acc, value) => (acc += value.amount), 0),
-                        total: ec.budgetPlan!.amount,
-                    },
-                ],
-            };
-        });
-    }
-
-    // Show create Expense Modal
-    const showCreateExpenseModal = () => {
-        const newState = { ...createModalState };
-        newState.expense = true;
-
-        dispatch(showCreateModal(newState));
-    };
-
-    // Show create Expense Category Modal
-    const showCreateExpenseCategoryModal = () => {
-        const newState = { ...createModalState };
-        newState.expenseCategory = true;
-
-        dispatch(showCreateModal(newState));
-    };
-
-    // Show create budget planning Modal
-    const showCreateBudgetModal = () => {
-        const newState = { ...createModalState };
-        newState.budgetPlanning = true;
-
-        dispatch(showCreateModal(newState));
-    };
-
-    //Show details Expense Modal
-    const showDetailsExpenseModal = (expenseId: number) => {
-        const selectedExpenseData = expenseData!.find((exp) => exp.id === expenseId);
-        const newState = { ...detailsModalState };
-        newState.show = { ...detailsModalState.show, expense: true };
-        newState.data = selectedExpenseData;
-        dispatch(showDetailsModal(newState));
-    };
-
-    // Show details Budget Plan Modal
-    const showDetailsBudgetPlanningModal = (budgetId: number) => {
-        const selectedBudgetPlan = expenseCategoriesWithBudget.find(
-            (ec) => ec.budgetPlan!.id == budgetId
-        )!.budgetPlan;
-        const newState = { ...detailsModalState };
-        newState.show = { ...detailsModalState.show, budgetPlanning: true };
-        newState.data = selectedBudgetPlan;
-        dispatch(showDetailsModal(newState));
-    };
-
-    // Show details Expense Category Modal
-    const showDetailsExpenseCategoryModal = (expenseCategoryId: number) => {
-        const selectedExpenseCategoryData: expenseCategoryDto = expenseCategoryData!.find(
-            (ec: expenseCategoryDto) => ec.id === expenseCategoryId
-        )!;
-
-        const newState = { ...detailsModalState };
-        newState.show = { ...detailsModalState.show, expenseCategory: true };
-        newState.data = selectedExpenseCategoryData;
-        dispatch(showDetailsModal(newState));
-    };
+                return {
+                    id: ec.budgetPlan!.id,
+                    data: [
+                        ec.category,
+                        periodicityValues[ec.budgetPlan!.periodicity],
+                        {
+                            value: budgetExpenses
+                                .filter((e) => e.expenseCategoryId === ec.id)
+                                .reduce((acc, value) => (acc += value.amount), 0),
+                            total: ec.budgetPlan!.amount,
+                        },
+                    ],
+                };
+            }),
+        [expenseCategoriesWithBudget, monthExpenses, yearExpenses]
+    );
 
     const expensesData: dataObject = {
         columns: [
@@ -226,7 +184,10 @@ export default function Expenses() {
                 key={e.id}
                 expense={e}
                 expenseCategoryData={expenseCategoryData}
-                showDetailsExpenseModal={showDetailsExpenseModal}
+                showDetailsExpenseModal={(expenseId: number) => {
+                    const expense = expenseData?.find((e) => e.id === expenseId) ?? null;
+                    openDetailsModal("expense", expense);
+                }}
             />
         ));
 
@@ -236,7 +197,12 @@ export default function Expenses() {
                 <div className="grid grid-cols-2 auto-rows-auto gap-8 overflow-x-hidden overflow-y-auto md:grid-cols-5 xl:grid-cols-7 xl:max-2xl:gap-5 xl:flex-1 xl:grid-rows-12 2xl:max-h-[1000px]">
                     <div className="flex col-span-2 gap-3 md:hidden">
                         <div className="flex-1">
-                            <ValuePill title={currentMonth} value={totalMonthExpenses} />
+                            <ValuePill
+                                title={new Date(0, currentMonth).toLocaleString("en-US", {
+                                    month: "long",
+                                })}
+                                value={totalMonthExpenses}
+                            />
                         </div>
                         <div className="flex-1">
                             <ValuePill title={currentYear.toString()} value={totalYearExpenses} />
@@ -244,7 +210,9 @@ export default function Expenses() {
                     </div>
                     <hr className="col-span-2 border-t-2 md:hidden"></hr>
                     <div className="infoContainer1 max-md:hidden md:col-span-3 xl:col-span-3 xl:row-span-6 2xl:row-span-5">
-                        <p>{`${currentMonth} Expenses`}</p>
+                        <p>{`${new Date(0, currentMonth).toLocaleString("en-US", {
+                            month: "long",
+                        })} Expenses`}</p>
                         <div className="w-full md:h-52 2xl:flex-1 overflow-y-hidden">
                             {expenseCategoryIsLoading ? (
                                 <Loader />
@@ -260,7 +228,7 @@ export default function Expenses() {
                             <p className="text-nowrap">Expenses</p>
                             <button
                                 className="absolute right-0 top-0 tableButton flex gap-x-2 p-0 items-center xl:opacity-70 hover:opacity-100"
-                                onClick={showCreateExpenseModal}
+                                onClick={() => openCreationModal("expense")}
                             >
                                 <HugeiconsIcon
                                     icon={AddSquareIcon}
@@ -269,9 +237,9 @@ export default function Expenses() {
                                 />
                             </button>
                         </div>
-                        {expenseCategoryIsLoading ? (
+                        {expenseCategoryIsLoading || expenseIsLoading ? (
                             <Loader />
-                        ) : expensesData && expenseData?.length === 0 ? (
+                        ) : expenseData?.length === 0 ? (
                             <div className="text-gray-400 py-12 flex items-center gap-x-1 h-full justify-self-center">
                                 <p>Press</p>
                                 <HugeiconsIcon
@@ -286,13 +254,15 @@ export default function Expenses() {
                                 <div className="flex flex-1 w-full max-h-[40rem] max-md:hidden xl:max-h-none overflow-hidden">
                                     <Table
                                         data={expensesData}
-                                        detailsFunction={(expenseId: number) =>
-                                            showDetailsExpenseModal(expenseId)
-                                        }
+                                        detailsFunction={(expenseId: number) => {
+                                            const expense =
+                                                expenseData?.find((e) => e.id === expenseId) ?? null;
+                                            openDetailsModal("expense", expense);
+                                        }}
                                     />
                                 </div>
                                 <div className="flex flex-col w-full overflow-x-hidden gap-4 max-h-[40rem] overflow-y-auto md:hidden">
-                                    <ExpenseCards />
+                                    {expenseIsFetching ? <Loader /> : <ExpenseCards />}
                                 </div>
                             </>
                         )}
@@ -302,7 +272,7 @@ export default function Expenses() {
                             <p className="text-nowrap">Budgets</p>
                             <button
                                 className="absolute right-0 top-0  tableButton flex gap-x-2 p-0 items-center xl:opacity-70 hover:opacity-100"
-                                onClick={showCreateBudgetModal}
+                                onClick={() => openCreationModal("budgetPlanning")}
                             >
                                 <HugeiconsIcon
                                     icon={AddSquareIcon}
@@ -319,9 +289,13 @@ export default function Expenses() {
                                 <div className=" max-md:hidden flex flex-1 w-full max-h-[40rem] xl:max-h-none overflow-hidden">
                                     <Table
                                         dark
-                                        detailsFunction={(budgetId: number) =>
-                                            showDetailsBudgetPlanningModal(budgetId)
-                                        }
+                                        detailsFunction={(budgetId: number) => {
+                                            const budgetPlan =
+                                                expenseCategoriesWithBudget.find(
+                                                    (ec) => ec.budgetPlan?.id == budgetId
+                                                )?.budgetPlan ?? null;
+                                            openDetailsModal("budgetPlanning", budgetPlan);
+                                        }}
                                         data={budgetExpensesData}
                                     />
                                 </div>
@@ -364,7 +338,7 @@ export default function Expenses() {
                             <p className="text-nowrap">Expense Categories</p>
                             <button
                                 className="absolute right-0 top-0 tableButton flex gap-x-2 p-0 items-center xl:opacity-70 hover:opacity-100"
-                                onClick={showCreateExpenseCategoryModal}
+                                onClick={() => openCreationModal("expenseCategory")}
                             >
                                 <HugeiconsIcon
                                     icon={AddSquareIcon}
@@ -389,9 +363,13 @@ export default function Expenses() {
                             ) : (
                                 <Table
                                     data={expenseCategoryTableData}
-                                    detailsFunction={(expenseCategoryId: number) =>
-                                        showDetailsExpenseCategoryModal(expenseCategoryId)
-                                    }
+                                    detailsFunction={(expenseCategoryId: number) => {
+                                        const expenseCategory =
+                                            expenseCategoryData?.find(
+                                                (ec) => ec.id === expenseCategoryId
+                                            ) ?? null;
+                                        openDetailsModal("expenseCategory", expenseCategory);
+                                    }}
                                     dark
                                 />
                             )}

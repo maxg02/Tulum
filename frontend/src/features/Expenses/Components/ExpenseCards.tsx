@@ -20,7 +20,8 @@ function ExpenseCard({ expense: e, expenseCategoryData, showDetailsExpenseModal 
             <div className="flex justify-between">
                 <p>
                     {e.expenseCategoryId != -1
-                        ? expenseCategoryData?.find((ec) => ec.id === e.expenseCategoryId)!.category
+                        ? expenseCategoryData?.find((ec) => ec.id === e.expenseCategoryId)?.category ??
+                          "Others"
                         : "Others"}
                 </p>
                 <p>{new Date(e.date).toDateString()}</p>
