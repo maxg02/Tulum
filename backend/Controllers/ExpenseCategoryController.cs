@@ -1,4 +1,5 @@
-﻿using backend.Dtos.ExpenseCategory;
+﻿using backend.Dtos.Expense;
+using backend.Dtos.ExpenseCategory;
 using backend.Mappers;
 using backend.Repositories.Interfaces;
 using backend.Utilities.Interfaces;
@@ -52,6 +53,16 @@ namespace backend.Controllers
         [Authorize]
         public async Task<IActionResult> CreateExpenseCategory([FromBody] ExpenseCategoryRequestDto expenseCategoryDto)
         {
+            if (await _expenseCategoryRepo.CategoryExists(expenseCategoryDto.Category))
+            {
+                ModelState.AddModelError("ExpenseCategoryId", "Category already exists");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return ValidationProblem(ModelState);
+            }
+
             int userId = _claimsAccess.GetUserIdFromClaims(_httpContext.HttpContext!);
             var expenseCategory = await _expenseCategoryRepo.CreateAsync(expenseCategoryDto.ToExpenseCategoryFromCreateDto(userId));
 

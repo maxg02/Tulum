@@ -11,6 +11,6 @@ namespace backend.Repositories.Interfaces
         Task<ExpenseCategory?> UpdateAsync(int id, ExpenseCategoryRequestDto expenseCategoryDto);
         Task<ExpenseCategory?> DeleteAsync(int id);
         Task<bool> CategoryExists(int id);
-
+        Task<bool> CategoryExists(string category);
     }
 }

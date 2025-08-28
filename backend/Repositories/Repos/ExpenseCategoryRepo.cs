@@ -80,5 +80,12 @@ namespace backend.Repositories.Repos
 
             return expenseCategory != null;
         }
+
+        public async Task<bool> CategoryExists(string category)
+        {
+            var expenseCategory = await _context.ExpenseCategories.FirstOrDefaultAsync(ec => ec.Category == category);
+
+            return expenseCategory != null;
+        }
     }
 }
