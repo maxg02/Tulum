@@ -6,8 +6,6 @@ import Loader from "@/components/Misc/Loader";
 import { periodicityValues } from "@/Constants/Constants";
 import CustomPieChart, { pieChartSlice } from "@/components/Graphs/CustomPieChart";
 import ValuePill from "@/components/Misc/ValuePill";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { AddSquareIcon } from "@hugeicons/core-free-icons";
 import ProgressBar from "@/components/Graphs/ProgressBar";
 import {
     ExpenseCard,
@@ -20,6 +18,7 @@ import {
 } from "@/features/Expenses/Components";
 import { useMemo } from "react";
 import useModal from "@/Hooks/useModal";
+import DataSection from "@/components/Layout/DataSection";
 
 export default function Expenses() {
     const { openCreationModal, openDetailsModal } = useModal();
@@ -224,156 +223,88 @@ export default function Expenses() {
                         </div>
                     </div>
                     <div className="infoContainer1 col-span-2 md:col-span-5 md:order-3 xl:col-span-4 xl:row-span-6 2xl:row-span-7">
-                        <div className="flex justify-center relative w-full">
-                            <p className="text-nowrap">Expenses</p>
-                            <button
-                                className="absolute right-0 top-0 tableButton flex gap-x-2 p-0 items-center xl:opacity-70 hover:opacity-100"
-                                onClick={() => openCreationModal("expense")}
-                            >
-                                <HugeiconsIcon
-                                    icon={AddSquareIcon}
-                                    size={20}
-                                    className="text-custom-accent"
+                        <DataSection
+                            isLoading={expenseCategoryIsLoading || expenseIsLoading}
+                            createFunction={() => openCreationModal("expense")}
+                            isEmpty={expenseData?.length === 0}
+                            title="Expenses"
+                        >
+                            <div className="flex flex-1 w-full max-h-[40rem] max-md:hidden xl:max-h-none overflow-hidden">
+                                <Table
+                                    data={expensesData}
+                                    detailsFunction={(expenseId: number) => {
+                                        const expense =
+                                            expenseData?.find((e) => e.id === expenseId) ?? null;
+                                        openDetailsModal("expense", expense);
+                                    }}
                                 />
-                            </button>
-                        </div>
-                        {expenseCategoryIsLoading || expenseIsLoading ? (
-                            <Loader />
-                        ) : expenseData?.length === 0 ? (
-                            <div className="text-gray-400 py-12 flex items-center gap-x-1 h-full justify-self-center">
-                                <p>Press</p>
-                                <HugeiconsIcon
-                                    icon={AddSquareIcon}
-                                    size={20}
-                                    className="text-custom-accent"
-                                />
-                                <p>to add a new expense</p>
                             </div>
-                        ) : (
-                            <>
-                                <div className="flex flex-1 w-full max-h-[40rem] max-md:hidden xl:max-h-none overflow-hidden">
-                                    <Table
-                                        data={expensesData}
-                                        detailsFunction={(expenseId: number) => {
-                                            const expense =
-                                                expenseData?.find((e) => e.id === expenseId) ?? null;
-                                            openDetailsModal("expense", expense);
-                                        }}
-                                    />
-                                </div>
-                                <div className="flex flex-col w-full overflow-x-hidden gap-4 max-h-[40rem] overflow-y-auto md:hidden">
-                                    {expenseIsFetching ? <Loader /> : <ExpenseCards />}
-                                </div>
-                            </>
-                        )}
+                            <div className="flex flex-col w-full overflow-x-hidden gap-4 max-h-[40rem] overflow-y-auto md:hidden">
+                                {expenseIsFetching ? <Loader /> : <ExpenseCards />}
+                            </div>
+                        </DataSection>
                     </div>
                     <div className="infoContainer2 col-span-2 md:col-span-5 md:order-4 xl:order-2 xl:col-span-4 xl:row-span-6 2xl:row-span-5">
-                        <div className="flex justify-center w-full relative">
-                            <p className="text-nowrap">Budgets</p>
-                            <button
-                                className="absolute right-0 top-0  tableButton flex gap-x-2 p-0 items-center xl:opacity-70 hover:opacity-100"
-                                onClick={() => openCreationModal("budgetPlanning")}
-                            >
-                                <HugeiconsIcon
-                                    icon={AddSquareIcon}
-                                    size={20}
-                                    className="text-custom-accent"
+                        <DataSection
+                            title="Budgets"
+                            createFunction={() => openCreationModal("budgetPlanning")}
+                            isLoading={expenseCategoryIsLoading || expenseIsLoading}
+                            isEmpty={budgetExpensesData.rows.length === 0}
+                        >
+                            <div className=" max-md:hidden flex flex-1 w-full max-h-[40rem] xl:max-h-none overflow-hidden">
+                                <Table
+                                    dark
+                                    detailsFunction={(budgetId: number) => {
+                                        const budgetPlan =
+                                            expenseCategoriesWithBudget.find(
+                                                (ec) => ec.budgetPlan?.id == budgetId
+                                            )?.budgetPlan ?? null;
+                                        openDetailsModal("budgetPlanning", budgetPlan);
+                                    }}
+                                    data={budgetExpensesData}
                                 />
-                            </button>
-                        </div>
-
-                        {expenseCategoryIsLoading || expenseIsLoading ? (
-                            <Loader />
-                        ) : budgetExpensesData.rows.length ? (
-                            <>
-                                <div className=" max-md:hidden flex flex-1 w-full max-h-[40rem] xl:max-h-none overflow-hidden">
-                                    <Table
-                                        dark
-                                        detailsFunction={(budgetId: number) => {
-                                            const budgetPlan =
-                                                expenseCategoriesWithBudget.find(
-                                                    (ec) => ec.budgetPlan?.id == budgetId
-                                                )?.budgetPlan ?? null;
-                                            openDetailsModal("budgetPlanning", budgetPlan);
-                                        }}
-                                        data={budgetExpensesData}
-                                    />
-                                </div>
-                                <div className="w-full flex flex-col gap-y-2 md:hidden max-md:max-h-96 max-md:overflow-y-auto">
-                                    {expenseCategoriesWithBudget.map((ec, key) => (
-                                        <div className="flex flex-col w-full" key={key}>
-                                            <p>
-                                                {ec.category} -{" "}
-                                                <span className="opacity-60">
-                                                    {periodicityValues[ec.budgetPlan!.periodicity]}
-                                                </span>
-                                            </p>
-                                            <div className="w-full">
-                                                <ProgressBar
-                                                    dark
-                                                    value={expenseData!
-                                                        .filter((e) => e.expenseCategoryId === ec.id)
-                                                        .reduce((acc, value) => (acc += value.amount), 0)}
-                                                    total={ec.budgetPlan!.amount}
-                                                />
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </>
-                        ) : (
-                            <div className="text-gray-400 py-12 flex items-center gap-x-1 h-full w-full justify-center">
-                                <p>Press</p>
-                                <HugeiconsIcon
-                                    icon={AddSquareIcon}
-                                    size={20}
-                                    className="text-custom-accent"
-                                />
-                                <p>to configure a new budget</p>
                             </div>
-                        )}
+                            <div className="w-full flex flex-col gap-y-2 md:hidden max-md:max-h-96 max-md:overflow-y-auto">
+                                {expenseCategoriesWithBudget.map((ec, key) => (
+                                    <div className="flex flex-col w-full" key={key}>
+                                        <p>
+                                            {ec.category} -{" "}
+                                            <span className="opacity-60">
+                                                {periodicityValues[ec.budgetPlan!.periodicity]}
+                                            </span>
+                                        </p>
+                                        <div className="w-full">
+                                            <ProgressBar
+                                                dark
+                                                value={expenseData!
+                                                    .filter((e) => e.expenseCategoryId === ec.id)
+                                                    .reduce((acc, value) => (acc += value.amount), 0)}
+                                                total={ec.budgetPlan!.amount}
+                                            />
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </DataSection>
                     </div>
                     <div className="infoContainer2 col-span-2 md:col-span-2 md:order-2 xl:col-span-3 xl:order-4 xl:row-span-6 2xl:row-span-7">
-                        <div className="flex justify-center relative w-full">
-                            <p className="text-nowrap">Expense Categories</p>
-                            <button
-                                className="absolute right-0 top-0 tableButton flex gap-x-2 p-0 items-center xl:opacity-70 hover:opacity-100"
-                                onClick={() => openCreationModal("expenseCategory")}
-                            >
-                                <HugeiconsIcon
-                                    icon={AddSquareIcon}
-                                    size={20}
-                                    className="text-custom-accent"
-                                />
-                            </button>
-                        </div>
-                        <div className="flex flex-1 w-full max-h-96 md:max-h-52 xl:max-h-none overflow-hidden">
-                            {expenseCategoryIsLoading ? (
-                                <Loader />
-                            ) : expenseCategoryData && expenseCategoryData?.length === 0 ? (
-                                <div className="text-gray-400 py-12 flex items-center gap-x-1 h-full w-full justify-center">
-                                    <p>Press</p>
-                                    <HugeiconsIcon
-                                        icon={AddSquareIcon}
-                                        size={20}
-                                        className="text-custom-accent"
-                                    />
-                                    <p>to add a new category</p>
-                                </div>
-                            ) : (
-                                <Table
-                                    data={expenseCategoryTableData}
-                                    detailsFunction={(expenseCategoryId: number) => {
-                                        const expenseCategory =
-                                            expenseCategoryData?.find(
-                                                (ec) => ec.id === expenseCategoryId
-                                            ) ?? null;
-                                        openDetailsModal("expenseCategory", expenseCategory);
-                                    }}
-                                    dark
-                                />
-                            )}
-                        </div>
+                        <DataSection
+                            title="Expense Categories"
+                            createFunction={() => openCreationModal("expenseCategory")}
+                            isLoading={expenseCategoryIsLoading}
+                            isEmpty={expenseCategoryData?.length === 0}
+                        >
+                            <Table
+                                data={expenseCategoryTableData}
+                                detailsFunction={(expenseCategoryId: number) => {
+                                    const expenseCategory =
+                                        expenseCategoryData?.find((ec) => ec.id === expenseCategoryId) ??
+                                        null;
+                                    openDetailsModal("expenseCategory", expenseCategory);
+                                }}
+                                dark
+                            />
+                        </DataSection>
                     </div>
                 </div>
             </SectionContent>
