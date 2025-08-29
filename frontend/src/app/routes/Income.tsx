@@ -94,24 +94,7 @@ export default function Budget() {
         rows: incomesRow,
     };
 
-    const IncomeCards = () =>
-        incomeData?.map((e) => (
-            <button
-                className="border-2 rounded-md p-2 flex gap-x-16"
-                key={e.id}
-                onClick={() => showDetailsIncomeModal(e.id)}
-            >
-                <div className="flex flex-col items-start overflow-hidden">
-                    <p className="font-bold text-ellipsis overflow-hidden text-nowrap w-full text-start">
-                        {e.details}
-                    </p>
-                    <p>{new Date(e.date).toDateString()}</p>
-                </div>
-                <div className="flex h-full items-center justify-end flex-1">
-                    <p className="font-bold">RD${e.amount}</p>
-                </div>
-            </button>
-        ));
+    const IncomeCards = () => incomeData?.map((income) => <IncomeCard income={income} />);
 
     return (
         <>
