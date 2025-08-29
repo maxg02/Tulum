@@ -5,6 +5,7 @@ import { useAppSelector } from "@/Hooks/stateHooks";
 import { createBudgetPlanDto } from "../types";
 import { useCreateBudgetPlanMutation } from "../api";
 import { periodicityValues } from "@/Constants/Constants";
+import { validationError } from "@/types/types";
 
 type modalProps = {
     categories:
@@ -48,8 +49,13 @@ function CreateBudget({ categories }: modalProps) {
 
         await createBudgetPlan(budgetPlanData)
             .unwrap()
-            .catch(() => {
-                throw [`Error creating budget`];
+            .catch((error) => {
+                const validationError = error.data as validationError;
+                if (validationError?.errors) {
+                    throw Object.values(validationError.errors).flat();
+                } else {
+                    throw ["An unexpected error occurred. Please try again."];
+                }
             });
     };
 

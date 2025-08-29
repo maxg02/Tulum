@@ -5,6 +5,7 @@ import { budgetPlanDto, updateBudgetPlanDto } from "../types";
 import { useDeleteBudgetPlanMutation, useUpdateBudgetPlanMutation } from "../api";
 import DetailsModal from "@/components/Modals/DetailsModal";
 import { periodicityValues } from "@/Constants/Constants";
+import { validationError } from "@/types/types";
 
 type modalProps = {
     categories:
@@ -50,8 +51,13 @@ function DetailsBudget({ categories }: modalProps) {
 
         await updateBudgetPlan(budgetPlanData)
             .unwrap()
-            .catch(() => {
-                throw [`Error updating budget`];
+            .catch((error) => {
+                const validationError = error.data as validationError;
+                if (validationError?.errors) {
+                    throw Object.values(validationError.errors).flat();
+                } else {
+                    throw ["An unexpected error occurred. Please try again."];
+                }
             });
     };
 

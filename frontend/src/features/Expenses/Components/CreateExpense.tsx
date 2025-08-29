@@ -4,6 +4,7 @@ import { AmountField, DateField, DetailsField, SelectField } from "@/components/
 import { useAppSelector } from "@/Hooks/stateHooks";
 import { createExpenseDto } from "../types";
 import { useCreateExpenseMutation } from "../api";
+import { validationError } from "@/types/types";
 
 type modalProps = {
     categories:
@@ -53,8 +54,13 @@ function CreateExpense({ categories }: modalProps) {
             .then(() => {
                 setSelectValue(undefined);
             })
-            .catch(() => {
-                throw [`Error creating expense`];
+            .catch((error) => {
+                const validationError = error.data as validationError;
+                if (validationError?.errors) {
+                    throw Object.values(validationError.errors).flat();
+                } else {
+                    throw ["An unexpected error occurred. Please try again."];
+                }
             });
     };
 

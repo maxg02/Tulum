@@ -4,6 +4,7 @@ import { useAppSelector } from "@/Hooks/stateHooks";
 import { expenseDto, updateExpenseDto } from "../types";
 import { useDeleteExpenseMutation, useUpdateExpenseMutation } from "../api";
 import DetailsModal from "@/components/Modals/DetailsModal";
+import { validationError } from "@/types/types";
 
 type modalProps = {
     categories:
@@ -58,8 +59,13 @@ function DetailsExpense({ categories }: modalProps) {
 
         await updateExpense(newExpenseData)
             .unwrap()
-            .catch(() => {
-                throw [`Error updating expense`];
+            .catch((error) => {
+                const validationError = error.data as validationError;
+                if (validationError?.errors) {
+                    throw Object.values(validationError.errors).flat();
+                } else {
+                    throw ["An unexpected error occurred. Please try again."];
+                }
             });
     };
 

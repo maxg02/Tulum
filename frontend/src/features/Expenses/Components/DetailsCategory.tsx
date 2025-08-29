@@ -4,6 +4,7 @@ import { useAppSelector } from "@/Hooks/stateHooks";
 import { expenseCategoryDto, updateExpenseCategoryDto } from "../types";
 import { useDeleteExpenseCategoryMutation, useUpdateExpenseCategoryMutation } from "../api";
 import DetailsModal from "@/components/Modals/DetailsModal";
+import { validationError } from "@/types/types";
 
 function DetailsCategory() {
     const [details, setDetails] = useState<string>("");
@@ -35,8 +36,13 @@ function DetailsCategory() {
 
         await updateExpenseCategory(expenseCategoryData)
             .unwrap()
-            .catch(() => {
-                throw [`Error updating category`];
+            .catch((error) => {
+                const validationError = error.data as validationError;
+                if (validationError?.errors) {
+                    throw Object.values(validationError.errors).flat();
+                } else {
+                    throw ["An unexpected error occurred. Please try again."];
+                }
             });
     };
 
