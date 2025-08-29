@@ -2,7 +2,6 @@ import SectionContent from "@/components/Layout/SectionContent";
 import Table, { dataObject, tableRow } from "@/components/Misc/Table";
 import { useGetUserExpensesQuery, useGetUserExpenseCategoriesQuery } from "@/features/Expenses/api";
 import { expenseDto, expenseCategoryDto } from "@/features/Expenses/types";
-import Loader from "@/components/Misc/Loader";
 import { periodicityValues } from "@/Constants/Constants";
 import CustomPieChart, { pieChartSlice } from "@/components/Graphs/CustomPieChart";
 import ValuePill from "@/components/Misc/ValuePill";
@@ -63,11 +62,7 @@ export default function Expenses() {
     );
 
     //Expense Fetching
-    const {
-        data: expenseData,
-        isFetching: expenseIsFetching,
-        isLoading: expenseIsLoading,
-    } = useGetUserExpensesQuery();
+    const { data: expenseData, isLoading: expenseIsLoading } = useGetUserExpensesQuery();
 
     const expensesRow: tableRow[] = useMemo(
         () =>
@@ -91,11 +86,11 @@ export default function Expenses() {
     const yearExpenses = useMemo(
         () =>
             expenseData?.filter((expense) => new Date(expense.date).getFullYear() === currentYear) ?? [],
-        [expenseData, currentYear]
+        [expenseData]
     );
     const monthExpenses = useMemo(
         () => yearExpenses?.filter((expense) => new Date(expense.date).getMonth() === currentMonth) ?? [],
-        [yearExpenses, currentMonth]
+        [yearExpenses]
     );
 
     const monthExpensesByCategory = useMemo(

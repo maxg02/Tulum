@@ -1,7 +1,5 @@
 import SectionContent from "@//components/Layout/SectionContent";
-import MoreDots from "@//components/Misc/MoreDots";
 import CustomGauge from "@//components/Graphs/CustomGauge";
-import Loader from "@//components/Misc/Loader";
 import { Invoice02Icon, MoneyReceiveSquareIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { monthList } from "@//Constants/Constants";
