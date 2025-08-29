@@ -179,15 +179,7 @@ export default function Expenses() {
 
     const ExpenseCards = () =>
         expenseData?.map((e) => (
-            <ExpenseCard
-                key={e.id}
-                expense={e}
-                expenseCategoryData={expenseCategoryData}
-                showDetailsExpenseModal={(expenseId: number) => {
-                    const expense = expenseData?.find((e) => e.id === expenseId) ?? null;
-                    openDetailsModal("expense", expense);
-                }}
-            />
+            <ExpenseCard key={e.id} expense={e} expenseCategoryData={expenseCategoryData} />
         ));
 
     return (
@@ -238,7 +230,7 @@ export default function Expenses() {
                                 />
                             </div>
                             <div className="flex flex-col w-full overflow-x-hidden gap-4 max-h-[40rem] overflow-y-auto md:hidden">
-                                {expenseIsFetching ? <Loader /> : <ExpenseCards />}
+                                <ExpenseCards />
                             </div>
                         </DataSection>
                     </div>

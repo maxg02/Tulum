@@ -1,4 +1,4 @@
-export { default as ExpenseCard } from "./ExpenseCards";
+export { default as ExpenseCard } from "./ExpenseCard";
 export { default as CreateExpense } from "./CreateExpense";
 export { default as CreateBudget } from "./CreateBudget";
 export { default as CreateCategory } from "./CreateCategory";

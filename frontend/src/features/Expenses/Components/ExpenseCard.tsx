@@ -1,17 +1,19 @@
+import useModal from "@/Hooks/useModal";
 import { expenseCategoryDto, expenseDto } from "../types";
 
 type expenseCardProps = {
     expense: expenseDto;
     expenseCategoryData: expenseCategoryDto[] | undefined;
-    showDetailsExpenseModal: (id: number) => void;
 };
 
-function ExpenseCard({ expense: e, expenseCategoryData, showDetailsExpenseModal }: expenseCardProps) {
+function ExpenseCard({ expense: e, expenseCategoryData }: expenseCardProps) {
+    const { openDetailsModal } = useModal();
+
     return (
         <button
             className="border-2 rounded-md p-2"
             key={e.id}
-            onClick={() => showDetailsExpenseModal(e.id)}
+            onClick={() => openDetailsModal("expense", e)}
         >
             <div className="flex justify-between gap-16">
                 <p className="font-bold text-ellipsis overflow-hidden text-nowrap">{e.details}</p>
