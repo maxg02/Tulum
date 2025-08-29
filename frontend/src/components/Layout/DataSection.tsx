@@ -6,8 +6,8 @@ import { AddSquareIcon } from "@hugeicons/core-free-icons";
 type dataSectionProps = {
     children: React.ReactNode;
     isLoading: boolean;
-    isEmpty: boolean | null;
-    createFunction: () => void | null;
+    isEmpty?: boolean;
+    createFunction?: () => void;
     title: string;
 };
 
