@@ -53,7 +53,8 @@ namespace backend.Controllers
         [Authorize]
         public async Task<IActionResult> CreateExpenseCategory([FromBody] ExpenseCategoryRequestDto expenseCategoryDto)
         {
-            if (await _expenseCategoryRepo.CategoryExists(expenseCategoryDto.Category))
+            
+            if (await _expenseCategoryRepo.CheckExists(expenseCategoryDto.Category))
             {
                 ModelState.AddModelError("ExpenseCategoryId", "Category already exists");
             }
@@ -73,6 +74,17 @@ namespace backend.Controllers
         [Authorize]
         public async Task<IActionResult> UpdateExpenseCategory([FromRoute] int id, [FromBody] ExpenseCategoryRequestDto expenseCategoryDto)
         {
+            
+            if (await _expenseCategoryRepo.CheckExists(id, expenseCategoryDto.Category))
+            {
+                ModelState.AddModelError("ExpenseCategoryId", "Category already exists");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return ValidationProblem(ModelState);
+            }
+
             var expenseCategory = await _expenseCategoryRepo.UpdateAsync(id, expenseCategoryDto);
 
             if (expenseCategory == null)

@@ -40,7 +40,7 @@ namespace backend.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateExpense([FromBody] ExpenseRequestDto expenseDto)
         {            
-            if (expenseDto.ExpenseCategoryId != null && !await _expenseCategoryRepo.CategoryExists(expenseDto.ExpenseCategoryId!.Value))
+            if (expenseDto.ExpenseCategoryId != null && !await _expenseCategoryRepo.CheckExists(expenseDto.ExpenseCategoryId!.Value))
             {
                 ModelState.AddModelError("ExpenseCategoryId", "Category does not exist");
             }
@@ -60,7 +60,7 @@ namespace backend.Controllers
         [HttpPut("{id:int}")]
         public async Task<IActionResult> UpdateExpense([FromRoute] int id, [FromBody] ExpenseRequestDto expenseDto)
         {
-            if (expenseDto.ExpenseCategoryId != null && !await _expenseCategoryRepo.CategoryExists(expenseDto.ExpenseCategoryId!.Value))
+            if (expenseDto.ExpenseCategoryId != null && !await _expenseCategoryRepo.CheckExists(expenseDto.ExpenseCategoryId!.Value))
             {
                 ModelState.AddModelError("ExpenseCategoryId", "Category does not exist");
             }

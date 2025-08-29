@@ -74,16 +74,23 @@ namespace backend.Repositories.Repos
             return expenseCategory;
         }
 
-        public async Task<bool> CategoryExists(int id)
+        public async Task<bool> CheckExists(int id)
         {
             var expenseCategory = await GetByIdAsync(id);
 
             return expenseCategory != null;
         }
 
-        public async Task<bool> CategoryExists(string category)
+        public async Task<bool> CheckExists(string categoryName)
         {
-            var expenseCategory = await _context.ExpenseCategories.FirstOrDefaultAsync(ec => ec.Category == category);
+            var expenseCategory = await _context.ExpenseCategories.FirstOrDefaultAsync(ec => ec.Category == categoryName);
+
+            return expenseCategory != null;
+        }
+
+        public async Task<bool> CheckExists(int id, string categoryName)
+        {
+            var expenseCategory = await _context.ExpenseCategories.FirstOrDefaultAsync(ec => ec.Category == categoryName && ec.Id != id);
 
             return expenseCategory != null;
         }
