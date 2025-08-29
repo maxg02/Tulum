@@ -209,18 +209,16 @@ export default function Expenses() {
                     </div>
                     <hr className="col-span-2 border-t-2 md:hidden"></hr>
                     <div className="infoContainer1 max-md:hidden md:col-span-3 xl:col-span-3 xl:row-span-6 2xl:row-span-5">
-                        <p>{`${new Date(0, currentMonth).toLocaleString("en-US", {
-                            month: "long",
-                        })} Expenses`}</p>
-                        <div className="w-full md:h-52 2xl:flex-1 overflow-y-hidden">
-                            {expenseCategoryIsLoading ? (
-                                <Loader />
-                            ) : (
-                                <>
-                                    <CustomPieChart data={dataPieChart} total={totalMonthExpenses} />
-                                </>
-                            )}
-                        </div>
+                        <DataSection
+                            title={`${new Date(0, currentMonth).toLocaleString("en-US", {
+                                month: "long",
+                            })} Expenses`}
+                            isLoading={expenseCategoryIsLoading}
+                        >
+                            <div className="w-full md:h-52 2xl:flex-1 overflow-y-hidden">
+                                <CustomPieChart data={dataPieChart} total={totalMonthExpenses} />
+                            </div>
+                        </DataSection>
                     </div>
                     <div className="infoContainer1 col-span-2 md:col-span-5 md:order-3 xl:col-span-4 xl:row-span-6 2xl:row-span-7">
                         <DataSection
