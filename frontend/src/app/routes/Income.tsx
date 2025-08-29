@@ -8,57 +8,70 @@ import { dataYearBarChart, incomeDto } from "@/features/Income/types";
 import { CreateIncome, DetailsIncome, IncomeCard, YearBarChart } from "@/features/Income/Components";
 import useModal from "@/Hooks/useModal";
 import DataSection from "@/components/Layout/DataSection";
+import { useMemo } from "react";
 
 export default function Budget() {
     const { openCreationModal, openDetailsModal } = useModal();
 
-    let incomesRow: tableRow[] = [];
-    const currentDate: Date = new Date();
-    const currentMonth: string = new Intl.DateTimeFormat("en-US", { month: "long" }).format(currentDate);
-    const currentYear: number = currentDate.getFullYear();
-    let totalIncome: number = 0;
-    let yearIncomes: incomeDto[] = [];
-    let totalMonthIncome: number = 0;
-    let totalYearIncome: number = 0;
-    let dataBarChart: dataYearBarChart = [];
+    const currentMonth: number = new Date().getMonth();
+    const currentYear: number = new Date().getFullYear();
 
     //Income Fetching
     const { data: incomeData, isLoading: incomeIsLoading } = useGetUserIncomesQuery();
 
-    // Income data handling
-    if (!incomeIsLoading && incomeData != undefined && incomeData.length > 0) {
-        incomesRow = incomeData.map((income: incomeDto) => ({
-            id: income.id,
-            data: [income.amount, income.details, new Date(income.date).toLocaleDateString("en-US")],
-        }));
+    const incomesRow: tableRow[] = useMemo(
+        () =>
+            incomeData?.map((income: incomeDto) => ({
+                id: income.id,
+                data: [income.amount, income.details, new Date(income.date).toLocaleDateString("en-US")],
+            })) ?? [],
+        [incomeData]
+    );
 
-        totalIncome = incomeData.reduce((acc: number, next: incomeDto) => acc + next.amount, 0);
+    const totalIncome = useMemo(
+        () => incomeData?.reduce((acc: number, next: incomeDto) => acc + next.amount, 0) ?? 0,
+        [incomeData]
+    );
 
-        const monthIncomes = incomeData.filter(
-            (income) =>
-                new Date(income.date).getMonth() === currentDate.getMonth() &&
-                new Date(income.date).getFullYear() === currentDate.getFullYear()
-        );
+    const monthIncomes = useMemo(
+        () =>
+            incomeData?.filter(
+                (income) =>
+                    new Date(income.date).getMonth() === currentMonth &&
+                    new Date(income.date).getFullYear() === currentYear
+            ) ?? [],
+        [incomeData]
+    );
 
-        yearIncomes = incomeData.filter(
-            (income) => new Date(income.date).getFullYear() === currentDate.getFullYear()
-        );
+    const yearIncomes = useMemo(
+        () => incomeData?.filter((income) => new Date(income.date).getFullYear() === currentYear) ?? [],
+        [incomeData]
+    );
 
-        totalMonthIncome = monthIncomes.reduce((acc: number, next: incomeDto) => acc + next.amount, 0);
-        totalYearIncome = yearIncomes.reduce((acc: number, next: incomeDto) => acc + next.amount, 0);
+    const totalMonthIncome = useMemo(
+        () => monthIncomes.reduce((acc: number, next: incomeDto) => acc + next.amount, 0),
+        [monthIncomes]
+    );
+    const totalYearIncome = useMemo(
+        () => yearIncomes.reduce((acc: number, next: incomeDto) => acc + next.amount, 0),
+        [yearIncomes]
+    );
 
-        dataBarChart = monthList.map((month) => ({
-            month,
-            income: yearIncomes
-                .filter(
-                    (income: incomeDto) =>
-                        new Intl.DateTimeFormat("en-US", { month: "short" }).format(
-                            new Date(income.date)
-                        ) == month
-                )
-                .reduce((acc: number, next: incomeDto) => acc + next.amount, 0),
-        }));
-    }
+    const dataBarChart: dataYearBarChart = useMemo(
+        () =>
+            monthList.map((month) => ({
+                month,
+                income: yearIncomes
+                    .filter(
+                        (income: incomeDto) =>
+                            new Intl.DateTimeFormat("en-US", { month: "short" }).format(
+                                new Date(income.date)
+                            ) == month
+                    )
+                    .reduce((acc: number, next: incomeDto) => acc + next.amount, 0),
+            })),
+        [yearIncomes, monthList]
+    );
 
     //Income table structure
     const incomeTableData: dataObject = {
@@ -77,7 +90,12 @@ export default function Budget() {
             <SectionContent>
                 <div className="grid grid-cols-2 auto-rows-auto gap-3 overflow-x-hidden overflow-y-auto md:grid-cols-6 md:gap-6 xl:gap-5 xl:grid-rows-12 xl:flex-1 2xl:gap-8 2xl:max-h-[1000px]">
                     <div className="flex-1 md:col-span-2 xl:row-span-3 2xl:row-span-2">
-                        <ValuePill title={currentMonth} value={totalMonthIncome} />
+                        <ValuePill
+                            title={new Date(0, currentMonth).toLocaleString("en-US", {
+                                month: "long",
+                            })}
+                            value={totalMonthIncome}
+                        />
                     </div>
                     <div className="flex-1 md:col-span-2 xl:row-span-3 2xl:row-span-2">
                         <ValuePill title={currentYear.toString()} value={totalYearIncome} />
