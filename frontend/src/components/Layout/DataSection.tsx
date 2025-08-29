@@ -2,6 +2,8 @@ import React from "react";
 import Loader from "../Misc/Loader";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { AddSquareIcon } from "@hugeicons/core-free-icons";
+import MoreDots from "../Misc/MoreDots";
+import { SectionUrl } from "@/types/types";
 
 type dataSectionProps = {
     children: React.ReactNode;
@@ -10,6 +12,7 @@ type dataSectionProps = {
     createFunction?: () => void;
     title: string;
     customEmptyMsg?: string;
+    link?: SectionUrl;
 };
 
 function DataSection({
@@ -19,6 +22,7 @@ function DataSection({
     createFunction,
     title,
     customEmptyMsg,
+    link,
 }: dataSectionProps) {
     return (
         <>
@@ -31,6 +35,11 @@ function DataSection({
                     >
                         <HugeiconsIcon icon={AddSquareIcon} size={20} className="text-custom-accent" />
                     </button>
+                )}
+                {link && (
+                    <div className="absolute right-0 top-0 tableButton flex gap-x-2 p-0 items-center xl:opacity-70 hover:opacity-100">
+                        <MoreDots section={link} />
+                    </div>
                 )}
             </div>
             {isLoading ? (

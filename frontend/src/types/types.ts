@@ -5,3 +5,5 @@ export type validationError = {
     errors: Record<string, string[]>;
     traceId: string;
 };
+
+export type SectionUrl = "/" | "/income" | "/expenses" | "/savings";

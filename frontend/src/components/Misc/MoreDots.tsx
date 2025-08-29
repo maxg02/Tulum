@@ -1,8 +1,7 @@
 import { Link } from "react-router-dom";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { DiamondIcon } from "@hugeicons/core-free-icons";
-
-export type SectionUrl = "/" | "/income" | "/expenses" | "/savings";
+import { SectionUrl } from "@/types/types";
 
 function MoreDots({ section, className }: { section: SectionUrl; className?: string }) {
     return (

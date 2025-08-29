@@ -14,6 +14,7 @@ import { useGetUserIncomesQuery } from "@/features/Income/api";
 import { incomeDto } from "@/features/Income/types";
 import { useGetUserSavingGoalsQuery } from "@/features/Savings/api";
 import { goalContributionDto } from "@/features/Savings/types";
+import DataSection from "@/components/Layout/DataSection";
 
 export default function Dashboard() {
     const currentDate: Date = new Date();
@@ -206,71 +207,60 @@ export default function Dashboard() {
                 </div>
 
                 <div className="infoContainer1 hidden col-span-2 md:flex xl:col-span-4 xl:row-span-4 2xl:row-span-5 2xl:col-span-5">
-                    <div className="flex justify-center relative w-full">
-                        <p className="text-nowrap">{currentMonth} Income</p>
-                        <div className="absolute right-0 top-0 tableButton flex gap-x-2 p-0 items-center xl:opacity-70 hover:opacity-100">
-                            <MoreDots section="/income" />
+                    <DataSection
+                        title={`${currentMonth} Income`}
+                        isLoading={incomeIsLoading}
+                        link="/income"
+                    >
+                        <h1 className="font-light text-4xl 2xl:text-5xl my-auto">
+                            RD${totalMonthIncome}
+                        </h1>
+                        <div className="2xl:flex flex-col self-stretch justify-between border-t-2 py-3 hidden">
+                            {monthIncomeRows}
                         </div>
-                    </div>
-                    <h1 className="font-light text-4xl 2xl:text-5xl my-auto">RD${totalMonthIncome}</h1>
-                    <div className="2xl:flex flex-col self-stretch justify-between border-t-2 py-3 hidden">
-                        {monthIncomeRows}
-                    </div>
+                    </DataSection>
                 </div>
 
                 <div className="infoContainer1 flex-1 hidden col-span-3 md:flex xl:col-span-4 xl:row-span-7 xl:order-3 2xl:row-span-6 2xl:col-span-5">
-                    <div className="flex justify-center relative w-full">
-                        <p className="text-nowrap">{currentMonth} Expenses</p>
-                        <div className="absolute right-0 top-0 tableButton flex gap-x-2 p-0 items-center xl:opacity-70 hover:opacity-100">
-                            <MoreDots section="/expenses" />
+                    <DataSection
+                        title={`${currentMonth} Expenses`}
+                        isLoading={expenseCategoryIsLoading}
+                        link="/expenses"
+                    >
+                        <div className="w-full md:h-52 xl:flex-1 overflow-y-hidden">
+                            <CustomPieChart data={dataPieChart} total={totalMonthExpenses} />
                         </div>
-                    </div>
-                    <div className="w-full md:h-52 xl:flex-1 overflow-y-hidden">
-                        {expenseCategoryIsLoading ? (
-                            <Loader />
-                        ) : (
-                            <>
-                                <CustomPieChart data={dataPieChart} total={totalMonthExpenses} />
-                            </>
-                        )}
-                    </div>
 
-                    <div className="xl:flex flex-col self-stretch justify-between border-t-2 py-3 hidden">
-                        {monthExpenseRows}
-                    </div>
+                        <div className="xl:flex flex-col self-stretch justify-between border-t-2 py-3 hidden">
+                            {monthExpenseRows}
+                        </div>
+                    </DataSection>
                 </div>
 
                 <div className="infoContainer2 md:col-span-5 xl:col-span-7 xl:row-span-6 xl:order-2 2xl:row-span-6 2xl:col-span-6">
-                    <p>{currentDate.getFullYear()} Summary</p>
-                    <div className="w-full h-52 xl:flex-1">
-                        {incomeIsLoading || expenseCategoryIsLoading ? (
-                            <Loader />
-                        ) : dataLineChart.some((x) => x.exp > 0 || x.inc > 0) ? (
+                    <DataSection
+                        title={`${currentDate.getFullYear()} Summary`}
+                        isLoading={incomeIsLoading || expenseCategoryIsLoading}
+                        isEmpty={!dataLineChart.some((x) => x.exp > 0 || x.inc > 0)}
+                        customEmptyMsg="No data available for this year."
+                    >
+                        <div className="w-full h-52 xl:flex-1">
                             <SummaryLineChart dataLineChart={dataLineChart} />
-                        ) : (
-                            <div className="flex items-center justify-center h-full">
-                                <p className="text-gray-400">No data available for this year.</p>
-                            </div>
-                        )}
-                    </div>
+                        </div>
+                    </DataSection>
                 </div>
 
                 <div className="infoContainer1 md:col-span-5 xl:col-span-7 xl:order-4 xl:row-span-5 2xl:row-span-5 2xl:col-span-6">
-                    <div className="flex justify-center relative w-full">
-                        <p className="text-nowrap">Saving Goals</p>
-                        <div className="absolute right-0 top-0 tableButton flex gap-x-2 p-0 items-center xl:opacity-70 hover:opacity-100">
-                            <MoreDots section="/savings" />
-                        </div>
-                    </div>
-                    <div className="w-full flex-1 flex items-center justify-evenly flex-wrap">
-                        {savingGoalIsLoading ? (
-                            <Loader />
-                        ) : goalsProgressGauges.length ? (
+                    <DataSection
+                        title="Saving Goals"
+                        isLoading={savingGoalIsLoading}
+                        isEmpty={goalsProgressGauges.length === 0}
+                        link="/savings"
+                    >
+                        <div className="w-full flex-1 flex items-center justify-evenly flex-wrap">
                             goalsProgressGauges
-                        ) : (
-                            <p className="text-gray-400 py-12">No saving goals available.</p>
-                        )}
-                    </div>
+                        </div>
+                    </DataSection>
                 </div>
             </div>
         </SectionContent>
