@@ -1,5 +1,4 @@
 import useModal from "@/Hooks/useModal";
-import React from "react";
 import { incomeDto } from "../types";
 
 function IncomeCard({ income }: { income: incomeDto }) {

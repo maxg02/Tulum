@@ -9,9 +9,17 @@ type dataSectionProps = {
     isEmpty?: boolean;
     createFunction?: () => void;
     title: string;
+    customEmptyMsg?: string;
 };
 
-function DataSection({ children, isLoading, isEmpty, createFunction, title }: dataSectionProps) {
+function DataSection({
+    children,
+    isLoading,
+    isEmpty,
+    createFunction,
+    title,
+    customEmptyMsg,
+}: dataSectionProps) {
     return (
         <>
             <div className="flex justify-center relative w-full">
@@ -29,9 +37,19 @@ function DataSection({ children, isLoading, isEmpty, createFunction, title }: da
                 <Loader />
             ) : isEmpty ? (
                 <div className="text-gray-400 py-12 flex items-center gap-x-1 h-full justify-self-center">
-                    <p>Press</p>
-                    <HugeiconsIcon icon={AddSquareIcon} size={20} className="text-custom-accent" />
-                    <p>to add {title.toLocaleLowerCase()}</p>
+                    {customEmptyMsg ? (
+                        <p>{customEmptyMsg}</p>
+                    ) : (
+                        <>
+                            <p>Press</p>
+                            <HugeiconsIcon
+                                icon={AddSquareIcon}
+                                size={20}
+                                className="text-custom-accent"
+                            />
+                            <p>to add {title.toLocaleLowerCase()}</p>
+                        </>
+                    )}
                 </div>
             ) : (
                 children

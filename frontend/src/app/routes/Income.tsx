@@ -2,21 +2,15 @@ import SectionContent from "@/components/Layout/SectionContent";
 import Table, { tableRow } from "@/components/Misc/Table";
 import { dataObject } from "@/components/Misc/Table";
 import { monthList } from "@/Constants/Constants";
-import { useAppDispatch, useAppSelector } from "@/Hooks/stateHooks";
-import { showModal as showCreateModal } from "@/reducers/createModalReducers";
-import { showModal as showDetailsModal } from "@/reducers/detailsModalReducers";
-import Loader from "@/components/Misc/Loader";
-import { AddSquareIcon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import ValuePill from "@/components/Misc/ValuePill";
 import { useGetUserIncomesQuery } from "@/features/Income/api";
 import { dataYearBarChart, incomeDto } from "@/features/Income/types";
-import { CreateIncome, DetailsIncome, YearBarChart } from "@/features/Income/Components";
+import { CreateIncome, DetailsIncome, IncomeCard, YearBarChart } from "@/features/Income/Components";
+import useModal from "@/Hooks/useModal";
+import DataSection from "@/components/Layout/DataSection";
 
 export default function Budget() {
-    const dispatch = useAppDispatch();
-    const createModalState = useAppSelector((state) => state.createModal.show);
-    const detailsModalState = useAppSelector((state) => state.detailsModal);
+    const { openCreationModal, openDetailsModal } = useModal();
 
     let incomesRow: tableRow[] = [];
     const currentDate: Date = new Date();
@@ -30,24 +24,6 @@ export default function Budget() {
 
     //Income Fetching
     const { data: incomeData, isLoading: incomeIsLoading } = useGetUserIncomesQuery();
-
-    // Show create Income Modal
-    const showCreateIncomeModal = () => {
-        const newState = { ...createModalState };
-        newState.income = true;
-
-        dispatch(showCreateModal(newState));
-    };
-
-    // Show details Income Modal
-    const showDetailsIncomeModal = (incomeId: number) => {
-        const selectedIncomeData: incomeDto = incomeData!.filter((i: incomeDto) => i.id === incomeId)[0];
-
-        const newState = { ...detailsModalState };
-        newState.show = { ...detailsModalState.show, income: true };
-        newState.data = selectedIncomeData;
-        dispatch(showDetailsModal(newState));
-    };
 
     // Income data handling
     if (!incomeIsLoading && incomeData != undefined && incomeData.length > 0) {
@@ -113,63 +89,41 @@ export default function Budget() {
                     <hr className="col-span-2 my-4 border-t-2 md:hidden"></hr>
 
                     <div className="infoContainer1 flex-1 col-span-2 mb-6 md:col-span-6 md:mb-0 xl:col-span-3 xl:row-span-9 2xl:row-span-10">
-                        <div className="flex justify-center relative w-full">
-                            <p className="text-nowrap">Income</p>
-                            <button
-                                className="absolute right-0 top-0 tableButton flex gap-x-2 p-0 items-center xl:opacity-70 hover:opacity-100"
-                                onClick={showCreateIncomeModal}
-                            >
-                                <HugeiconsIcon
-                                    icon={AddSquareIcon}
-                                    size={20}
-                                    className="text-custom-accent"
-                                />
-                            </button>
-                        </div>
-                        {incomeData && incomeData.length === 0 ? (
-                            <div className="text-gray-400 py-12 flex items-center gap-x-1 h-full">
-                                <p>Press</p>
-                                <HugeiconsIcon
-                                    icon={AddSquareIcon}
-                                    size={20}
-                                    className="text-custom-accent"
-                                />
-                                <p>to add a new income</p>
-                            </div>
-                        ) : (
-                            <>
-                                <div className="flex items-start flex-1 w-full max-h-[40rem] max-md:hidden lg:max-h-[30rem] xl:max-h-none overflow-hidden">
-                                    {incomeIsLoading ? (
-                                        <Loader />
-                                    ) : (
+                        <DataSection
+                            isLoading={incomeIsLoading}
+                            title="Income"
+                            isEmpty={incomeData?.length === 0}
+                            createFunction={() => openCreationModal("income")}
+                        >
+                            {!incomeIsLoading && (
+                                <>
+                                    <div className="flex items-start flex-1 w-full max-h-[40rem] max-md:hidden lg:max-h-[30rem] xl:max-h-none overflow-hidden">
                                         <Table
                                             data={incomeTableData}
-                                            detailsFunction={(incomeId: number) =>
-                                                showDetailsIncomeModal(incomeId)
-                                            }
+                                            detailsFunction={(incomeId: number) => {
+                                                const income =
+                                                    incomeData?.find((i) => i.id === incomeId) ?? null;
+                                                openDetailsModal("income", income);
+                                            }}
                                         />
-                                    )}
-                                </div>
-                                <div className="flex flex-col w-full overflow-x-hidden gap-4 max-h-[40rem] overflow-y-auto md:hidden">
-                                    <IncomeCards />
-                                </div>
-                            </>
-                        )}
+                                    </div>
+                                    <div className="flex flex-col w-full overflow-x-hidden gap-4 max-h-[40rem] overflow-y-auto md:hidden">
+                                        <IncomeCards />
+                                    </div>
+                                </>
+                            )}
+                        </DataSection>
                     </div>
 
                     <div className="infoContainer2 flex-1 col-span-2 md:col-span-6 xl:col-span-3 xl:row-span-9 2xl:row-span-10">
-                        <p className="col-start-2 mx-auto">Income Summary {currentYear}</p>
-                        <div className="flex h-96 w-full xl:h-full">
-                            {incomeIsLoading ? (
-                                <Loader />
-                            ) : yearIncomes.length ? (
-                                <YearBarChart dataBarChart={dataBarChart} />
-                            ) : (
-                                <div className="flex items-center justify-center h-full w-full">
-                                    <p className="text-gray-400">No data available for this year.</p>
-                                </div>
-                            )}
-                        </div>
+                        <DataSection
+                            isLoading={incomeIsLoading}
+                            title={`Income Summary ${currentYear}`}
+                            isEmpty={yearIncomes.length === 0}
+                            customEmptyMsg="No data available for this year"
+                        >
+                            <YearBarChart dataBarChart={dataBarChart} />
+                        </DataSection>
                     </div>
                 </div>
             </SectionContent>
