@@ -251,40 +251,55 @@ export default function Expenses() {
                             isLoading={expenseCategoryIsLoading || expenseIsLoading}
                             isEmpty={budgetExpensesData.rows.length === 0}
                         >
-                            <div className=" max-md:hidden flex flex-1 w-full max-h-[40rem] xl:max-h-none overflow-hidden">
-                                <Table
-                                    dark
-                                    detailsFunction={(budgetId: number) => {
-                                        const budgetPlan =
-                                            expenseCategoriesWithBudget.find(
-                                                (ec) => ec.budgetPlan?.id == budgetId
-                                            )?.budgetPlan ?? null;
-                                        openDetailsModal("budgetPlanning", budgetPlan);
-                                    }}
-                                    data={budgetExpensesData}
-                                />
-                            </div>
-                            <div className="w-full flex flex-col gap-y-2 md:hidden max-md:max-h-96 max-md:overflow-y-auto">
-                                {expenseCategoriesWithBudget.map((ec, key) => (
-                                    <div className="flex flex-col w-full" key={key}>
-                                        <p>
-                                            {ec.category} -{" "}
-                                            <span className="opacity-60">
-                                                {periodicityValues[ec.budgetPlan!.periodicity]}
-                                            </span>
-                                        </p>
-                                        <div className="w-full">
-                                            <ProgressBar
-                                                dark
-                                                value={expenseData!
-                                                    .filter((e) => e.expenseCategoryId === ec.id)
-                                                    .reduce((acc, value) => (acc += value.amount), 0)}
-                                                total={ec.budgetPlan!.amount}
-                                            />
-                                        </div>
+                            {!(expenseCategoryIsLoading || expenseIsLoading) && (
+                                <>
+                                    <div className=" max-md:hidden flex flex-1 w-full max-h-[40rem] xl:max-h-none overflow-hidden">
+                                        <Table
+                                            dark
+                                            detailsFunction={(budgetId: number) => {
+                                                const budgetPlan =
+                                                    expenseCategoriesWithBudget.find(
+                                                        (ec) => ec.budgetPlan?.id == budgetId
+                                                    )?.budgetPlan ?? null;
+                                                openDetailsModal("budgetPlanning", budgetPlan);
+                                            }}
+                                            data={budgetExpensesData}
+                                        />
                                     </div>
-                                ))}
-                            </div>
+                                    <div className="w-full flex flex-col gap-y-2 md:hidden max-md:max-h-96 max-md:overflow-y-auto">
+                                        {expenseCategoriesWithBudget.map((ec, key) => {
+                                            return (
+                                                <div className="flex flex-col w-full" key={key}>
+                                                    <p>
+                                                        {ec.category} -{" "}
+                                                        <span className="opacity-60">
+                                                            {
+                                                                periodicityValues[
+                                                                    ec.budgetPlan!.periodicity
+                                                                ]
+                                                            }
+                                                        </span>
+                                                    </p>
+                                                    <div className="w-full">
+                                                        <ProgressBar
+                                                            dark
+                                                            value={expenseData!
+                                                                .filter(
+                                                                    (e) => e.expenseCategoryId === ec.id
+                                                                )
+                                                                .reduce(
+                                                                    (acc, value) => (acc += value.amount),
+                                                                    0
+                                                                )}
+                                                            total={ec.budgetPlan!.amount}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </>
+                            )}
                         </DataSection>
                     </div>
                     <div className="infoContainer2 col-span-2 md:col-span-2 md:order-2 xl:col-span-3 xl:order-4 xl:row-span-6 2xl:row-span-7">
