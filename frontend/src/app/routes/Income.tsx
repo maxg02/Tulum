@@ -140,7 +140,9 @@ export default function Budget() {
                             isEmpty={yearIncomes.length === 0}
                             customEmptyMsg="No data available for this year"
                         >
-                            <YearBarChart dataBarChart={dataBarChart} />
+                            <div className="flex h-96 w-full xl:h-full">
+                                <YearBarChart dataBarChart={dataBarChart} />
+                            </div>
                         </DataSection>
                     </div>
                 </div>

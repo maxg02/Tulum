@@ -156,8 +156,7 @@ export default function Dashboard() {
                     value: (progress * 100) / sg!.goal,
                 };
             })
-            .sort((a, b) => a.value - b.value)
-            .reverse();
+            .sort((a, b) => b.value - a.value);
     }
 
     dataLineChart = monthList.map((month) => ({
@@ -256,7 +255,7 @@ export default function Dashboard() {
                         link="/savings"
                     >
                         <div className="w-full flex-1 flex items-center justify-evenly flex-wrap">
-                            goalsProgressGauges
+                            {goalsProgressGauges}
                         </div>
                     </DataSection>
                 </div>
