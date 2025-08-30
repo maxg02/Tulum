@@ -33,19 +33,19 @@ export default function Budget() {
         [incomeData]
     );
 
-    const monthIncomes = useMemo(
-        () =>
+    const monthIncomes = useMemo(() => {
+        return (
             incomeData?.filter(
                 (income) =>
                     new Date(income.date).getMonth() === currentMonth &&
                     new Date(income.date).getFullYear() === currentYear
-            ) ?? [],
-        [incomeData]
-    );
+            ) ?? []
+        );
+    }, [incomeData, currentMonth, currentYear]);
 
     const yearIncomes = useMemo(
         () => incomeData?.filter((income) => new Date(income.date).getFullYear() === currentYear) ?? [],
-        [incomeData]
+        [incomeData, currentYear]
     );
 
     const totalMonthIncome = useMemo(
@@ -70,7 +70,7 @@ export default function Budget() {
                     )
                     .reduce((acc: number, next: incomeDto) => acc + next.amount, 0),
             })),
-        [yearIncomes, monthList]
+        [yearIncomes]
     );
 
     //Income table structure
@@ -83,7 +83,7 @@ export default function Budget() {
         rows: incomesRow,
     };
 
-    const IncomeCards = () => incomeData?.map((income) => <IncomeCard income={income} />);
+    const IncomeCards = () => incomeData?.map((income, key) => <IncomeCard key={key} income={income} />);
 
     return (
         <>
