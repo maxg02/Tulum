@@ -4,6 +4,7 @@ import { useAppSelector } from "@/Hooks/stateHooks";
 import { incomeDto, updateIncomeDto } from "../types";
 import { useDeleteIncomeMutation, useUpdateIncomeMutation } from "../api";
 import DetailsModal from "@/components/Modals/DetailsModal";
+import { validationError } from "@/types/types";
 
 function DetailsExpense() {
     const [amount, setAmount] = useState<number>(0);
@@ -48,8 +49,13 @@ function DetailsExpense() {
 
         await updateIncome(newIncomeData)
             .unwrap()
-            .catch(() => {
-                throw [`Error updating income`];
+            .catch((error) => {
+                const validationError = error.data as validationError;
+                if (validationError?.errors) {
+                    throw Object.values(validationError.errors).flat();
+                } else {
+                    throw ["An unexpected error occurred. Please try again."];
+                }
             });
     };
 

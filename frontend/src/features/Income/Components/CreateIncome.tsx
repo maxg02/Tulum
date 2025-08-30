@@ -4,6 +4,7 @@ import { AmountField, DateField, DetailsField } from "@/components/Modals/Modals
 import { useAppSelector } from "@/Hooks/stateHooks";
 import { createIncomeDto } from "../types";
 import { useCreateIncomeMutation } from "../api";
+import { validationError } from "@/types/types";
 
 function CreateExpense() {
     const [amount, setAmount] = useState<number>(0);
@@ -33,8 +34,13 @@ function CreateExpense() {
 
         await createIncome(incomeData)
             .unwrap()
-            .catch(() => {
-                throw [`Error creating income`];
+            .catch((error) => {
+                const validationError = error.data as validationError;
+                if (validationError?.errors) {
+                    throw Object.values(validationError.errors).flat();
+                } else {
+                    throw ["An unexpected error occurred. Please try again."];
+                }
             });
     };
 

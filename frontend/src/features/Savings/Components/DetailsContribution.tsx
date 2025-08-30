@@ -4,6 +4,7 @@ import { useAppSelector } from "@/Hooks/stateHooks";
 import { goalContributionDto, updateGoalContributionDto } from "../types";
 import { useDeleteGoalContributionMutation, useUpdateGoalContributionMutation } from "../api";
 import DetailsModal from "@/components/Modals/DetailsModal";
+import { validationError } from "@/types/types";
 
 type modalProps = {
     goals: {
@@ -52,8 +53,13 @@ function DetailsContribution({ goals }: modalProps) {
 
         await updateGoalContribution(goalContributionData)
             .unwrap()
-            .catch(() => {
-                throw [`Error updating goal contribution`];
+            .catch((error) => {
+                const validationError = error.data as validationError;
+                if (validationError?.errors) {
+                    throw Object.values(validationError.errors).flat();
+                } else {
+                    throw ["An unexpected error occurred. Please try again."];
+                }
             });
     };
 

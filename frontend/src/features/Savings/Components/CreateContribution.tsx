@@ -4,6 +4,7 @@ import { AmountField, DateField, SelectField } from "@/components/Modals/ModalsF
 import { useAppSelector } from "@/Hooks/stateHooks";
 import { createGoalContributionDto } from "../types";
 import { useCreateGoalContributionMutation } from "../api";
+import { validationError } from "@/types/types";
 
 type modalProps = {
     goals: {
@@ -45,8 +46,13 @@ function CreateContribution({ goals }: modalProps) {
 
         await createGoalContribution(goalContributionData)
             .unwrap()
-            .catch(() => {
-                throw [`Error creating goal contribution`];
+            .catch((error) => {
+                const validationError = error.data as validationError;
+                if (validationError?.errors) {
+                    throw Object.values(validationError.errors).flat();
+                } else {
+                    throw ["An unexpected error occurred. Please try again."];
+                }
             });
     };
 

@@ -4,6 +4,7 @@ import { AmountField, DetailsField } from "@/components/Modals/ModalsFields";
 import { useAppSelector } from "@/Hooks/stateHooks";
 import { createSavingGoalDto } from "../types";
 import { useCreateSavingGoalMutation } from "../api";
+import { validationError } from "@/types/types";
 
 function CreateGoal() {
     const [details, setDetails] = useState<string>("");
@@ -30,8 +31,13 @@ function CreateGoal() {
 
         await createSavingGoal(savingGoalData)
             .unwrap()
-            .catch(() => {
-                throw [`Error creating goal`];
+            .catch((error) => {
+                const validationError = error.data as validationError;
+                if (validationError?.errors) {
+                    throw Object.values(validationError.errors).flat();
+                } else {
+                    throw ["An unexpected error occurred. Please try again."];
+                }
             });
     };
 

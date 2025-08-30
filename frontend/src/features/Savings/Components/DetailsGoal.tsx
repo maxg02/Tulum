@@ -4,6 +4,7 @@ import { useAppSelector } from "@/Hooks/stateHooks";
 import { savingGoalDto, updateSavingGoalDto } from "../types";
 import { useDeleteSavingGoalMutation, useUpdateSavingGoalMutation } from "../api";
 import DetailsModal from "@/components/Modals/DetailsModal";
+import { validationError } from "@/types/types";
 
 function DetailsGoal() {
     const [details, setDetails] = useState<string>("");
@@ -41,8 +42,13 @@ function DetailsGoal() {
 
         await updateSavingGoal(savingGoalData)
             .unwrap()
-            .catch(() => {
-                throw [`Error updating saving goal`];
+            .catch((error) => {
+                const validationError = error.data as validationError;
+                if (validationError?.errors) {
+                    throw Object.values(validationError.errors).flat();
+                } else {
+                    throw ["An unexpected error occurred. Please try again."];
+                }
             });
     };
 
