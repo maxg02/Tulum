@@ -55,7 +55,7 @@ namespace backend.Controllers
             int userId = _claimsAccess.GetUserIdFromClaims(_httpContext.HttpContext!);
             var incomeModel = await _incomeRepo.CreateAsync(incomeDto.ToIncomeFromCreateDto(userId));
             
-            return CreatedAtAction(nameof(GetIncome), new { id = incomeModel.Id }, incomeModel.ToIncomeDto());
+            return Created();
         }
 
         [Authorize]
@@ -69,7 +69,7 @@ namespace backend.Controllers
                 return NotFound();
             }
 
-            return Ok(incomeModel.ToIncomeDto());
+            return Ok();
         }
 
         [Authorize]

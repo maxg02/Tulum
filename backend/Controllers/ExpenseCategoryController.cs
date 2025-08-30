@@ -67,7 +67,7 @@ namespace backend.Controllers
             int userId = _claimsAccess.GetUserIdFromClaims(_httpContext.HttpContext!);
             var expenseCategory = await _expenseCategoryRepo.CreateAsync(expenseCategoryDto.ToExpenseCategoryFromCreateDto(userId));
 
-            return CreatedAtAction(nameof(GetExpenseCategory), new { id = expenseCategory.Id }, expenseCategory.ToExpenseCategoryDto());
+            return Created();
         }
 
         [HttpPut("{id:int}")]
@@ -92,7 +92,7 @@ namespace backend.Controllers
                 return NotFound();
             }
 
-            return Ok(expenseCategory.ToExpenseCategoryDto());
+            return Ok();
         }
 
         [HttpDelete("{id:int}")]

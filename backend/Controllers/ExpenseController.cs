@@ -53,7 +53,7 @@ namespace backend.Controllers
             int userId = _claimsAccess.GetUserIdFromClaims(_httpContext.HttpContext!);
             var expense = await _expenseRepo.CreateAsync(expenseDto.ToExpenseFromCreateDto(userId));
 
-            return Ok(expense.ToExpenseDto());
+            return Created();
         }
 
         [Authorize]
@@ -77,7 +77,7 @@ namespace backend.Controllers
                 return NotFound();
             }
 
-            return Ok(expense.ToExpenseDto());
+            return Ok();
         }
 
         [Authorize]
