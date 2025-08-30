@@ -86,11 +86,11 @@ export default function Expenses() {
     const yearExpenses = useMemo(
         () =>
             expenseData?.filter((expense) => new Date(expense.date).getFullYear() === currentYear) ?? [],
-        [expenseData]
+        [expenseData, currentYear]
     );
     const monthExpenses = useMemo(
         () => yearExpenses?.filter((expense) => new Date(expense.date).getMonth() === currentMonth) ?? [],
-        [yearExpenses]
+        [yearExpenses, currentMonth]
     );
 
     const monthExpensesByCategory = useMemo(
