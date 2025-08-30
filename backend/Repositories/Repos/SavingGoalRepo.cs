@@ -70,9 +70,23 @@ namespace backend.Repositories.Repos
             return savingGoal;
         }
 
-        public async Task<bool> SavingGoalExists(int id)
+        public async Task<bool> CheckExists(int id)
         {
             var savingGoal = await GetByIdAsync(id);
+
+            return savingGoal != null;
+        }
+
+        public async Task<bool> CheckExists(string goal)
+        {
+            var savingGoal = await _context.SavingGoals.FirstOrDefaultAsync(sg => sg.Details == goal);
+
+            return savingGoal != null;
+        }
+
+        public async Task<bool> CheckExists(int id, string goal)
+        {
+            var savingGoal = await _context.SavingGoals.FirstOrDefaultAsync(sg => sg.Details == goal && sg.Id != id);
 
             return savingGoal != null;
         }

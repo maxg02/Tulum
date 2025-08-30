@@ -10,7 +10,9 @@ namespace backend.Repositories.Interfaces
         Task<SavingGoal> CreateAsync(SavingGoal savingGoal);
         Task<SavingGoal?> UpdateAsync(int id, SavingGoalRequestDto savingGoalDto);
         Task<SavingGoal?> DeleteAsync(int id);
-        Task<bool> SavingGoalExists(int id);
+        Task<bool> CheckExists(string goal);
+        Task<bool> CheckExists(int id, string goal);
+        Task<bool> CheckExists(int id);
 
     }
 }

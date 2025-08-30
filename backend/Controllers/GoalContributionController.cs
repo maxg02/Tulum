@@ -26,7 +26,7 @@ namespace backend.Controllers
         [Authorize]
         public async Task<IActionResult> CreateGoalContribution([FromBody] GoalContributionRequestDto goalContributionDto)
         {
-            if (!await _savingGoalRepo.SavingGoalExists(goalContributionDto.SavingGoalId))
+            if (!await _savingGoalRepo.CheckExists(goalContributionDto.SavingGoalId))
             {
                 ModelState.AddModelError("SavingGoalId","Saving goal does not exist");
             }
@@ -45,7 +45,7 @@ namespace backend.Controllers
         [Authorize]
         public async Task<IActionResult> UpdateGoalContribution([FromRoute] int id, [FromBody] GoalContributionRequestDto goalContributionDto)
         {
-            if (!await _savingGoalRepo.SavingGoalExists(goalContributionDto.SavingGoalId))
+            if (!await _savingGoalRepo.CheckExists(goalContributionDto.SavingGoalId))
             {
                 ModelState.AddModelError("SavingGoalId", "Saving goal does not exist");
             }

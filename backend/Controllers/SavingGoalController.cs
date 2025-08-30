@@ -1,6 +1,9 @@
-﻿using backend.Dtos.SavingGoal;
+﻿using backend.Dtos.Expense;
+using backend.Dtos.ExpenseCategory;
+using backend.Dtos.SavingGoal;
 using backend.Mappers;
 using backend.Repositories.Interfaces;
+using backend.Repositories.Repos;
 using backend.Utilities.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -38,6 +41,16 @@ namespace backend.Controllers
         [Authorize]
         public async Task<IActionResult> CreateSavingGoal([FromBody] SavingGoalRequestDto savingGoalDto)
         {
+            if (await _savingGoalRepo.CheckExists(savingGoalDto.Details))
+            {
+                ModelState.AddModelError("savingGoal", "Saving goal already exists");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return ValidationProblem(ModelState);
+            }
+
             int userId = _claimsAccess.GetUserIdFromClaims(_httpContext.HttpContext!);
             var savingGoal = await _savingGoalRepo.CreateAsync(savingGoalDto.ToSavingGoalFromCreateDto(userId));
 
@@ -48,6 +61,16 @@ namespace backend.Controllers
         [Authorize]
         public async Task<IActionResult> UpdateSavingGoal([FromRoute] int id, [FromBody] SavingGoalRequestDto savingGoalDto)
         {
+            if (await _savingGoalRepo.CheckExists(id, savingGoalDto.Details))
+            {
+                ModelState.AddModelError("savingGoal", "Saving goal already exists");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return ValidationProblem(ModelState);
+            }
+
             var savingGoal = await _savingGoalRepo.UpdateAsync(id, savingGoalDto);
 
             if (savingGoal == null)
