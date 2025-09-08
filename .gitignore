@@ -301,5 +301,7 @@ appsettings.Development.json
 appsettings.Production.json
 appsettings.Staging.json
 
+.vite/
+
 # End of https://www.toptal.com/developers/gitignore/api/aspnetcore
 frontend/tsconfig.tsbuildinfo
