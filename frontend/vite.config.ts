@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => ({
     resolve: {
         alias: [{ find: "@", replacement: path.resolve(__dirname, "src") }],
     },
-    base: mode === "production" ? "/tulum/" : "/",
+    base: mode === "production" ? "https://maxg02.github.io/Tulum/" : "/",
     build: {
         rollupOptions: {
             output: {
