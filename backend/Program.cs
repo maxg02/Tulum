@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Diagnostics;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -90,12 +91,13 @@ builder.Services.AddHttpContextAccessor();
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
+var frontendUrl = builder.Configuration.GetValue<string>("FrontendUrl");
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: MyAllowSpecificOrigins, policy =>
     {
         policy
-        .WithOrigins("http://localhost:5173")
+        .WithOrigins(frontendUrl!)
         .AllowAnyHeader()
         .AllowAnyMethod();
 
