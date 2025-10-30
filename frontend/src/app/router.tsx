@@ -7,6 +7,7 @@ import Login from "./routes/Login";
 import Register from "./routes/Register";
 import { createBrowserRouter } from "react-router-dom";
 import ErrorPage from "./routes/ErrorPage";
+import VerifyEmail from "./routes/VerifyEmail";
 
 const router = createBrowserRouter(
     [
@@ -40,6 +41,10 @@ const router = createBrowserRouter(
         {
             path: "/register",
             element: <Register />,
+        },
+        {
+            path: "/verify-email",
+            element: <VerifyEmail />,
         },
     ],
     {

@@ -1,0 +1,63 @@
+import { useState } from "react";
+import { useGetUserMutation } from "@/features/Auth/api";
+import { validationError } from "@/types/types.ts";
+import { setUserInfo } from "@/features/Auth/reducers";
+
+import { Link, useNavigate } from "react-router-dom";
+import { useAppDispatch } from "@/Hooks/stateHooks";
+
+import loginImage from "@/features/Auth/assets/loginImage.jpg";
+import ErrorMessage from "@/components/Misc/ErrorMessage";
+
+import { HugeiconsIcon } from "@hugeicons/react";
+import { CancelCircleIcon, CheckmarkCircle02Icon } from "@hugeicons/core-free-icons";
+
+export default function VerifyEmail() {
+    return (
+        <div
+            className="flex w-screen h-screen px-5 relative"
+            style={{
+                background: "linear-gradient(137deg,rgba(45, 57, 52, 1) 27%, rgba(51, 79, 71, 1) 100%)",
+            }}
+        >
+            <div className="m-auto infoContainer1 py-14 px-16 w-full flex-col items-center max-xl:max-w-96 max-xl:max-h-[30rem] xl:h-2/3 xl:w-2/3 xl:p-6 xl:gap-x-6 2xl:max-w-5xl 2xl:max-h-[40rem]">
+                {false ? (
+                    <>
+                        <HugeiconsIcon
+                            size={120}
+                            icon={CheckmarkCircle02Icon}
+                            className="text-custom-accent"
+                        />
+                        <h3 className="text-4xl text-custom-accent">Success</h3>
+                        <p className="text-base text-center mb-5">
+                            Congrats!, your account is now activated, you can now log in and start using
+                            the app.
+                        </p>
+                        <Link
+                            to={"/login"}
+                            className="formBtn formBtnPrimary w-full text-white text-center"
+                        >
+                            Go to Login
+                        </Link>
+                    </>
+                ) : (
+                    <>
+                        <HugeiconsIcon size={120} icon={CancelCircleIcon} className="text-red-300" />
+                        <h3 className="text-4xl text-red-300">Failure</h3>
+                        <p className="text-base text-center mb-5">
+                            The email verification has failed due to this token being already used or
+                            expired.
+                        </p>
+                        <Link
+                            to={"/login"}
+                            className="formBtn formBtnPrimary w-full text-white text-center"
+                        >
+                            Generate new token
+                        </Link>
+                    </>
+                )}
+            </div>
+            <span className="fixed bottom-0 mb-3">Design and Built By Max Garcia</span>
+        </div>
+    );
+}
