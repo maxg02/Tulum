@@ -21,10 +21,27 @@ namespace backend.Repositories.Repos
             return user;
         }
 
-        public async Task<bool> UserExists(string email)
+        public async Task<User?> GetByEmailAsync(string email)
         {
             User? user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
-            return user != null;
+
+            return user;
+        }
+
+        public async Task ValidateEmailVerificationAsync(int Id)
+        {
+            User user = GetByIdAsync(Id).Result!;
+            user.isVerified = true;
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<User> CreateAsync(User user)
+        {
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
+
+            return user;
         }
     }
 }
