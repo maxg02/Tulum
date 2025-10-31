@@ -14,21 +14,6 @@ namespace backend.Repositories.Repos
             _context = context;
         }
 
-        public async Task<User> RegisterAsync(User user)
-        {
-            await _context.Users.AddAsync(user);
-            await _context.SaveChangesAsync();
-
-            return user;
-        }
-
-        public async Task<User?> LogInAsync(string email)
-        {
-            User? user = await _context.Users.FirstOrDefaultAsync(user => user.Email == email);
-
-            return user;
-        }
-
         public async Task<User?> ValidateRefreshTokenAsync(string refreshToken)
         {
             User? user = await _context.Users.FirstOrDefaultAsync(user => user.RefreshToken == refreshToken);

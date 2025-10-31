@@ -10,6 +10,8 @@ using System.Text;
 using System.Security.Claims;
 using backend.Utilities.Classes;
 using Microsoft.Extensions.Options;
+using backend.Utilities.Interfaces;
+using backend.Dtos.User;
 
 namespace backend.Controllers
 {
@@ -20,18 +22,55 @@ namespace backend.Controllers
         private readonly IAuthRepo _authRepo;
         private readonly IUserRepo _userRepo;
         private readonly JwtInfo _jwtInfo;
+        private readonly IEmailSend _emailSend;
+        private readonly IEmailVerificationRepo _emailVerificationRepo;
 
-        public AuthController(IAuthRepo authRepo, IUserRepo userRepo, IOptions<JwtInfo> jwtInfo)
+        public AuthController(IAuthRepo authRepo, IUserRepo userRepo, IOptions<JwtInfo> jwtInfo, IEmailSend emailSend, IEmailVerificationRepo emailVerification)
         {
             _authRepo = authRepo;
             _userRepo = userRepo;
             _jwtInfo = jwtInfo.Value;
+            _emailSend = emailSend;
+            _emailVerificationRepo = emailVerification;
+        }
+
+        [HttpPost("verify-email")]
+        public async Task<IActionResult> VerifyEmail([FromBody] string token)
+        {
+            int? validationTokenUserId = await _emailVerificationRepo.VerifyTokenAsync(token);
+
+            if (validationTokenUserId == null)
+            {
+                return BadRequest("Invalid or expired token");
+            }
+
+            await _userRepo.ValidateEmailVerificationAsync(validationTokenUserId.Value);
+
+            return Ok("User verified");
+        }
+
+        [HttpPost("resend-verification")]
+        public async Task<IActionResult> ResendEmailVerification([FromBody] string userEmail)
+        {
+            User? user = await _userRepo.GetByEmailAsync(userEmail);
+
+            if (user == null)
+            {
+                return BadRequest("This email is not registered");
+            }
+
+            String token = await _emailVerificationRepo.CreateEmailVerificationCodeAsync(user.Id);
+            var verificationLink = Url.Action("VerifyEmail", "Auth", new { token }, Request.Scheme, Request.Host.Value);
+
+            await _emailSend.SendVerificationEmail(user, "Email verification", verificationLink!);
+
+            return Ok("Verification email sent");
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] UserRegisterRequestDto userDto)
         {
-            if (await _userRepo.UserExists(userDto.Email))
+            if (await _userRepo.GetByEmailAsync(userDto.Email) != null)
             {
                 ModelState.AddModelError("User", "The email address is already in use");
             }
@@ -40,14 +79,17 @@ namespace backend.Controllers
                 return ValidationProblem(ModelState);
             }
 
-            User user = await _authRepo.RegisterAsync(userDto.ToUserFromRegisterDto());
+            User user = await _userRepo.CreateAsync(userDto.ToUserFromRegisterDto());            
+
+            await _emailSend.SendVerificationEmail(user);
+
             return Ok(user.ToUserDto());
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> LogIn([FromBody] UserAuthRequestDto userDto)
         {
-            User? user = await _authRepo.LogInAsync(userDto.Email);
+            User? user = await _userRepo.GetByEmailAsync(userDto.Email);
 
             if (user == null)
             {

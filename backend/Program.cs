@@ -60,6 +60,9 @@ builder.Services.AddDbContext<ApplicationDBContext>(options =>
 });
 
 builder.Services.Configure<JwtInfo>(builder.Configuration.GetSection("Jwt"));
+builder.Services.Configure<EmailCreds>(builder.Configuration.GetSection("EmailCreds"));
+builder.Services.Configure<string>(builder.Configuration.GetSection("FrontendUrl"));
+
 var jwtInfo = builder.Configuration.GetSection("Jwt").Get<JwtInfo>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -87,6 +90,8 @@ builder.Services.AddScoped<IGoalContributionRepo, GoalContributionRepo>();
 builder.Services.AddScoped<IAuthRepo, AuthRepo>();
 builder.Services.AddScoped<IUserRepo, UserRepo>();
 builder.Services.AddScoped<IClaimsAccess, ClaimsAccess>();
+builder.Services.AddScoped<IEmailVerificationRepo, EmailVerificationRepo>();
+builder.Services.AddSingleton<IEmailSend, EmailSend>();
 builder.Services.AddHttpContextAccessor();
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";

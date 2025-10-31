@@ -16,9 +16,6 @@ namespace backend.Models
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpireDate {  get; set; }
-        public List<Income> Incomes { get; set; } = new List<Income>();
-        public List<SavingGoal> SavingGoals { get; set; } = new List<SavingGoal>();
-        public List<ExpenseCategory> Expense_Categories { get; set; } = new List<ExpenseCategory>();
-        public List<Expense> Expenses { get; set; } = new List<Expense>();
+        public bool isVerified { get; set; } = false;
     }
 }

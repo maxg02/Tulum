@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<body style="margin:0;padding:0;background-color:#f4f6f8;font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+    <table role="presentation"
+           cellpadding="0"
+           cellspacing="0"
+           width="100%"
+           style="max-width:680px;margin:32px auto;background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 4px 18px rgba(0,0,0,0.06);">
+        <tbody>
+            <tr>
+                <td style="padding:24px 28px 16px 28px;text-align:left;">
+                    <!-- Header -->
+                    <table role="presentation"
+                           width="100%">
+                        <tbody>
+                            <tr>
+                                <td style="vertical-align:middle">
+                                    <h1 style="margin:0;font-size:20px;color:#0f1724;">Tulum</h1>
+                                    <p style="margin:6px 0 0 0;color:#6b7280;font-size:14px;">Email Verification</p>
+                                </td>
+                                <!--
+                                <td style="text-align:right;vertical-align:middle">
+                                         Optional logo: replace src or remove
+                                        <img src="{{LOGO_URL}}" alt="{{COMPANY_NAME}}" width="48" style="display:block;border:0;outline:none;text-decoration:none;">
+                                      </td>
+                                -->
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:0 28px 20px 28px;border-top:1px solid #eef2f7;">
+                    <!-- Body -->
+                    <p style="margin:18px 0 10px 0;color:#111827;font-size:15px;line-height:1.5;">
+                        Hi {{USER_NAME}},
+                    </p>
+                    <p style="margin:0 0 18px 0;color:#374151;font-size:15px;line-height:1.5;">
+                        Hi, use the verification button below to verify your email address. Verification will only be available for							<strong>15 minutes</strong>, after that you will have to start the verification process again.
+                    </p>
+                    <p style="text-align:center;margin:18px 0;">
+                        <a href="{{VERIFICATION_LINK}}"
+                           style="display:inline-block;padding:12px 22px;border-radius:8px;text-decoration:none;font-weight:600;background:#2563eb;color:#ffffff;">
+                            Verify your account
+                        </a>
+                    </p>
+                    <p style="margin:0 0 18px 0;color:#374151;font-size:14px;line-height:1.5;">
+                        If the button doesn't work navigate to this link on your browser: {{VERIFICATION_LINK}}
+                    </p>
+                    <p style="margin:0 0 18px 0;color:#374151;font-size:14px;line-height:1.5;">
+                        If you didn't request an email verification, you can safely ignore this email.
+                    </p>
+                    <p style="margin:0 0 6px 0;color:#6b7280;font-size:13px;">
+                        Support: <a href="mailto:{{SUPPORT_EMAIL}}"
+                                                               style="color:#2563eb;text-decoration:none;">{{SUPPORT_EMAIL}}</a>
+                    </p>
+                    <hr style="border:none;border-top:1px solid #eef2f7;margin:18px 0;">
+                    <!-- Footer -->
+                    <p style="margin:0 0 6px 0;color:#9ca3af;font-size:12px;">
+                        This email was sent to								<strong>{{USER_EMAIL}}</strong> because an email validation was requested for your account.
+                    </p>
+                    <p style="margin:6px 0 0 0;color:#9ca3af;font-size:12px;">
+                        © {{YEAR}} TULUM. All rights reserved.
+                    </p>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <!-- Plain text fallback for email clients that ignore buttons or styles
+    <div style="max-width:680px;margin:8px auto;font-family:inherit;color:#6b7280;font-size:13px;text-align:left;">
+      <p style="margin:0 28px 16px 28px;">
+        If the button does not work, copy and paste the following link into your browser:
+        <br>
+        <a href="{{RESET_LINK}}" style="color:#2563eb;">{{RESET_LINK}}</a>
+      </p>
+    </div>-->
+</body>
+</html>
