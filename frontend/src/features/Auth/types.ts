@@ -21,3 +21,7 @@ export type userInfo = {
     } | null;
     tokens: { accessToken: string; refreshToken: string } | null;
 };
+
+export type userEmailVerificationDto = {
+    verificationToken: string;
+};

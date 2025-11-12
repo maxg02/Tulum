@@ -35,9 +35,9 @@ namespace backend.Controllers
         }
 
         [HttpPost("verify-email")]
-        public async Task<IActionResult> VerifyEmail([FromBody] string token)
+        public async Task<IActionResult> VerifyEmail([FromBody] UserEmailVerificationDto emailVerificationDto)
         {
-            int? validationTokenUserId = await _emailVerificationRepo.VerifyTokenAsync(token);
+            int? validationTokenUserId = await _emailVerificationRepo.VerifyTokenAsync(emailVerificationDto.VerificationToken);
 
             if (validationTokenUserId == null)
             {

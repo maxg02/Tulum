@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useGetUserMutation } from "@/features/Auth/api";
+import { useGetUserMutation, useVerifyEmailMutation } from "@/features/Auth/api";
 import { validationError } from "@/types/types.ts";
 import { setUserInfo } from "@/features/Auth/reducers";
 
@@ -13,6 +13,8 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { CancelCircleIcon, CheckmarkCircle02Icon } from "@hugeicons/core-free-icons";
 
 export default function VerifyEmail() {
+    const { verifyEmail, isLoading } = useVerifyEmailMutation();
+
     return (
         <div
             className="flex w-screen h-screen px-5 relative"
