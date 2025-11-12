@@ -1,19 +1,18 @@
-import { useState } from "react";
-import { useGetUserMutation, useVerifyEmailMutation } from "@/features/Auth/api";
-import { validationError } from "@/types/types.ts";
-import { setUserInfo } from "@/features/Auth/reducers";
-
-import { Link, useNavigate } from "react-router-dom";
-import { useAppDispatch } from "@/Hooks/stateHooks";
-
-import loginImage from "@/features/Auth/assets/loginImage.jpg";
-import ErrorMessage from "@/components/Misc/ErrorMessage";
-
+import { useVerifyEmailMutation } from "@/features/Auth/api";
+import { Link, useLoaderData } from "react-router-dom";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { CancelCircleIcon, CheckmarkCircle02Icon } from "@hugeicons/core-free-icons";
+import Loader from "@/components/Misc/Loader";
+import { useEffect } from "react";
 
 export default function VerifyEmail() {
-    const { verifyEmail, isLoading } = useVerifyEmailMutation();
+    const { token } = useLoaderData();
+
+    const [verifyEmail, { isLoading, isSuccess, isUninitialized }] = useVerifyEmailMutation();
+
+    useEffect(() => {
+        verifyEmail({ verificationToken: token });
+    }, [token, verifyEmail]);
 
     return (
         <div
@@ -23,7 +22,9 @@ export default function VerifyEmail() {
             }}
         >
             <div className="m-auto infoContainer1 py-14 px-16 w-full flex-col items-center max-xl:max-w-96 max-xl:max-h-[30rem] xl:h-2/3 xl:w-2/3 xl:p-6 xl:gap-x-6 2xl:max-w-5xl 2xl:max-h-[40rem]">
-                {false ? (
+                {isLoading || isUninitialized ? (
+                    <Loader />
+                ) : isSuccess ? (
                     <>
                         <HugeiconsIcon
                             size={120}

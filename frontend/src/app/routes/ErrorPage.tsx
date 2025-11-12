@@ -2,9 +2,8 @@ import { Link, useRouteError, isRouteErrorResponse } from "react-router-dom";
 import notFound from "/404.svg";
 import ErrorSVG from "/Error.svg";
 
-function NotFound() {
+function ErrorPage() {
     const error = useRouteError();
-    console.error(error);
 
     return (
         <div className="bg-[#242424] h-screen w-screen flex items-center justify-center flex-col px-8">
@@ -17,7 +16,7 @@ function NotFound() {
             ) : (
                 <img
                     src={ErrorSVG}
-                    alt="404 Not Found"
+                    alt="Error"
                     className="w-full mb-4 max-w-[40rem] xl:max-w-[45rem] 2xl:max-w-[50rem]"
                 />
             )}
@@ -29,4 +28,4 @@ function NotFound() {
     );
 }
 
-export default NotFound;
+export default ErrorPage;

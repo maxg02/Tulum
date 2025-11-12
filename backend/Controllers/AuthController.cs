@@ -46,7 +46,7 @@ namespace backend.Controllers
 
             await _userRepo.ValidateEmailVerificationAsync(validationTokenUserId.Value);
 
-            return Ok("User verified");
+            return NoContent();
         }
 
         [HttpPost("resend-verification")]
@@ -64,7 +64,7 @@ namespace backend.Controllers
 
             await _emailSend.SendVerificationEmail(user, "Email verification", verificationLink!);
 
-            return Ok("Verification email sent");
+            return NoContent();
         }
 
         [HttpPost("register")]
@@ -78,8 +78,8 @@ namespace backend.Controllers
             if (!ModelState.IsValid) {
                 return ValidationProblem(ModelState);
             }
-
-            User user = await _userRepo.CreateAsync(userDto.ToUserFromRegisterDto());            
+            
+            User user = await _userRepo.CreateAsync(userDto.ToUserFromRegisterDto());
 
             await _emailSend.SendVerificationEmail(user);
 
