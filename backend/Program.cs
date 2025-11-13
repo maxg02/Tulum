@@ -90,7 +90,7 @@ builder.Services.AddScoped<IAuthRepo, AuthRepo>();
 builder.Services.AddScoped<IUserRepo, UserRepo>();
 builder.Services.AddScoped<IClaimsAccess, ClaimsAccess>();
 builder.Services.AddScoped<IEmailVerificationRepo, EmailVerificationRepo>();
-builder.Services.AddSingleton<IEmailSend, EmailSend>();
+builder.Services.AddScoped<IEmailSend, EmailSend>();
 builder.Services.AddHttpContextAccessor();
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";

@@ -3,9 +3,9 @@ using backend.Repositories.Interfaces;
 using backend.Utilities.Classes;
 using backend.Utilities.Interfaces;
 using MailKit.Net.Smtp;
+using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
-using System;
 
 namespace backend.Utilities.Services 
 { 
@@ -13,11 +13,13 @@ namespace backend.Utilities.Services
     {
         private readonly EmailCreds _emailCreds;
         private readonly IEmailVerificationRepo _emailVerificationRepo;
+        private readonly string _frontedUrl;
 
-        public EmailSend(IOptions<EmailCreds> emailCreds, IEmailVerificationRepo emailVerificationRepo)
+        public EmailSend(IOptions<EmailCreds> emailCreds, IEmailVerificationRepo emailVerificationRepo, IConfiguration config)
         {
             _emailCreds = emailCreds.Value;
             _emailVerificationRepo = emailVerificationRepo;
+            _frontedUrl = config["FrontendUrl"]!;
         }
 
         private async Task SendEmail(User user, string subject, string body) 
@@ -27,14 +29,14 @@ namespace backend.Utilities.Services
             message.To.Add(new MailboxAddress(user.Name, user.Email));
             message.Subject = subject;
             
-            message.Body = new TextPart("plain") 
+            message.Body = new TextPart("html") 
             { 
                 Text = body
             };
             
             using (var smtp = new SmtpClient()) 
             { 
-                smtp.Connect("smtp.gmail.com", 587, true);
+                smtp.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
                 smtp.Authenticate(_emailCreds.VerificationEmail, _emailCreds.AppPassword);
                 await smtp.SendAsync(message);
                 smtp.Disconnect(true); 
@@ -44,22 +46,20 @@ namespace backend.Utilities.Services
         public async Task SendVerificationEmail(User user)
         {
             string token = await _emailVerificationRepo.CreateEmailVerificationCodeAsync(user.Id);
-            var verificationLink = Url.Action("VerifyEmail", "Auth", new { token }, Request.Scheme, Request.Host.Value);
+            var verificationLink = $"{_frontedUrl}/verify-email?token={token}";
 
             var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "Utilities", "EmailTemplates", "EmailVerificationTemplate.html");
             var htmlTemplate = await File.ReadAllTextAsync(templatePath);
 
-            string emailBody = htmlTemplate
-                .Replace("{{UserName}}", user.Name)
-                .Replace("{{VerificationLink}}", verificationLink);
-
-
-
+            string body = htmlTemplate
+                .Replace("{{USER_NAME}}", user.Name)
+                .Replace("{{VERIFICATION_LINK}}", verificationLink)
+                .Replace("{{SUPPORT_EMAIL}}", _emailCreds.SupportEmail)
+                .Replace("{{USER_EMAIL}}", user.Email)
+                .Replace("{{YEAR}}", DateTime.Now.Year.ToString());
 
             string subject = "Verify your email address";
-            string body = $"Hello {user.Name},\n\nPlease verify your email address by clicking the link below:\n\n" +
-                          $"http://yourfrontenddomain.com/verify-email?email={user.Email}\n\n" +
-                          "If you did not create an account, please ignore this email.\n\nThank you!";
+
             await SendEmail(user, subject, body);
         }
     } 

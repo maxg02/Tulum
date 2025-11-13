@@ -11,7 +11,6 @@ using System.Security.Claims;
 using backend.Utilities.Classes;
 using Microsoft.Extensions.Options;
 using backend.Utilities.Interfaces;
-using backend.Dtos.User;
 
 namespace backend.Controllers
 {
@@ -86,27 +85,30 @@ namespace backend.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> LogIn([FromBody] UserAuthRequestDto userDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return ValidationProblem(ModelState);
+            }
+
             User? user = await _userRepo.GetByEmailAsync(userDto.Email);
 
             if (user == null)
             {
                 ModelState.AddModelError("User", "Incorrect email or password");
-            }
-
-            if (!ModelState.IsValid)
-            {
                 return ValidationProblem(ModelState);
             }
 
-            if (new PasswordHasher<User>().VerifyHashedPassword(user!, user!.PasswordHash, userDto.Password) == PasswordVerificationResult.Failed)
+            if (!user.isVerified)
+            {
+                ModelState.AddModelError("User", "User is not verified, check your email");
+                return ValidationProblem(ModelState);
+            }
+
+            if (new PasswordHasher<User>().VerifyHashedPassword(user, user.PasswordHash, userDto.Password) == PasswordVerificationResult.Failed)
             {
                 ModelState.AddModelError("User", "Incorrect email or password");
-            }
-
-            if (!ModelState.IsValid)
-            {
                 return ValidationProblem(ModelState);
-            }
+            }            
 
             return Ok(new TokenDto()
             {
