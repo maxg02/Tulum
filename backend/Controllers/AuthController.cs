@@ -57,12 +57,9 @@ namespace backend.Controllers
             if (user == null)
             {
                 return BadRequest("This email is not registered");
-            }
+            }            
 
-            String token = await _emailVerificationRepo.CreateEmailVerificationCodeAsync(user.Id);
-            var verificationLink = Url.Action("VerifyEmail", "Auth", new { token }, Request.Scheme, Request.Host.Value);
-
-            await _emailSend.SendVerificationEmail(user, "Email verification", verificationLink!);
+            await _emailSend.SendVerificationEmail(user);
 
             return NoContent();
         }
