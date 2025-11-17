@@ -5,8 +5,12 @@ import { CancelCircleIcon, CheckmarkCircle02Icon } from "@hugeicons/core-free-ic
 import Loader from "@/components/Misc/Loader";
 import { useEffect } from "react";
 
+type verificationToken = {
+    token: string;
+};
+
 export default function VerifyEmail() {
-    const { token } = useLoaderData();
+    const { token } = useLoaderData() as verificationToken;
 
     const [verifyEmail, { isLoading, isSuccess, isUninitialized }] = useVerifyEmailMutation();
 
@@ -21,7 +25,7 @@ export default function VerifyEmail() {
                 background: "linear-gradient(137deg,rgba(45, 57, 52, 1) 27%, rgba(51, 79, 71, 1) 100%)",
             }}
         >
-            <div className="m-auto infoContainer1 py-14 px-16 w-full flex-col items-center max-xl:max-w-96 max-xl:max-h-[30rem] xl:h-2/3 xl:w-2/3 xl:p-6 xl:gap-x-6 2xl:max-w-5xl 2xl:max-h-[40rem]">
+            <div className="m-auto infoContainer1 py-14 px-10 w-full flex-col items-center max-w-96 xl:w-2/3 xl:gap-x-6">
                 {isLoading || isUninitialized ? (
                     <Loader />
                 ) : isSuccess ? (
