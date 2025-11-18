@@ -1,5 +1,5 @@
 import { apiSlice } from "@/api/apiSlice";
-import { tokenDto, userEmailVerificationDto } from "./types";
+import { resendEmailVerificationDto, tokenDto, userEmailVerificationDto } from "./types";
 
 export const authApi = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
@@ -31,7 +31,19 @@ export const authApi = apiSlice.injectEndpoints({
                 body: verifyToken,
             }),
         }),
+        resendVerificationEmail: builder.mutation({
+            query: (email: resendEmailVerificationDto) => ({
+                url: "auth/resend-verification",
+                method: "Post",
+                body: email,
+            }),
+        }),
     }),
 });
 
-export const { useGetUserMutation, useRegisterUserMutation, useVerifyEmailMutation } = authApi;
+export const {
+    useGetUserMutation,
+    useRegisterUserMutation,
+    useVerifyEmailMutation,
+    useResendVerificationEmailMutation,
+} = authApi;

@@ -25,3 +25,6 @@ export type userInfo = {
 export type userEmailVerificationDto = {
     verificationToken: string;
 };
+export type resendEmailVerificationDto = {
+    email: string;
+};

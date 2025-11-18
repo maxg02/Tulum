@@ -49,14 +49,27 @@ namespace backend.Controllers
         }
 
         [HttpPost("resend-verification")]
-        public async Task<IActionResult> ResendEmailVerification([FromBody] string userEmail)
+        public async Task<IActionResult> ResendEmailVerification([FromBody] UserResendEmailVerification resendEmailVerificationDto)
         {
-            User? user = await _userRepo.GetByEmailAsync(userEmail);
+            //TODO set timeout on email verification resending
+            if (!ModelState.IsValid)
+            {
+                return ValidationProblem(ModelState);
+            }
+
+            User? user = await _userRepo.GetByEmailAsync(resendEmailVerificationDto.Email);
 
             if (user == null)
             {
-                return BadRequest("This email is not registered");
-            }            
+                ModelState.AddModelError("User", "Email is not registered");
+                return ValidationProblem(ModelState);
+            }
+
+            if (user.isVerified)
+            {
+                ModelState.AddModelError("User", "User is already verified");
+                return ValidationProblem(ModelState);
+            }
 
             await _emailSend.SendVerificationEmail(user);
 
