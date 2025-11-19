@@ -18,7 +18,7 @@ namespace backend.Mappers
         {
             return new ExpenseCategory
             {
-                Category = ExpenseCategoryDto.Category,
+                Category = ExpenseCategoryDto.Category.Trim(),
                 UserId = userId
             };
         }

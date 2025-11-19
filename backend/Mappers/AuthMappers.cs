@@ -10,9 +10,8 @@ namespace backend.Mappers
         {
             User user = new()
             {
-                Email = UserDto.Email,
-                Name = UserDto.Name
-
+                Email = UserDto.Email.Trim(),
+                Name = UserDto.Name.Trim()
             };
 
             user.PasswordHash = new PasswordHasher<User>().HashPassword(user, UserDto.Password);

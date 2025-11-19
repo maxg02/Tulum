@@ -20,7 +20,7 @@ namespace backend.Mappers
             return new Income
             {
                 Amount = incomeDto.Amount,
-                Details = incomeDto.Details,
+                Details = incomeDto.Details.Trim(),
                 Date = incomeDto.Date,
                 UserId = userId
             };
