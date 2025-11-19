@@ -5,7 +5,7 @@ namespace backend.Dtos.Income
     public class IncomeRequestDto
     {
         [Required]
-        public int Amount { get; set; }
+        public double Amount { get; set; }
         [Required]
         public string Details { get; set; } = String.Empty;
         [Required]

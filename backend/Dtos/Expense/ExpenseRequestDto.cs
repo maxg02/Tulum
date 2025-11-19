@@ -5,7 +5,7 @@ namespace backend.Dtos.Expense
     public class ExpenseRequestDto
     {
         [Required]
-        public int Amount { get; set; }
+        public double Amount { get; set; }
         [Required]
         public string Details { get; set; } = String.Empty;
         [Required]

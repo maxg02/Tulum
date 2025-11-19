@@ -5,7 +5,7 @@ namespace backend.Dtos.BudgetPlan
     public class UpdateBudgetPlanRequestDto
     {
         [Required]
-        public int Amount { get; set; }
+        public double Amount { get; set; }
         [Required]
         public int Periodicity { get; set; }
     }

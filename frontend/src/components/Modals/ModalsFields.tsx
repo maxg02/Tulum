@@ -20,11 +20,12 @@ export function AmountField({ fieldStateHandler, value, customLabel }: modalFiel
             <input
                 type="number"
                 id="amount"
+                step="any"
                 name="amount"
                 className="formInput w-full"
                 placeholder="Amount"
                 value={value ?? undefined}
-                onChange={(e) => fieldStateHandler(parseInt(e.target.value))}
+                onChange={(e) => fieldStateHandler(parseFloat(e.target.value))}
             ></input>
         </div>
     );
