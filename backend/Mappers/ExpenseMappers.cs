@@ -12,7 +12,7 @@ namespace backend.Mappers
                 UserId = userId,
                 Amount = expenseDto.Amount,
                 Date = expenseDto.Date,
-                Details = expenseDto.Details,
+                Details = expenseDto.Details.Trim(),
                 ExpenseCategoryId = expenseDto.ExpenseCategoryId,
             };
         }

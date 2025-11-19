@@ -22,7 +22,7 @@ namespace backend.Mappers
             return new SavingGoal
             {
                 Goal = savingGoalDto.Goal,
-                Details = savingGoalDto.Details,
+                Details = savingGoalDto.Details.Trim(),
                 FixedContribution = savingGoalDto.FixedContribution,
                 Periodicity = savingGoalDto.Periodicity,
                 UserId = userId
