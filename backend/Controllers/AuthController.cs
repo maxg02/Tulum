@@ -71,6 +71,18 @@ namespace backend.Controllers
                 return ValidationProblem(ModelState);
             }
 
+            EmailVerification? emailVerification = await _emailVerificationRepo.GetLastEmailVerificationAsync(user.Id);
+
+            if (emailVerification != null)
+            {
+                DateTime limitDate = emailVerification.ExpiresAt.AddMinutes(-10);
+                if (limitDate < DateTime.UtcNow)
+                {
+                    ModelState.AddModelError("Time", "Please wait 5 minutes to resend the verification email");
+                    return ValidationProblem(ModelState);
+                }
+            }
+
             await _emailSend.SendVerificationEmail(user);
 
             return NoContent();

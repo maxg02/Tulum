@@ -2,6 +2,7 @@
 using backend.Models;
 using backend.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Common;
 
 namespace backend.Repositories.Repos
 {
@@ -29,6 +30,13 @@ namespace backend.Repositories.Repos
             await _context.SaveChangesAsync();
 
             return verificationToken;
+        }
+
+        public async Task<EmailVerification?> GetLastEmailVerificationAsync(int userId)
+        {
+            EmailVerification? emailVerification = await _context.EmailVerification.OrderByDescending(ev => ev.ExpiresAt).FirstOrDefaultAsync();
+
+            return emailVerification;
         }
 
         public async Task<int?> VerifyTokenAsync(string token)
