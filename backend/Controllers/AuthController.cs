@@ -51,7 +51,6 @@ namespace backend.Controllers
         [HttpPost("resend-verification")]
         public async Task<IActionResult> ResendEmailVerification([FromBody] UserResendEmailVerification resendEmailVerificationDto)
         {
-            //TODO set timeout on email verification resending
             if (!ModelState.IsValid)
             {
                 return ValidationProblem(ModelState);
@@ -76,7 +75,7 @@ namespace backend.Controllers
             if (emailVerification != null)
             {
                 DateTime limitDate = emailVerification.ExpiresAt.AddMinutes(-10);
-                if (limitDate < DateTime.UtcNow)
+                if (limitDate > DateTime.UtcNow)
                 {
                     ModelState.AddModelError("Time", "Please wait 5 minutes to resend the verification email");
                     return ValidationProblem(ModelState);
