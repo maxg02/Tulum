@@ -19,7 +19,7 @@ namespace backend.Repositories.Repos
         {
             String verificationToken = Guid.NewGuid().ToString();
 
-            await _context.EmailVerification.AddAsync(new EmailVerification
+            await _context.EmailVerification.AddAsync(new VerificationToken
             {
                 UserId = userId,
                 Token = verificationToken,
@@ -32,16 +32,16 @@ namespace backend.Repositories.Repos
             return verificationToken;
         }
 
-        public async Task<EmailVerification?> GetLastEmailVerificationAsync(int userId)
+        public async Task<VerificationToken?> GetLastEmailVerificationAsync(int userId)
         {
-            EmailVerification? emailVerification = await _context.EmailVerification.OrderByDescending(ev => ev.ExpiresAt).FirstOrDefaultAsync();
+            VerificationToken? emailVerification = await _context.EmailVerification.OrderByDescending(ev => ev.ExpiresAt).FirstOrDefaultAsync();
 
             return emailVerification;
         }
 
         public async Task<int?> VerifyTokenAsync(string token)
         {
-            EmailVerification? emailVerification = await _context.EmailVerification.FirstOrDefaultAsync(ev => ev.Token == token);
+            VerificationToken? emailVerification = await _context.EmailVerification.FirstOrDefaultAsync(ev => ev.Token == token);
 
             if (emailVerification == null || emailVerification.IsUsed || emailVerification.ExpiresAt < DateTime.UtcNow)
             {

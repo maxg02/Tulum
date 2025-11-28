@@ -70,7 +70,7 @@ namespace backend.Controllers
                 return ValidationProblem(ModelState);
             }
 
-            EmailVerification? emailVerification = await _emailVerificationRepo.GetLastEmailVerificationAsync(user.Id);
+            VerificationToken? emailVerification = await _emailVerificationRepo.GetLastEmailVerificationAsync(user.Id);
 
             if (emailVerification != null)
             {

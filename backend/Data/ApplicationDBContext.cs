@@ -17,6 +17,6 @@ namespace backend.Data
         public DbSet<SavingGoal> SavingGoals { get; set; }
         public DbSet<GoalContribution> GoalContributions { get; set; }
         public DbSet<BudgetPlan> BudgetPlans { get; set; }
-        public DbSet<EmailVerification> EmailVerification { get; set; }
+        public DbSet<VerificationToken> EmailVerification { get; set; }
     }
 }

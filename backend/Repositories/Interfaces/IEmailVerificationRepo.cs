@@ -6,6 +6,6 @@ namespace backend.Repositories.Interfaces
     {
         Task<String> CreateEmailVerificationCodeAsync(int userId);
         Task<int?> VerifyTokenAsync(string token);
-        Task<EmailVerification?> GetLastEmailVerificationAsync(int userId);
+        Task<VerificationToken?> GetLastEmailVerificationAsync(int userId);
     }
 }

@@ -62,5 +62,10 @@ namespace backend.Utilities.Services
 
             await SendEmail(user, subject, body);
         }
+
+        //public Task SendPasswordRestoreEmail(User user)
+        //{
+            
+        //}
     } 
 }
