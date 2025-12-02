@@ -43,5 +43,13 @@ namespace backend.Repositories.Repos
 
             return user;
         }
+
+        public async Task ResetPasswordAsync(int Id, string password)
+        {
+            User user = GetByIdAsync(Id).Result!;
+            user.PasswordHash = password;
+
+            await _context.SaveChangesAsync();
+        }
     }
 }

@@ -4,8 +4,8 @@ namespace backend.Repositories.Interfaces
 {
     public interface IEmailVerificationRepo
     {
-        Task<String> CreateEmailVerificationCodeAsync(int userId);
+        Task<String> CreateEmailVerificationTokenAsync(int userId);
         Task<int?> VerifyTokenAsync(string token);
-        Task<VerificationToken?> GetLastEmailVerificationAsync(int userId);
+        Task<EmailVerificationToken?> GetLastEmailVerificationTokenAsync(int userId);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace backend.Dtos.Auth
 {
-    public class UserResendEmailVerification
+    public class UserResendEmailVerificationDto
     {
         [EmailAddress]
         public required string Email { get; set; }

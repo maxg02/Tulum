@@ -15,16 +15,15 @@ namespace backend.Repositories.Repos
             _context = context;
         }
 
-        public async Task<String> CreateEmailVerificationCodeAsync(int userId)
+        public async Task<String> CreateEmailVerificationTokenAsync(int userId)
         {
             String verificationToken = Guid.NewGuid().ToString();
 
-            await _context.EmailVerification.AddAsync(new VerificationToken
+            await _context.EmailVerificationTokens.AddAsync(new EmailVerificationToken
             {
                 UserId = userId,
                 Token = verificationToken,
                 ExpiresAt = DateTime.UtcNow.AddMinutes(15),
-                IsUsed = false
             });
 
             await _context.SaveChangesAsync();
@@ -32,16 +31,16 @@ namespace backend.Repositories.Repos
             return verificationToken;
         }
 
-        public async Task<VerificationToken?> GetLastEmailVerificationAsync(int userId)
+        public async Task<EmailVerificationToken?> GetLastEmailVerificationTokenAsync(int userId)
         {
-            VerificationToken? emailVerification = await _context.EmailVerification.OrderByDescending(ev => ev.ExpiresAt).FirstOrDefaultAsync();
+            EmailVerificationToken? emailVerification = await _context.EmailVerificationTokens.OrderByDescending(ev => ev.ExpiresAt).FirstOrDefaultAsync();
 
             return emailVerification;
         }
 
         public async Task<int?> VerifyTokenAsync(string token)
         {
-            VerificationToken? emailVerification = await _context.EmailVerification.FirstOrDefaultAsync(ev => ev.Token == token);
+            EmailVerificationToken? emailVerification = await _context.EmailVerificationTokens.FirstOrDefaultAsync(ev => ev.Token == token);
 
             if (emailVerification == null || emailVerification.IsUsed || emailVerification.ExpiresAt < DateTime.UtcNow)
             {

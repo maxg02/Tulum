@@ -13,13 +13,15 @@ namespace backend.Utilities.Services
     {
         private readonly EmailCreds _emailCreds;
         private readonly IEmailVerificationRepo _emailVerificationRepo;
+        private readonly IPasswordResetRepo _passwordResetRepo;
         private readonly string _frontedUrl;
 
-        public EmailSend(IOptions<EmailCreds> emailCreds, IEmailVerificationRepo emailVerificationRepo, IConfiguration config)
+        public EmailSend(IOptions<EmailCreds> emailCreds, IEmailVerificationRepo emailVerificationRepo, IConfiguration config, IPasswordResetRepo passwordResetRepo)
         {
             _emailCreds = emailCreds.Value;
             _emailVerificationRepo = emailVerificationRepo;
             _frontedUrl = config["FrontendUrl"]!;
+            _passwordResetRepo = passwordResetRepo;
         }
 
         private async Task SendEmail(User user, string subject, string body) 
@@ -45,7 +47,7 @@ namespace backend.Utilities.Services
 
         public async Task SendVerificationEmail(User user)
         {
-            string token = await _emailVerificationRepo.CreateEmailVerificationCodeAsync(user.Id);
+            string token = await _emailVerificationRepo.CreateEmailVerificationTokenAsync(user.Id);
             var verificationLink = $"{_frontedUrl}/verify-email?token={token}";
 
             var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "Utilities", "EmailTemplates", "EmailVerificationTemplate.html");
@@ -63,9 +65,24 @@ namespace backend.Utilities.Services
             await SendEmail(user, subject, body);
         }
 
-        //public Task SendPasswordRestoreEmail(User user)
-        //{
-            
-        //}
+        public async Task SendPasswordRestoreEmail(User user)
+        {
+            string token = await _passwordResetRepo.CreatePasswordResetTokenAsync(user.Id);
+            var resetLink = $"{_frontedUrl}/reset-password?token={token}";
+
+            var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "Utilities", "EmailTemplates", "PasswordResetTemplate.html");
+            var htmlTemplate = await File.ReadAllTextAsync(templatePath);
+
+            string body = htmlTemplate
+                .Replace("{{USER_NAME}}", user.Name)
+                .Replace("{{RESET_LINK}}", resetLink)
+                .Replace("{{SUPPORT_EMAIL}}", _emailCreds.SupportEmail)
+                .Replace("{{USER_EMAIL}}", user.Email)
+                .Replace("{{YEAR}}", DateTime.Now.Year.ToString());
+
+            string subject = "Reset your password";
+
+            await SendEmail(user, subject, body);
+        }
     } 
 }

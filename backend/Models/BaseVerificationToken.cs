@@ -1,12 +1,11 @@
 ﻿namespace backend.Models
 {
-    public class VerificationToken
+    public abstract class BaseVerificationToken
     {
-        public int Id { get; set; } 
+        public int Id { get; set; }
         public int UserId { get; set; }
         public string Token { get; set; } = String.Empty;
         public DateTime ExpiresAt { get; set; }
-        public bool IsUsed { get; set; }
-
+        public bool IsUsed { get; set; } = false;
     }
 }

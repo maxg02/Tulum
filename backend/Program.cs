@@ -1,10 +1,12 @@
 using backend.Data;
+using backend.Models;
 using backend.Repositories.Interfaces;
 using backend.Repositories.Repos;
 using backend.Utilities.Classes;
 using backend.Utilities.Interfaces;
 using backend.Utilities.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -91,6 +93,8 @@ builder.Services.AddScoped<IUserRepo, UserRepo>();
 builder.Services.AddScoped<IClaimsAccess, ClaimsAccess>();
 builder.Services.AddScoped<IEmailVerificationRepo, EmailVerificationRepo>();
 builder.Services.AddScoped<IEmailSend, EmailSend>();
+builder.Services.AddScoped<IPasswordResetRepo, PasswordResetRepo>();
+builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddHttpContextAccessor();
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";

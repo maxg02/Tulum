@@ -1,16 +1,17 @@
-﻿using backend.Models;
+﻿using backend.Dtos.Auth;
+using backend.Dtos.User;
 using backend.Mappers;
+using backend.Models;
 using backend.Repositories.Interfaces;
-using Microsoft.AspNetCore.Mvc;
+using backend.Utilities.Classes;
+using backend.Utilities.Interfaces;
 using Microsoft.AspNetCore.Identity;
-using backend.Dtos.Auth;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using System.Security.Claims;
-using backend.Utilities.Classes;
-using Microsoft.Extensions.Options;
-using backend.Utilities.Interfaces;
+using System.Text;
 
 namespace backend.Controllers
 {
@@ -23,14 +24,18 @@ namespace backend.Controllers
         private readonly JwtInfo _jwtInfo;
         private readonly IEmailSend _emailSend;
         private readonly IEmailVerificationRepo _emailVerificationRepo;
+        private readonly IPasswordResetRepo _passwordResetRepo;
+        private readonly IPasswordHasher<User> _passwordHasher;
 
-        public AuthController(IAuthRepo authRepo, IUserRepo userRepo, IOptions<JwtInfo> jwtInfo, IEmailSend emailSend, IEmailVerificationRepo emailVerification)
+        public AuthController(IAuthRepo authRepo, IUserRepo userRepo, IOptions<JwtInfo> jwtInfo, IEmailSend emailSend, IEmailVerificationRepo emailVerification, IPasswordResetRepo passwordResetRepo, IPasswordHasher<User> passwordHasher)
         {
             _authRepo = authRepo;
             _userRepo = userRepo;
             _jwtInfo = jwtInfo.Value;
             _emailSend = emailSend;
             _emailVerificationRepo = emailVerification;
+            _passwordResetRepo = passwordResetRepo;
+            _passwordHasher = passwordHasher;
         }
 
         [HttpPost("verify-email")]
@@ -49,7 +54,7 @@ namespace backend.Controllers
         }
 
         [HttpPost("resend-verification")]
-        public async Task<IActionResult> ResendEmailVerification([FromBody] UserResendEmailVerification resendEmailVerificationDto)
+        public async Task<IActionResult> ResendEmailVerification([FromBody] UserResendEmailVerificationDto resendEmailVerificationDto)
         {
             if (!ModelState.IsValid)
             {
@@ -70,7 +75,7 @@ namespace backend.Controllers
                 return ValidationProblem(ModelState);
             }
 
-            VerificationToken? emailVerification = await _emailVerificationRepo.GetLastEmailVerificationAsync(user.Id);
+            EmailVerificationToken? emailVerification = await _emailVerificationRepo.GetLastEmailVerificationTokenAsync(user.Id);
 
             if (emailVerification != null)
             {
@@ -83,6 +88,61 @@ namespace backend.Controllers
             }
 
             await _emailSend.SendVerificationEmail(user);
+
+            return NoContent();
+        }
+
+        [HttpPost("send-password-reset")]
+        public async Task<IActionResult> SendPasswordReset([FromBody] UserSendPasswordResetDto passwordResetDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ValidationProblem(ModelState);
+            }
+
+            User? user = await _userRepo.GetByEmailAsync(passwordResetDto.Email);
+
+            if (user == null)
+            {
+                ModelState.AddModelError("User", "Email is not registered");
+                return ValidationProblem(ModelState);
+            }
+
+            PasswordResetToken? passwordResetLastToken = await _passwordResetRepo.GetLastPasswordResetTokenAsync(user.Id);
+
+            if (passwordResetLastToken != null)
+            {
+                DateTime limitDate = passwordResetLastToken.ExpiresAt.AddMinutes(-10);
+                if (limitDate > DateTime.UtcNow)
+                {
+                    ModelState.AddModelError("Time", "Please wait 5 minutes to resend the password restoring email");
+                    return ValidationProblem(ModelState);
+                }
+            }
+
+            await _emailSend.SendPasswordRestoreEmail(user);
+
+            return NoContent();
+        }
+
+        [HttpPost("password-reset")]
+        public async Task<IActionResult> RestorePassword([FromBody] UserRestorePasswordDto restorePasswordDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ValidationProblem(ModelState);
+            }
+
+            int? resetTokenUserId = await _passwordResetRepo.VerifyTokenAsync(restorePasswordDto.VerificationToken);
+
+            if (resetTokenUserId == null)
+            {
+                return BadRequest("Invalid or expired token");
+            }
+
+            string passwordHash = _passwordHasher.HashPassword(new User(), restorePasswordDto.NewPassword);
+
+            await _userRepo.ResetPasswordAsync(resetTokenUserId.Value, passwordHash);
 
             return NoContent();
         }
@@ -128,7 +188,7 @@ namespace backend.Controllers
                 return ValidationProblem(ModelState);
             }
 
-            if (new PasswordHasher<User>().VerifyHashedPassword(user, user.PasswordHash, userDto.Password) == PasswordVerificationResult.Failed)
+            if (_passwordHasher.VerifyHashedPassword(user, user.PasswordHash, userDto.Password) == PasswordVerificationResult.Failed)
             {
                 ModelState.AddModelError("User", "Incorrect email or password");
                 return ValidationProblem(ModelState);
