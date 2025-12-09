@@ -13,6 +13,7 @@ export default function Login() {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [error, setError] = useState<string[]>([]);
+    const [recoveryInput, setRecoveryInput] = useState<boolean>(false);
 
     const dispatch = useAppDispatch();
 
@@ -47,45 +48,55 @@ export default function Login() {
                 <div className="flex flex-col h-full w-full xl:w-1/2">
                     <div className="flex-1 w-full flex flex-col items-center py-11">
                         <h1 className="text-3xl">Log In</h1>
-                        <form
-                            onSubmit={(e) => e.preventDefault()}
-                            className="flex flex-col gap-y-3 w-full my-auto px-7"
-                        >
-                            <div className="flex flex-col gap-y-1">
-                                <label htmlFor="email">
-                                    <p>Email</p>
-                                </label>
-                                <input
-                                    name="email"
-                                    id="email"
-                                    type="text"
-                                    className="formInput"
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    required
-                                />
-                            </div>
-                            <div className="flex flex-col gap-y-1">
-                                <label htmlFor="password">
-                                    <p>Password</p>
-                                </label>
-                                <input
-                                    name="password"
-                                    id="password"
-                                    type="password"
-                                    className="formInput"
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    required
-                                />
-                            </div>
-                            <button
-                                className="formBtn formBtnPrimary w-full mt-6"
-                                onClick={() => handleLogin()}
+                        {!recoveryInput ? (
+                            <form
+                                onSubmit={(e) => e.preventDefault()}
+                                className="flex flex-col gap-y-3 w-full my-auto px-7"
                             >
-                                <p>Log In</p>
-                            </button>
-                        </form>
+                                <div className="flex flex-col gap-y-1">
+                                    <label htmlFor="email">
+                                        <p>Email</p>
+                                    </label>
+                                    <input
+                                        name="email"
+                                        id="email"
+                                        type="text"
+                                        className="formInput"
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                                <div className="flex flex-col gap-y-1">
+                                    <label htmlFor="password">
+                                        <p>Password</p>
+                                    </label>
+                                    <input
+                                        name="password"
+                                        id="password"
+                                        type="password"
+                                        className="formInput"
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        required
+                                    />
+                                    <button
+                                        onClick={() => setRecoveryInput(true)}
+                                        className="text-xs text-right text-custom-accent self-end"
+                                    >
+                                        Forgot Password?
+                                    </button>
+                                </div>
+                                <button
+                                    className="formBtn formBtnPrimary w-full mt-6"
+                                    onClick={() => handleLogin()}
+                                >
+                                    <p>Log In</p>
+                                </button>
+                            </form>
+                        ) : (
+                            <form></form>
+                        )}
                     </div>
-                    <p className="text-sm text-gray-400 text-center">
+                    <p className="text-xs text-gray-400 text-center">
                         Don't have an account?{" "}
                         <Link className="text-custom-accent cursor-pointer" to="/register">
                             Sign Up
