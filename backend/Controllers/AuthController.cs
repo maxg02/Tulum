@@ -102,9 +102,9 @@ namespace backend.Controllers
 
             User? user = await _userRepo.GetByEmailAsync(passwordResetDto.Email);
 
-            if (user == null)
+            if (user == null || !user.isVerified)
             {
-                ModelState.AddModelError("User", "Email is not registered");
+                ModelState.AddModelError("User", "Email is not registered or is not verified");
                 return ValidationProblem(ModelState);
             }
 

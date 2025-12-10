@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useGetUserMutation } from "@/features/Auth/api";
+import { useGetUserMutation, useSendPasswordRecoverEmailMutation } from "@/features/Auth/api";
 import { validationError } from "@/types/types.ts";
 import { setUserInfo } from "@/features/Auth/reducers";
 
@@ -8,9 +8,13 @@ import { useAppDispatch } from "@/Hooks/stateHooks";
 
 import loginImage from "@/features/Auth/assets/loginImage.jpg";
 import ErrorMessage from "@/components/Misc/ErrorMessage";
+import Loader from "@/components/Misc/Loader";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { CheckmarkCircle02Icon } from "@hugeicons/core-free-icons";
 
 export default function Login() {
     const [email, setEmail] = useState<string>("");
+    const [recoverEmail, setRecoverEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [error, setError] = useState<string[]>([]);
     const [recoveryInput, setRecoveryInput] = useState<boolean>(false);
@@ -18,6 +22,9 @@ export default function Login() {
     const dispatch = useAppDispatch();
 
     const [logUser] = useGetUserMutation();
+    const [sendPasswordRecoverEmail, { isLoading: isLoadingRecover, isSuccess: isSuccessRecover }] =
+        useSendPasswordRecoverEmailMutation();
+
     const navigate = useNavigate();
 
     const handleLogin = async () => {
@@ -27,6 +34,19 @@ export default function Login() {
                 dispatch(setUserInfo(tokens));
                 navigate("/");
             })
+            .catch((error) => {
+                const validationError = error.data as validationError;
+                if (validationError?.errors) {
+                    setError(Object.values(validationError.errors).flat());
+                } else {
+                    setError(["An unexpected error occurred. Please try again."]);
+                }
+            });
+    };
+
+    const handlePasswordRecoverEmail = async () => {
+        await sendPasswordRecoverEmail({ email: recoverEmail })
+            .unwrap()
             .catch((error) => {
                 const validationError = error.data as validationError;
                 if (validationError?.errors) {
@@ -52,6 +72,7 @@ export default function Login() {
                             <form
                                 onSubmit={(e) => e.preventDefault()}
                                 className="flex flex-col gap-y-3 w-full my-auto px-7"
+                                key="login"
                             >
                                 <div className="flex flex-col gap-y-1">
                                     <label htmlFor="email">
@@ -93,7 +114,42 @@ export default function Login() {
                                 </button>
                             </form>
                         ) : (
-                            <form></form>
+                            <form
+                                onSubmit={(e) => e.preventDefault()}
+                                className="flex flex-col gap-y-3 w-full my-auto px-7"
+                                key="recover"
+                            >
+                                <div className="flex flex-col gap-y-1">
+                                    <label htmlFor="recover">
+                                        <p>Email</p>
+                                    </label>
+                                    <input
+                                        name="recover"
+                                        autoComplete="off"
+                                        id="recover"
+                                        type="text"
+                                        className="formInput"
+                                        onChange={(e) => setRecoverEmail(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                                <button
+                                    className="formBtn formBtnPrimary w-full mt-6"
+                                    onClick={() => handlePasswordRecoverEmail()}
+                                >
+                                    {isLoadingRecover ? (
+                                        <Loader />
+                                    ) : isSuccessRecover ? (
+                                        <HugeiconsIcon
+                                            size={23}
+                                            icon={CheckmarkCircle02Icon}
+                                            className="mx-auto"
+                                        />
+                                    ) : (
+                                        "Send recover link"
+                                    )}
+                                </button>
+                            </form>
                         )}
                     </div>
                     <p className="text-xs text-gray-400 text-center">
