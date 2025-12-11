@@ -22,9 +22,13 @@ export type userInfo = {
     tokens: { accessToken: string; refreshToken: string } | null;
 };
 
-export type userEmailVerificationDto = {
+export type verificationTokenDto = {
     verificationToken: string;
 };
 export type sendEmailVerificationDto = {
     email: string;
+};
+export type userRestorePasswordDto = {
+    verificationToken: string;
+    newPassword: string;
 };

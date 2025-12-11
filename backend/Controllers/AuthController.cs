@@ -137,7 +137,8 @@ namespace backend.Controllers
 
             if (resetTokenUserId == null)
             {
-                return BadRequest("Invalid or expired token");
+                ModelState.AddModelError("Token", "Invalid or expired token");
+                return ValidationProblem(ModelState);
             }
 
             string passwordHash = _passwordHasher.HashPassword(new User(), restorePasswordDto.NewPassword);

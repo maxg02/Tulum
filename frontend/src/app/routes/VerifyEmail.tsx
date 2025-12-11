@@ -73,7 +73,7 @@ export default function VerifyEmail() {
                         <HugeiconsIcon size={120} icon={CancelCircleIcon} className="text-red-300" />
                         <h3 className="text-4xl text-red-300 mb-5">Failure</h3>
                         <p className="text-base text-center mb-5">
-                            The email verification has failed due to this token being already used or
+                            The email verification has failed due to this link being already used or
                             expired.
                         </p>
                         <div

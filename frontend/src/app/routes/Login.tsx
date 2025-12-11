@@ -120,13 +120,12 @@ export default function Login() {
                                 key="recover"
                             >
                                 <div className="flex flex-col gap-y-1">
-                                    <label htmlFor="recover">
+                                    <label htmlFor="passwordRecoverEmail">
                                         <p>Email</p>
                                     </label>
                                     <input
-                                        name="recover"
-                                        autoComplete="off"
-                                        id="recover"
+                                        name="passwordRecoverEmail"
+                                        id="passwordRecoverEmail"
                                         type="text"
                                         className="formInput"
                                         onChange={(e) => setRecoverEmail(e.target.value)}

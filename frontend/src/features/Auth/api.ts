@@ -1,5 +1,10 @@
 import { apiSlice } from "@/api/apiSlice";
-import { sendEmailVerificationDto, tokenDto, userEmailVerificationDto } from "./types";
+import {
+    sendEmailVerificationDto,
+    tokenDto,
+    verificationTokenDto,
+    userRestorePasswordDto,
+} from "./types";
 
 export const authApi = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
@@ -25,7 +30,7 @@ export const authApi = apiSlice.injectEndpoints({
             }),
         }),
         verifyEmail: builder.mutation({
-            query: (verifyToken: userEmailVerificationDto) => ({
+            query: (verifyToken: verificationTokenDto) => ({
                 url: "auth/verify-email",
                 method: "Post",
                 body: verifyToken,
@@ -45,6 +50,13 @@ export const authApi = apiSlice.injectEndpoints({
                 body: email,
             }),
         }),
+        resetPassword: builder.mutation({
+            query: (body: userRestorePasswordDto) => ({
+                url: "auth/password-reset",
+                method: "Post",
+                body,
+            }),
+        }),
     }),
 });
 
@@ -54,4 +66,5 @@ export const {
     useVerifyEmailMutation,
     useResendVerificationEmailMutation,
     useSendPasswordRecoverEmailMutation,
+    useResetPasswordMutation,
 } = authApi;

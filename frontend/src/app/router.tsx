@@ -8,6 +8,7 @@ import Register from "./routes/Register";
 import { createBrowserRouter, json } from "react-router-dom";
 import ErrorPage from "./routes/ErrorPage";
 import VerifyEmail from "./routes/VerifyEmail";
+import ResetPass from "./routes/ResetPass";
 
 const router = createBrowserRouter(
     [
@@ -45,6 +46,17 @@ const router = createBrowserRouter(
         {
             path: "/verify-email",
             element: <VerifyEmail />,
+            loader: ({ request }) => {
+                const url = new URL(request.url);
+                const token = url.searchParams.get("token");
+                if (!token) throw json({ message: "Missing token" }, { status: 404 });
+                return { token };
+            },
+            errorElement: <ErrorPage />,
+        },
+        {
+            path: "/reset-password",
+            element: <ResetPass />,
             loader: ({ request }) => {
                 const url = new URL(request.url);
                 const token = url.searchParams.get("token");
