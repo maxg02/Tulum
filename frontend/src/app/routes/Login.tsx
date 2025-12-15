@@ -8,9 +8,7 @@ import { useAppDispatch } from "@/Hooks/stateHooks";
 
 import loginImage from "@/features/Auth/assets/loginImage.jpg";
 import ErrorMessage from "@/components/Misc/ErrorMessage";
-import Loader from "@/components/Misc/Loader";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { CheckmarkCircle02Icon } from "@hugeicons/core-free-icons";
+import CustomButton from "@/components/Misc/CustomButton";
 
 export default function Login() {
     const [email, setEmail] = useState<string>("");
@@ -21,13 +19,14 @@ export default function Login() {
 
     const dispatch = useAppDispatch();
 
-    const [logUser] = useGetUserMutation();
+    const [logUser, { isLoading: isLoadingLogIn, isSuccess: isSuccessLogIn }] = useGetUserMutation();
     const [sendPasswordRecoverEmail, { isLoading: isLoadingRecover, isSuccess: isSuccessRecover }] =
         useSendPasswordRecoverEmailMutation();
 
     const navigate = useNavigate();
 
-    const handleLogin = async () => {
+    const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
         await logUser({ email, password })
             .unwrap()
             .then((tokens) => {
@@ -44,7 +43,8 @@ export default function Login() {
             });
     };
 
-    const handlePasswordRecoverEmail = async () => {
+    const handlePasswordRecoverEmail = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
         await sendPasswordRecoverEmail({ email: recoverEmail })
             .unwrap()
             .catch((error) => {
@@ -70,7 +70,7 @@ export default function Login() {
                         <h1 className="text-3xl">Log In</h1>
                         {!recoveryInput ? (
                             <form
-                                onSubmit={(e) => e.preventDefault()}
+                                onSubmit={handleLogin}
                                 className="flex flex-col gap-y-3 w-full my-auto px-7"
                                 key="login"
                             >
@@ -83,6 +83,7 @@ export default function Login() {
                                         id="email"
                                         type="text"
                                         className="formInput"
+                                        value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                         required
                                     />
@@ -96,6 +97,7 @@ export default function Login() {
                                         id="password"
                                         type="password"
                                         className="formInput"
+                                        value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         required
                                     />
@@ -106,16 +108,18 @@ export default function Login() {
                                         Forgot Password?
                                     </button>
                                 </div>
-                                <button
+                                <CustomButton
+                                    isLoading={isLoadingLogIn}
+                                    isSuccess={isSuccessLogIn}
                                     className="formBtn formBtnPrimary w-full mt-6"
-                                    onClick={() => handleLogin()}
+                                    type="submit"
                                 >
-                                    <p>Log In</p>
-                                </button>
+                                    Log In
+                                </CustomButton>
                             </form>
                         ) : (
                             <form
-                                onSubmit={(e) => e.preventDefault()}
+                                onSubmit={handlePasswordRecoverEmail}
                                 className="flex flex-col gap-y-3 w-full my-auto px-7"
                                 key="recover"
                             >
@@ -128,26 +132,19 @@ export default function Login() {
                                         id="passwordRecoverEmail"
                                         type="text"
                                         className="formInput"
+                                        value={recoverEmail}
                                         onChange={(e) => setRecoverEmail(e.target.value)}
                                         required
                                     />
                                 </div>
-                                <button
+                                <CustomButton
+                                    isLoading={isLoadingRecover}
+                                    isSuccess={isSuccessRecover}
                                     className="formBtn formBtnPrimary w-full mt-6"
-                                    onClick={() => handlePasswordRecoverEmail()}
+                                    type="submit"
                                 >
-                                    {isLoadingRecover ? (
-                                        <Loader />
-                                    ) : isSuccessRecover ? (
-                                        <HugeiconsIcon
-                                            size={23}
-                                            icon={CheckmarkCircle02Icon}
-                                            className="mx-auto"
-                                        />
-                                    ) : (
-                                        "Send recover link"
-                                    )}
-                                </button>
+                                    Send Recover Email
+                                </CustomButton>
                             </form>
                         )}
                     </div>

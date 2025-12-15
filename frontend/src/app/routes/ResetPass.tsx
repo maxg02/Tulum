@@ -23,14 +23,14 @@ export default function ResetPass() {
 
     const [resetPassword, { isLoading, isSuccess }] = useResetPasswordMutation();
 
-    const handlePasswordReset = (event: React.FormEvent<HTMLFormElement>) => {
+    const handlePasswordReset = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (newPassword !== confirmPassword) {
             setError(["Passwords do not match."]);
             return;
         }
 
-        resetPassword({ newPassword, verificationToken })
+        await resetPassword({ newPassword, verificationToken })
             .unwrap()
             .then(() => setTimeout(() => navigate("/login"), 100))
             .catch((error) => {

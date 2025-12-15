@@ -4,6 +4,7 @@ import loginImage from "@/features/Auth/assets/loginImage.jpg";
 import ErrorMessage from "@/components/Misc/ErrorMessage";
 import { useRegisterUserMutation } from "@/features/Auth/api";
 import { validationError } from "@/types/types.ts";
+import CustomButton from "@/components/Misc/CustomButton";
 
 export default function Register() {
     const [email, setEmail] = useState<string>("");
@@ -12,10 +13,11 @@ export default function Register() {
     const [name, setName] = useState<string>("");
     const [error, setError] = useState<string[]>([]);
 
-    const [registerUser] = useRegisterUserMutation();
+    const [registerUser, { isLoading, isSuccess }] = useRegisterUserMutation();
     const navigate = useNavigate();
 
-    const handleRegister = async () => {
+    const handleRegister = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
         if (password !== confirmPassword) {
             setError(["Passwords do not match."]);
             return;
@@ -48,7 +50,7 @@ export default function Register() {
                     <div className="flex-1 w-full flex flex-col items-center py-11">
                         <h1 className="text-3xl mb-8">Sign Up</h1>
                         <form
-                            onSubmit={(e) => e.preventDefault()}
+                            onSubmit={handleRegister}
                             className="flex flex-col gap-y-3 w-full my-auto px-7"
                         >
                             <div className="flex flex-col gap-y-1">
@@ -60,6 +62,7 @@ export default function Register() {
                                     id="name"
                                     type="text"
                                     className="formInput"
+                                    value={name}
                                     onChange={(e) => setName(e.target.value)}
                                     required
                                 />
@@ -73,6 +76,7 @@ export default function Register() {
                                     id="email"
                                     type="text"
                                     className="formInput"
+                                    value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
                                 />
@@ -86,6 +90,7 @@ export default function Register() {
                                     id="password"
                                     type="password"
                                     className="formInput"
+                                    value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
                                 />
@@ -98,17 +103,20 @@ export default function Register() {
                                     name="confirmPassword"
                                     id="confirmPassword"
                                     type="password"
+                                    value={confirmPassword}
                                     className="formInput"
                                     onChange={(e) => setConfirmPassword(e.target.value)}
                                     required
                                 />
                             </div>
-                            <button
+                            <CustomButton
+                                isLoading={isLoading}
+                                isSuccess={isSuccess}
                                 className="formBtn formBtnPrimary w-full mt-6"
-                                onClick={() => handleRegister()}
+                                type="submit"
                             >
-                                <p>Sign Up</p>
-                            </button>
+                                Sign Up
+                            </CustomButton>
                         </form>
                     </div>
                     <p className="text-sm text-gray-400 text-center">
