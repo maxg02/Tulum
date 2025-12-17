@@ -40,7 +40,7 @@ export default function Register() {
 
     return (
         <div
-            className="flex w-screen h-screen px-5 relative"
+            className="flex flex-col w-screen min-h-screen p-5 relative"
             style={{
                 background: "linear-gradient(137deg,rgba(45, 57, 52, 1) 27%, rgba(51, 79, 71, 1) 100%)",
             }}
@@ -131,7 +131,7 @@ export default function Register() {
                     style={{ backgroundImage: `url(${loginImage})` }}
                 ></div>
             </div>
-            <span className="fixed bottom-0 mb-3">Design and Built By Max Garcia</span>
+            <span className="mt-3">Design and Built By Max Garcia</span>
             <ErrorMessage error={error} />
         </div>
     );

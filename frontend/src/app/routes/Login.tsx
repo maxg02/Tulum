@@ -59,15 +59,15 @@ export default function Login() {
 
     return (
         <div
-            className="flex w-screen h-screen px-5 relative"
+            className="flex flex-col w-screen min-h-screen p-5 relative"
             style={{
                 background: "linear-gradient(137deg,rgba(45, 57, 52, 1) 27%, rgba(51, 79, 71, 1) 100%)",
             }}
         >
-            <div className="m-auto infoContainer1 w-full h-2/4 flex-row max-xl:max-w-96 max-xl:max-h-[30rem] xl:h-2/3 xl:w-2/3 xl:p-6 xl:gap-x-6 2xl:max-w-5xl 2xl:max-h-[40rem]">
+            <div className="m-auto infoContainer1 w-full h-2/4 flex-row max-xl:max-w-96 max-xl:max-h-[30rem] xl:w-2/3 xl:p-6 xl:gap-x-6 xl:h-fit xl:items-stretch 2xl:max-w-5xl">
                 <div className="flex flex-col h-full w-full xl:w-1/2">
                     <div className="flex-1 w-full flex flex-col items-center py-11">
-                        <h1 className="text-3xl">Log In</h1>
+                        <h1 className="text-3xl mb-8">Log In</h1>
                         {!recoveryInput ? (
                             <form
                                 onSubmit={handleLogin}
@@ -104,6 +104,7 @@ export default function Login() {
                                     <button
                                         onClick={() => setRecoveryInput(true)}
                                         className="text-xs text-right text-custom-accent self-end"
+                                        type="button"
                                     >
                                         Forgot Password?
                                     </button>
@@ -155,11 +156,12 @@ export default function Login() {
                         </Link>
                     </p>
                 </div>
-                <div className="max-xl:hidden w-1/2 h-full flex items-center justify-center overflow-hidden">
-                    <img className="object-cover w-full h-full rounded-xl" src={loginImage} />
-                </div>
+                <div
+                    className="max-xl:hidden w-1/2 flex items-center justify-center overflow-hidden grow rounded-xl"
+                    style={{ backgroundImage: `url(${loginImage})` }}
+                ></div>
             </div>
-            <span className="fixed bottom-0 mb-3">Design and Built By Max Garcia</span>
+            <span className="mt-3">Design and Built By Max Garcia</span>
             <ErrorMessage error={error} />
         </div>
     );
