@@ -6,6 +6,7 @@ import Loader from "@/components/Misc/Loader";
 import { useEffect, useState } from "react";
 import ErrorMessage from "@/components/Misc/ErrorMessage";
 import { validationError } from "@/types/types.ts";
+import CustomButton from "@/components/Misc/CustomButton";
 
 type verificationToken = {
     token: string;
@@ -26,7 +27,8 @@ export default function VerifyEmail() {
         verifyEmail({ verificationToken: token });
     }, [token, verifyEmail]);
 
-    const handleEmailVerificationResend = () => {
+    const handleEmailVerificationResend = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
         resendVerificationEmail({ email: email })
             .unwrap()
             .catch((error) => {
@@ -41,7 +43,7 @@ export default function VerifyEmail() {
 
     return (
         <div
-            className="flex w-screen h-screen px-5 relative"
+            className="flex flex-col w-screen min-h-screen p-5 relative"
             style={{
                 background: "linear-gradient(137deg,rgba(45, 57, 52, 1) 27%, rgba(51, 79, 71, 1) 100%)",
             }}
@@ -76,49 +78,46 @@ export default function VerifyEmail() {
                             The email verification has failed due to this link being already used or
                             expired.
                         </p>
-                        <div
-                            className={`transition-all duration-1000 flex flex-col w-full gap-y-1 overflow-hidden ${
-                                emailInput ? "max-h-96 mb-5" : "max-h-0 mb-0"
-                            }`}
-                        >
-                            <label htmlFor="email">Email:</label>
-                            <input
-                                type="email"
-                                id="email"
-                                className="formInput"
-                                placeholder="Enter email"
-                                onChange={(e) => setEmail(e.target.value)}
-                            />
-                        </div>
-                        {emailInput ? (
-                            <button
-                                onClick={() => handleEmailVerificationResend()}
-                                className="formBtn formBtnPrimary w-full text-white text-center"
+                        <form onSubmit={handleEmailVerificationResend}>
+                            <div
+                                className={`transition-all duration-1000 flex flex-col w-full gap-y-1 overflow-hidden ${
+                                    emailInput ? "max-h-96 mb-5" : "max-h-0 mb-0"
+                                }`}
                             >
-                                {isLoadingResend ? (
-                                    <Loader />
-                                ) : isSuccessResend ? (
-                                    <HugeiconsIcon
-                                        size={23}
-                                        icon={CheckmarkCircle02Icon}
-                                        className="mx-auto"
-                                    />
-                                ) : (
-                                    "Send"
-                                )}
-                            </button>
-                        ) : (
-                            <button
-                                onClick={() => setEmailInput(true)}
-                                className="formBtn formBtnPrimary w-full text-white text-center"
-                            >
-                                Resend Verification Email
-                            </button>
-                        )}
+                                <label htmlFor="email">Email:</label>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    className="formInput"
+                                    placeholder="Enter email"
+                                    value={email}
+                                    required
+                                    onChange={(e) => setEmail(e.target.value)}
+                                />
+                            </div>
+                            {emailInput ? (
+                                <CustomButton
+                                    isLoading={isLoadingResend}
+                                    isSuccess={isSuccessResend}
+                                    className="formBtn formBtnPrimary w-full mt-6"
+                                    type="submit"
+                                >
+                                    Resend
+                                </CustomButton>
+                            ) : (
+                                <button
+                                    onClick={() => setEmailInput(true)}
+                                    className="formBtn formBtnPrimary w-full text-white text-center"
+                                    type="button"
+                                >
+                                    Resend Verification Email
+                                </button>
+                            )}
+                        </form>
                     </>
                 )}
             </div>
-            <span className="fixed bottom-0 mb-3">Design and Built By Max Garcia</span>
+            <span className="mt-3">Design and Built By Max Garcia</span>
             <ErrorMessage error={error} />
         </div>
     );

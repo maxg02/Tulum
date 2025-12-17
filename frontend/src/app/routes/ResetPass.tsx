@@ -1,11 +1,11 @@
 import { useResetPasswordMutation } from "@/features/Auth/api";
 import { Link, useLoaderData, useNavigate } from "react-router-dom";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { CancelCircleIcon, CheckmarkCircle02Icon, ShieldKeyIcon } from "@hugeicons/core-free-icons";
-import Loader from "@/components/Misc/Loader";
+import { CancelCircleIcon, ShieldKeyIcon } from "@hugeicons/core-free-icons";
 import { useState } from "react";
 import ErrorMessage from "@/components/Misc/ErrorMessage";
 import { validationError } from "@/types/types.ts";
+import CustomButton from "@/components/Misc/CustomButton";
 
 type verificationToken = {
     token: string;
@@ -48,7 +48,7 @@ export default function ResetPass() {
 
     return (
         <div
-            className="flex w-screen h-screen px-5 relative"
+            className="flex flex-col w-screen min-h-screen p-5 relative"
             style={{
                 background: "linear-gradient(137deg,rgba(45, 57, 52, 1) 27%, rgba(51, 79, 71, 1) 100%)",
             }}
@@ -91,19 +91,14 @@ export default function ResetPass() {
                                     required
                                 />
                             </div>
-                            <button className="formBtn formBtnPrimary w-full mt-6" type="submit">
-                                {isLoading ? (
-                                    <Loader />
-                                ) : isSuccess ? (
-                                    <HugeiconsIcon
-                                        size={23}
-                                        icon={CheckmarkCircle02Icon}
-                                        className="mx-auto"
-                                    />
-                                ) : (
-                                    "Reset Password"
-                                )}
-                            </button>
+                            <CustomButton
+                                isLoading={isLoading}
+                                isSuccess={isSuccess}
+                                className="formBtn formBtnPrimary w-full mt-6"
+                                type="submit"
+                            >
+                                Reset Password
+                            </CustomButton>
                         </form>
                     </>
                 ) : (
@@ -123,7 +118,7 @@ export default function ResetPass() {
                     </>
                 )}
             </div>
-            <span className="fixed bottom-0 mb-3">Design and Built By Max Garcia</span>
+            <span className="mt-3">Design and Built By Max Garcia</span>
             <ErrorMessage error={error} />
         </div>
     );
