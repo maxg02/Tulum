@@ -29,7 +29,7 @@ function CreateBudget({ categories }: modalProps) {
         }
     }, [createModalState]);
 
-    const [createBudgetPlan] = useCreateBudgetPlanMutation();
+    const [createBudgetPlan, { isLoading }] = useCreateBudgetPlanMutation();
 
     const createBudgetHandler = async () => {
         const errors: string[] = [];
@@ -60,7 +60,7 @@ function CreateBudget({ categories }: modalProps) {
     };
 
     return (
-        <CreateModal show={createModalState} createFunction={createBudgetHandler}>
+        <CreateModal show={createModalState} createFunction={createBudgetHandler} isLoading={isLoading}>
             <AmountField fieldStateHandler={setAmount} />
             <SelectField<number | undefined>
                 fieldStateHandler={setSelectValue}

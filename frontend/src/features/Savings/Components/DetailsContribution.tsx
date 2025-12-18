@@ -29,8 +29,8 @@ function DetailsContribution({ goals }: modalProps) {
         }
     }, [contributionData]);
 
-    const [deleteGoalContribution] = useDeleteGoalContributionMutation();
-    const [updateGoalContribution] = useUpdateGoalContributionMutation();
+    const [deleteGoalContribution, { isLoading: isLoadingDelete }] = useDeleteGoalContributionMutation();
+    const [updateGoalContribution, { isLoading: isLoadingUpdate }] = useUpdateGoalContributionMutation();
 
     const updateGoalContributionHandler = async () => {
         const errors: string[] = [];
@@ -63,9 +63,18 @@ function DetailsContribution({ goals }: modalProps) {
             });
     };
 
-    const deleteGoalContributionHandler = () => {
+    const deleteGoalContributionHandler = async () => {
         const goalContributionId = contributionData.id;
-        deleteGoalContribution(goalContributionId!);
+        await deleteGoalContribution(goalContributionId!)
+            .unwrap()
+            .catch((error) => {
+                const validationError = error.data as validationError;
+                if (validationError?.errors) {
+                    throw Object.values(validationError.errors).flat();
+                } else {
+                    throw ["An unexpected error occurred. Please try again."];
+                }
+            });
     };
 
     return (
@@ -73,6 +82,7 @@ function DetailsContribution({ goals }: modalProps) {
             updateFunction={updateGoalContributionHandler}
             deleteFunction={deleteGoalContributionHandler}
             show={detailsModalState.show.goalContribution}
+            isLoading={isLoadingDelete || isLoadingUpdate}
         >
             <AmountField value={amount} fieldStateHandler={setAmount} />
             <SelectField

@@ -12,7 +12,7 @@ function CreateGoal() {
 
     const createModalState = useAppSelector((state) => state.createModal.show);
 
-    const [createSavingGoal] = useCreateSavingGoalMutation();
+    const [createSavingGoal, { isLoading }] = useCreateSavingGoalMutation();
 
     // Create Saving Goal function
     const createSavingGoalHandler = async () => {
@@ -42,7 +42,11 @@ function CreateGoal() {
     };
 
     return (
-        <CreateModal show={createModalState.savingGoal} createFunction={createSavingGoalHandler}>
+        <CreateModal
+            show={createModalState.savingGoal}
+            createFunction={createSavingGoalHandler}
+            isLoading={isLoading}
+        >
             <DetailsField fieldStateHandler={setDetails} />
             <AmountField fieldStateHandler={setAmount} />
         </CreateModal>

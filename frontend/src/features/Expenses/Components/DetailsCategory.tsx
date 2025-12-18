@@ -12,8 +12,8 @@ function DetailsCategory() {
     const detailsModalState = useAppSelector((state) => state.detailsModal);
     const categoryData = detailsModalState.data as expenseCategoryDto;
 
-    const [deleteExpenseCategory] = useDeleteExpenseCategoryMutation();
-    const [updateExpenseCategory] = useUpdateExpenseCategoryMutation();
+    const [deleteExpenseCategory, { isLoading: isLoadingDelete }] = useDeleteExpenseCategoryMutation();
+    const [updateExpenseCategory, { isLoading: isLoadingUpdate }] = useUpdateExpenseCategoryMutation();
 
     useEffect(() => {
         if (categoryData) {
@@ -46,9 +46,18 @@ function DetailsCategory() {
             });
     };
 
-    const deleteExpenseCategoryHandler = () => {
+    const deleteExpenseCategoryHandler = async () => {
         const expenseCategoryId = categoryData.id;
-        deleteExpenseCategory(expenseCategoryId!);
+        await deleteExpenseCategory(expenseCategoryId!)
+            .unwrap()
+            .catch((error) => {
+                const validationError = error.data as validationError;
+                if (validationError?.errors) {
+                    throw Object.values(validationError.errors).flat();
+                } else {
+                    throw ["An unexpected error occurred. Please try again."];
+                }
+            });
     };
 
     return (
@@ -56,6 +65,7 @@ function DetailsCategory() {
             updateFunction={updateExpenseCategoryHandler}
             deleteFunction={deleteExpenseCategoryHandler}
             show={detailsModalState.show.expenseCategory}
+            isLoading={isLoadingDelete || isLoadingUpdate}
         >
             <DetailsField value={details} fieldStateHandler={setDetails} />
         </DetailsModal>

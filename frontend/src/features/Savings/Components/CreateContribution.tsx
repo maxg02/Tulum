@@ -26,7 +26,7 @@ function CreateContribution({ goals }: modalProps) {
         }
     }, [createModalState]);
 
-    const [createGoalContribution] = useCreateGoalContributionMutation();
+    const [createGoalContribution, { isLoading }] = useCreateGoalContributionMutation();
 
     const createGoalContributionHandler = async () => {
         const errors: string[] = [];
@@ -57,7 +57,11 @@ function CreateContribution({ goals }: modalProps) {
     };
 
     return (
-        <CreateModal show={createModalState} createFunction={createGoalContributionHandler}>
+        <CreateModal
+            show={createModalState}
+            createFunction={createGoalContributionHandler}
+            isLoading={isLoading}
+        >
             <AmountField fieldStateHandler={setAmount} />
             <SelectField<number | undefined>
                 fieldStateHandler={setSelectValue}

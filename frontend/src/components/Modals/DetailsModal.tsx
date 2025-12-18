@@ -5,15 +5,17 @@ import { hideModal } from "@//reducers/detailsModalReducers";
 import { modalTitles } from "@//Constants/Constants";
 import { useState } from "react";
 import ErrorMessage from "../Misc/ErrorMessage";
+import Loader from "../Misc/Loader";
 
 type detailsModal = {
-    deleteFunction: () => void;
+    deleteFunction: () => Promise<void>;
     updateFunction: () => Promise<void>;
+    isLoading: boolean;
     show: boolean;
     children: React.ReactNode;
 };
 
-function DetailsModal({ children, show, deleteFunction, updateFunction }: detailsModal) {
+function DetailsModal({ children, show, deleteFunction, updateFunction, isLoading }: detailsModal) {
     const dispatch = useAppDispatch();
     const [error, setError] = useState<string[]>([]);
     const detailsModalState = useAppSelector((state) => state.detailsModal.show);
@@ -28,8 +30,11 @@ function DetailsModal({ children, show, deleteFunction, updateFunction }: detail
     };
 
     const handleDelete = () => {
-        deleteFunction();
-        handleClosing();
+        deleteFunction()
+            .then(() => handleClosing())
+            .catch((error) => {
+                setError(error);
+            });
     };
 
     const handleUpdate = () => {
@@ -48,7 +53,14 @@ function DetailsModal({ children, show, deleteFunction, updateFunction }: detail
 
     return (
         <ModalContainer closingHandler={handleClosing} title={title}>
-            {children}
+            <div className="relative">
+                {isLoading && (
+                    <div className="absolute right-1/2 top-1/2 translate-x-1/2 -translate-y-1/2">
+                        <Loader />
+                    </div>
+                )}
+                <div className={`${isLoading ? "invisible" : ""}`}>{children}</div>
+            </div>
             <hr className="customDivider"></hr>
             <div className="self-end flex gap-x-2">
                 <button type="reset" className="formBtn formBtnSecondary" onClick={handleClosing}>

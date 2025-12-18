@@ -24,8 +24,8 @@ function DetailsBudget({ categories }: modalProps) {
     const detailsModalState = useAppSelector((state) => state.detailsModal);
     const budgetData = detailsModalState.data as budgetPlanDto;
 
-    const [deleteBudgetPlan] = useDeleteBudgetPlanMutation();
-    const [updateBudgetPlan] = useUpdateBudgetPlanMutation();
+    const [deleteBudgetPlan, { isLoading: isLoadingDelete }] = useDeleteBudgetPlanMutation();
+    const [updateBudgetPlan, { isLoading: isLoadingUpdate }] = useUpdateBudgetPlanMutation();
 
     useEffect(() => {
         if (budgetData) {
@@ -61,9 +61,18 @@ function DetailsBudget({ categories }: modalProps) {
             });
     };
 
-    const deleteBudgetPlanHandler = () => {
+    const deleteBudgetPlanHandler = async () => {
         const budgetPlanId = budgetData.id;
-        deleteBudgetPlan(budgetPlanId!);
+        await deleteBudgetPlan(budgetPlanId!)
+            .unwrap()
+            .catch((error) => {
+                const validationError = error.data as validationError;
+                if (validationError?.errors) {
+                    throw Object.values(validationError.errors).flat();
+                } else {
+                    throw ["An unexpected error occurred. Please try again."];
+                }
+            });
     };
 
     return (
@@ -71,6 +80,7 @@ function DetailsBudget({ categories }: modalProps) {
             updateFunction={updateBudgetPlanHandler}
             deleteFunction={deleteBudgetPlanHandler}
             show={detailsModalState.show.budgetPlanning}
+            isLoading={isLoadingDelete || isLoadingUpdate}
         >
             <AmountField value={amount} fieldStateHandler={setAmount} />
             <SelectField<number>

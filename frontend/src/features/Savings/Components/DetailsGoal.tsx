@@ -13,8 +13,8 @@ function DetailsGoal() {
     const detailsModalState = useAppSelector((state) => state.detailsModal);
     const goalData = detailsModalState.data as savingGoalDto;
 
-    const [deleteSavingGoal] = useDeleteSavingGoalMutation();
-    const [updateSavingGoal] = useUpdateSavingGoalMutation();
+    const [deleteSavingGoal, { isLoading: isLoadingDelete }] = useDeleteSavingGoalMutation();
+    const [updateSavingGoal, { isLoading: isLoadingUpdate }] = useUpdateSavingGoalMutation();
 
     useEffect(() => {
         if (goalData) {
@@ -52,9 +52,18 @@ function DetailsGoal() {
             });
     };
 
-    const deleteSavingGoalHandler = () => {
+    const deleteSavingGoalHandler = async () => {
         const savingGoalId = goalData.id;
-        deleteSavingGoal(savingGoalId!);
+        deleteSavingGoal(savingGoalId!)
+            .unwrap()
+            .catch((error) => {
+                const validationError = error.data as validationError;
+                if (validationError?.errors) {
+                    throw Object.values(validationError.errors).flat();
+                } else {
+                    throw ["An unexpected error occurred. Please try again."];
+                }
+            });
     };
 
     return (
@@ -62,6 +71,7 @@ function DetailsGoal() {
             updateFunction={updateSavingGoalHandler}
             deleteFunction={deleteSavingGoalHandler}
             show={detailsModalState.show.savingGoal}
+            isLoading={isLoadingUpdate || isLoadingDelete}
         >
             <DetailsField value={details} fieldStateHandler={setDetails} />
             <AmountField value={amount} fieldStateHandler={setAmount} />

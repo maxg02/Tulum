@@ -11,7 +11,7 @@ function CreateCategory() {
 
     const createModalState = useAppSelector((state) => state.createModal.show);
 
-    const [createExpenseCategory] = useCreateExpenseCategoryMutation();
+    const [createExpenseCategory, { isLoading }] = useCreateExpenseCategoryMutation();
 
     const createExpenseCategoryHandler = async () => {
         const errors: string[] = [];
@@ -41,6 +41,7 @@ function CreateCategory() {
         <CreateModal
             show={createModalState.expenseCategory}
             createFunction={createExpenseCategoryHandler}
+            isLoading={isLoading}
         >
             <DetailsField fieldStateHandler={setDetails} />
         </CreateModal>

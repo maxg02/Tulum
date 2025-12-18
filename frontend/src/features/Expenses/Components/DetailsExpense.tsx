@@ -33,8 +33,8 @@ function DetailsExpense({ categories }: modalProps) {
         }
     }, [expenseData]);
 
-    const [deleteExpense] = useDeleteExpenseMutation();
-    const [updateExpense] = useUpdateExpenseMutation();
+    const [deleteExpense, { isLoading: isLoadingDelete }] = useDeleteExpenseMutation();
+    const [updateExpense, { isLoading: isLoadingUpdate }] = useUpdateExpenseMutation();
 
     const updateExpenseHandler = async () => {
         const errors: string[] = [];
@@ -69,9 +69,18 @@ function DetailsExpense({ categories }: modalProps) {
             });
     };
 
-    const deleteExpenseHandler = () => {
+    const deleteExpenseHandler = async () => {
         const expenseId = expenseData.id;
-        deleteExpense(expenseId!);
+        await deleteExpense(expenseId!)
+            .unwrap()
+            .catch((error) => {
+                const validationError = error.data as validationError;
+                if (validationError?.errors) {
+                    throw Object.values(validationError.errors).flat();
+                } else {
+                    throw ["An unexpected error occurred. Please try again."];
+                }
+            });
     };
 
     return (
@@ -79,6 +88,7 @@ function DetailsExpense({ categories }: modalProps) {
             updateFunction={updateExpenseHandler}
             deleteFunction={deleteExpenseHandler}
             show={detailsModalState.show.expense}
+            isLoading={isLoadingDelete || isLoadingUpdate}
         >
             <AmountField value={amount} fieldStateHandler={setAmount} />
             <DetailsField value={details} fieldStateHandler={setDetails} />

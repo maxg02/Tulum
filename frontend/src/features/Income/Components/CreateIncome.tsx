@@ -13,7 +13,7 @@ function CreateExpense() {
 
     const createModalState = useAppSelector((state) => state.createModal.show);
 
-    const [createIncome] = useCreateIncomeMutation();
+    const [createIncome, { isLoading }] = useCreateIncomeMutation();
 
     const createIncomeHandler = async () => {
         const errors: string[] = [];
@@ -45,7 +45,11 @@ function CreateExpense() {
     };
 
     return (
-        <CreateModal show={createModalState.income} createFunction={createIncomeHandler}>
+        <CreateModal
+            show={createModalState.income}
+            createFunction={createIncomeHandler}
+            isLoading={isLoading}
+        >
             <AmountField fieldStateHandler={setAmount} />
             <DetailsField fieldStateHandler={setDetails} />
             <DateField fieldStateHandler={setDate} />

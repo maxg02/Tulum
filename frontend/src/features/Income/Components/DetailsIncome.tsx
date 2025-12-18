@@ -14,8 +14,8 @@ function DetailsExpense() {
     const detailsModalState = useAppSelector((state) => state.detailsModal);
     const incomeData = detailsModalState.data as incomeDto;
 
-    const [deleteIncome] = useDeleteIncomeMutation();
-    const [updateIncome] = useUpdateIncomeMutation();
+    const [deleteIncome, { isLoading: isLoadingDelete }] = useDeleteIncomeMutation();
+    const [updateIncome, { isLoading: isLoadingUpdate }] = useUpdateIncomeMutation();
 
     useEffect(() => {
         if (incomeData) {
@@ -26,9 +26,18 @@ function DetailsExpense() {
     }, [incomeData]);
 
     // Delete Income Function
-    const deleteIncomeHandler = () => {
+    const deleteIncomeHandler = async () => {
         const incomeId = incomeData.id;
-        deleteIncome(incomeId!);
+        await deleteIncome(incomeId!)
+            .unwrap()
+            .catch((error) => {
+                const validationError = error.data as validationError;
+                if (validationError?.errors) {
+                    throw Object.values(validationError.errors).flat();
+                } else {
+                    throw ["An unexpected error occurred. Please try again."];
+                }
+            });
     };
 
     // Update Income Function
@@ -64,6 +73,7 @@ function DetailsExpense() {
             updateFunction={updateIncomeHandler}
             deleteFunction={deleteIncomeHandler}
             show={detailsModalState.show.income}
+            isLoading={isLoadingDelete || isLoadingUpdate}
         >
             <AmountField value={amount} fieldStateHandler={setAmount} />
             <DetailsField value={details} fieldStateHandler={setDetails} />

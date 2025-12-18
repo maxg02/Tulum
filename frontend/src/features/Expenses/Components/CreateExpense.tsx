@@ -29,7 +29,7 @@ function CreateExpense({ categories }: modalProps) {
         }
     }, [createModalState]);
 
-    const [createExpense] = useCreateExpenseMutation();
+    const [createExpense, { isLoading }] = useCreateExpenseMutation();
 
     const createExpenseHandler = async () => {
         const errors: string[] = [];
@@ -65,7 +65,7 @@ function CreateExpense({ categories }: modalProps) {
     };
 
     return (
-        <CreateModal show={createModalState} createFunction={createExpenseHandler}>
+        <CreateModal show={createModalState} createFunction={createExpenseHandler} isLoading={isLoading}>
             <AmountField fieldStateHandler={setAmount} />
             <SelectField<number | undefined>
                 fieldStateHandler={setSelectValue}
