@@ -3,7 +3,7 @@ using System.Security.Claims;
 
 namespace backend.Utilities.Services
 {
-    public class ClaimsAccess : IClaimsAccess
+    public class ClaimsAccessService : IClaimsAccessService
     {
         public int GetUserIdFromClaims(HttpContext httpContext)
         {

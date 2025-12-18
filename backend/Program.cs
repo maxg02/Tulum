@@ -88,13 +88,14 @@ builder.Services.AddScoped<IBudgetPlanRepo, BudgetPlanRepo>();
 builder.Services.AddScoped<IExpenseRepo, ExpenseRepo>();
 builder.Services.AddScoped<ISavingGoalRepo, SavingGoalRepo>();
 builder.Services.AddScoped<IGoalContributionRepo, GoalContributionRepo>();
-builder.Services.AddScoped<IAuthRepo, AuthRepo>();
+builder.Services.AddScoped<ITokenRepo, TokenRepo>();
 builder.Services.AddScoped<IUserRepo, UserRepo>();
-builder.Services.AddScoped<IClaimsAccess, ClaimsAccess>();
+builder.Services.AddScoped<IClaimsAccessService, ClaimsAccessService>();
 builder.Services.AddScoped<IEmailVerificationRepo, EmailVerificationRepo>();
-builder.Services.AddScoped<IEmailSend, EmailSend>();
+builder.Services.AddScoped<IEmailSendService, EmailSendService>();
 builder.Services.AddScoped<IPasswordResetRepo, PasswordResetRepo>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddHttpContextAccessor();
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";

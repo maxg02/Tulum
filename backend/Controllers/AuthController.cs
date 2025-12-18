@@ -1,5 +1,4 @@
 ﻿using backend.Dtos.Auth;
-using backend.Dtos.User;
 using backend.Mappers;
 using backend.Models;
 using backend.Repositories.Interfaces;
@@ -8,10 +7,6 @@ using backend.Utilities.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.JsonWebTokens;
-using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
-using System.Text;
 
 namespace backend.Controllers
 {
@@ -19,23 +14,21 @@ namespace backend.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IAuthRepo _authRepo;
         private readonly IUserRepo _userRepo;
-        private readonly JwtInfo _jwtInfo;
-        private readonly IEmailSend _emailSend;
+        private readonly IEmailSendService _emailSend;
         private readonly IEmailVerificationRepo _emailVerificationRepo;
         private readonly IPasswordResetRepo _passwordResetRepo;
         private readonly IPasswordHasher<User> _passwordHasher;
+        private readonly ITokenService _tokenService;
 
-        public AuthController(IAuthRepo authRepo, IUserRepo userRepo, IOptions<JwtInfo> jwtInfo, IEmailSend emailSend, IEmailVerificationRepo emailVerification, IPasswordResetRepo passwordResetRepo, IPasswordHasher<User> passwordHasher)
+        public AuthController(ITokenRepo authRepo, IUserRepo userRepo, IOptions<JwtInfo> jwtInfo, IEmailSendService emailSend, IEmailVerificationRepo emailVerification, IPasswordResetRepo passwordResetRepo, IPasswordHasher<User> passwordHasher, ITokenService tokenService)
         {
-            _authRepo = authRepo;
             _userRepo = userRepo;
-            _jwtInfo = jwtInfo.Value;
             _emailSend = emailSend;
             _emailVerificationRepo = emailVerification;
             _passwordResetRepo = passwordResetRepo;
             _passwordHasher = passwordHasher;
+            _tokenService = tokenService;
         }
 
         [HttpPost("verify-email")]
@@ -197,15 +190,15 @@ namespace backend.Controllers
 
             return Ok(new TokenDto()
             {
-                AccessToken = CreateAccessToken(user),
-                RefreshToken = await CreateRefreshToken(user)
+                AccessToken = _tokenService.CreateAccessToken(user),
+                RefreshToken = await _tokenService.CreateRefreshToken(user)
             });
         }
 
         [HttpPost("refreshAccessToken")]
         public async Task<IActionResult> GetAccessTokenFromRefresh([FromBody] UserRefreshTokenRequestDto refreshTokenDto)
         {            
-            User? user = await ValidateRefreshToken(refreshTokenDto.RefreshToken);
+            User? user = await _tokenService.ValidateRefreshToken(refreshTokenDto.RefreshToken);
 
             if (user == null)
             {
@@ -214,52 +207,9 @@ namespace backend.Controllers
 
             return Ok(new TokenDto()
             {
-                AccessToken = CreateAccessToken(user),
-                RefreshToken = await CreateRefreshToken(user)
+                AccessToken = _tokenService.CreateAccessToken(user),
+                RefreshToken = await _tokenService.CreateRefreshToken(user)
             });
-        }
-
-        private string CreateAccessToken(User user)
-        {
-            Dictionary<string, object> claims = new()
-            {
-                {ClaimTypes.Name, user.Name},
-                {ClaimTypes.NameIdentifier, user.Id },
-                {ClaimTypes.Email, user.Email},
-            };
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtInfo.SigningKey));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
-
-            var tokenDescriptor = new SecurityTokenDescriptor()
-            {
-                Claims = claims,
-                Expires = DateTime.Now.AddMinutes(60),
-                Issuer = _jwtInfo.Issuer,
-                Audience = _jwtInfo.Audience,
-                SigningCredentials = creds
-            };
-
-            return new JsonWebTokenHandler().CreateToken(tokenDescriptor);
-        }
-        private async Task<string> CreateRefreshToken(User user)
-        {
-            string refreshToken = Guid.NewGuid().ToString();
-            await _authRepo.SaveRefreshTokenAsync(refreshToken, user);
-
-            return refreshToken;
-        }
-        
-        private async Task<User?> ValidateRefreshToken(string refreshToken)
-        {
-            User? user = await _authRepo.ValidateRefreshTokenAsync(refreshToken);
-
-            if (user == null || user.RefreshTokenExpireDate < DateTime.Now)
-            {
-                return null;
-            }
-
-            return user;
-        } 
+        }        
     }
 }

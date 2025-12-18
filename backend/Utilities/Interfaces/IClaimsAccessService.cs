@@ -1,6 +1,6 @@
 ﻿namespace backend.Utilities.Interfaces
 {
-    public interface IClaimsAccess
+    public interface IClaimsAccessService
     {
         int GetUserIdFromClaims(HttpContext httpContext);
     };

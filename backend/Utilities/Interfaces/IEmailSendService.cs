@@ -2,7 +2,7 @@
 
 namespace backend.Utilities.Interfaces
 {
-    public interface IEmailSend
+    public interface IEmailSendService
     {
         Task SendVerificationEmail(User user);
         Task SendPasswordRestoreEmail(User user);

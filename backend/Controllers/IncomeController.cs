@@ -14,9 +14,9 @@ namespace backend.Controllers
     {
         private readonly IIncomeRepo _incomeRepo;
         private readonly IHttpContextAccessor _httpContext;
-        private readonly IClaimsAccess _claimsAccess;
+        private readonly IClaimsAccessService _claimsAccess;
 
-        public IncomeController(IIncomeRepo incomeRepo, IHttpContextAccessor httpContext, IClaimsAccess claimsAccess) 
+        public IncomeController(IIncomeRepo incomeRepo, IHttpContextAccessor httpContext, IClaimsAccessService claimsAccess) 
         {
             _incomeRepo = incomeRepo;
             _httpContext = httpContext;

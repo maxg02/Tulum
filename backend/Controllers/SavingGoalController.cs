@@ -16,9 +16,9 @@ namespace backend.Controllers
     {
         private readonly ISavingGoalRepo _savingGoalRepo;
         private readonly IHttpContextAccessor _httpContext;
-        private readonly IClaimsAccess _claimsAccess;
+        private readonly IClaimsAccessService _claimsAccess;
 
-        public SavingGoalController(ISavingGoalRepo savingGoalRepo, IHttpContextAccessor httpContext, IClaimsAccess claimsAccess)
+        public SavingGoalController(ISavingGoalRepo savingGoalRepo, IHttpContextAccessor httpContext, IClaimsAccessService claimsAccess)
         {
             _savingGoalRepo = savingGoalRepo;
             _httpContext = httpContext;

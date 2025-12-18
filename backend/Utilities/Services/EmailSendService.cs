@@ -9,14 +9,14 @@ using MimeKit;
 
 namespace backend.Utilities.Services 
 { 
-    public class EmailSend : IEmailSend
+    public class EmailSendService : IEmailSendService
     {
         private readonly EmailCreds _emailCreds;
         private readonly IEmailVerificationRepo _emailVerificationRepo;
         private readonly IPasswordResetRepo _passwordResetRepo;
         private readonly string _frontedUrl;
 
-        public EmailSend(IOptions<EmailCreds> emailCreds, IEmailVerificationRepo emailVerificationRepo, IConfiguration config, IPasswordResetRepo passwordResetRepo)
+        public EmailSendService(IOptions<EmailCreds> emailCreds, IEmailVerificationRepo emailVerificationRepo, IConfiguration config, IPasswordResetRepo passwordResetRepo)
         {
             _emailCreds = emailCreds.Value;
             _emailVerificationRepo = emailVerificationRepo;

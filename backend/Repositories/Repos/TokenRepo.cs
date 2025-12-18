@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace backend.Repositories.Repos
 {
-    public class AuthRepo : IAuthRepo
+    public class TokenRepo : ITokenRepo
     {
         private readonly ApplicationDBContext _context;
 
-        public AuthRepo (ApplicationDBContext context)
+        public TokenRepo (ApplicationDBContext context)
         {
             _context = context;
         }

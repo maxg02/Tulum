@@ -14,9 +14,9 @@ namespace backend.Controllers
     {
         private readonly IExpenseCategoryRepo _expenseCategoryRepo;
         private readonly IHttpContextAccessor _httpContext;
-        private readonly IClaimsAccess _claimsAccess;
+        private readonly IClaimsAccessService _claimsAccess;
 
-        public ExpenseCategoryController(IExpenseCategoryRepo expenseCategoryRepo, IHttpContextAccessor httpContext, IClaimsAccess claimsAccess)
+        public ExpenseCategoryController(IExpenseCategoryRepo expenseCategoryRepo, IHttpContextAccessor httpContext, IClaimsAccessService claimsAccess)
         {
             _expenseCategoryRepo = expenseCategoryRepo;
             _httpContext = httpContext;
