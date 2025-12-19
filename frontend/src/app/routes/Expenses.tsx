@@ -224,7 +224,7 @@ export default function Expenses() {
                                     }}
                                 />
                             </div>
-                            <div className="flex flex-col w-full overflow-x-hidden gap-4 max-h-[40rem] overflow-y-auto md:hidden">
+                            <div className="flex flex-col w-full overflow-x-hidden gap-4 max-h-[40rem] overflow-y-auto md:hidden hide-scrollbar">
                                 <ExpenseCards />
                             </div>
                         </DataSection>
