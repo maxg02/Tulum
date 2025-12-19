@@ -2,6 +2,7 @@
 using backend.Repositories.Interfaces;
 using backend.Utilities.Classes;
 using backend.Utilities.Interfaces;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
@@ -14,9 +15,9 @@ namespace backend.Utilities.Services
         private readonly JwtInfo _jwtInfo;
         private readonly ITokenRepo _authRepo;
 
-        public TokenService(JwtInfo jwtInfo, ITokenRepo authRepo)
+        public TokenService(IOptions<JwtInfo> jwtInfo, ITokenRepo authRepo)
         {
-            _jwtInfo = jwtInfo;
+            _jwtInfo = jwtInfo.Value;
             _authRepo = authRepo;
         }
 

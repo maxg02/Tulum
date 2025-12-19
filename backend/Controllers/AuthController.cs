@@ -21,7 +21,7 @@ namespace backend.Controllers
         private readonly IPasswordHasher<User> _passwordHasher;
         private readonly ITokenService _tokenService;
 
-        public AuthController(ITokenRepo authRepo, IUserRepo userRepo, IOptions<JwtInfo> jwtInfo, IEmailSendService emailSend, IEmailVerificationRepo emailVerification, IPasswordResetRepo passwordResetRepo, IPasswordHasher<User> passwordHasher, ITokenService tokenService)
+        public AuthController(ITokenRepo authRepo, IUserRepo userRepo, IEmailSendService emailSend, IEmailVerificationRepo emailVerification, IPasswordResetRepo passwordResetRepo, IPasswordHasher<User> passwordHasher, ITokenService tokenService)
         {
             _userRepo = userRepo;
             _emailSend = emailSend;
