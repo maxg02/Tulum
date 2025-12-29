@@ -5,7 +5,7 @@ import ErrorMessage from "@/components/Misc/ErrorMessage";
 import { useRegisterUserMutation } from "@/features/Auth/api";
 import { validationError } from "@/types/types.ts";
 import CustomButton from "@/components/Misc/CustomButton";
-import appLogo from "@/assets/LogoP.svg";
+import appLogo from "/logos/LogoP.svg";
 
 export default function Register() {
     const [email, setEmail] = useState<string>("");

@@ -17,7 +17,7 @@ import type { ReactNode } from "react";
 import { useAppDispatch, useAppSelector } from "@/Hooks/stateHooks";
 import { toggleSidebar, toggleActiveSection } from "@/reducers/utilitiesReducers";
 import { logOut } from "@/features/Auth/reducers";
-import appLogo from "@/assets/LogoLetra.svg";
+import appLogo from "/logos/LogoLetra.svg";
 
 enum routes {
     Dashboard = "",

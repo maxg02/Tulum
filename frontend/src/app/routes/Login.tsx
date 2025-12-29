@@ -10,7 +10,7 @@ import loginImage from "@/features/Auth/assets/loginImage.jpg";
 import ErrorMessage from "@/components/Misc/ErrorMessage";
 import CustomButton from "@/components/Misc/CustomButton";
 
-import appLogo from "@/assets/LogoP.svg";
+import appLogo from "/logos/LogoP.svg";
 
 export default function Login() {
     const [email, setEmail] = useState<string>("");

@@ -27,7 +27,7 @@ namespace backend.Utilities.Services
         private async Task SendEmail(User user, string subject, string body) 
         { 
             var message = new MimeMessage();
-            message.From.Add(new MailboxAddress("Tulum", _emailCreds.VerificationEmail));
+            message.From.Add(new MailboxAddress("Telvia", _emailCreds.VerificationEmail));
             message.To.Add(new MailboxAddress(user.Name, user.Email));
             message.Subject = subject;
             
@@ -39,7 +39,7 @@ namespace backend.Utilities.Services
             using (var smtp = new SmtpClient()) 
             { 
                 smtp.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
-                smtp.Authenticate(_emailCreds.VerificationEmail, _emailCreds.AppPassword);
+                smtp.Authenticate(_emailCreds.AuthEmail, _emailCreds.AppPassword);
                 await smtp.SendAsync(message);
                 smtp.Disconnect(true); 
             } 
@@ -58,7 +58,8 @@ namespace backend.Utilities.Services
                 .Replace("{{VERIFICATION_LINK}}", verificationLink)
                 .Replace("{{SUPPORT_EMAIL}}", _emailCreds.SupportEmail)
                 .Replace("{{USER_EMAIL}}", user.Email)
-                .Replace("{{YEAR}}", DateTime.Now.Year.ToString());
+                .Replace("{{YEAR}}", DateTime.Now.Year.ToString())
+                .Replace("{{LOGO_URL}}", $"{_frontedUrl}/logos/LogoP.svg");
 
             string subject = "Verify your email address";
 
@@ -78,7 +79,8 @@ namespace backend.Utilities.Services
                 .Replace("{{RESET_LINK}}", resetLink)
                 .Replace("{{SUPPORT_EMAIL}}", _emailCreds.SupportEmail)
                 .Replace("{{USER_EMAIL}}", user.Email)
-                .Replace("{{YEAR}}", DateTime.Now.Year.ToString());
+                .Replace("{{YEAR}}", DateTime.Now.Year.ToString())
+                .Replace("{{LOGO_URL}}", $"{_frontedUrl}/logos/LogoP.svg");
 
             string subject = "Reset your password";
 
