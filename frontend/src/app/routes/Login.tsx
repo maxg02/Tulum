@@ -10,6 +10,8 @@ import loginImage from "@/features/Auth/assets/loginImage.jpg";
 import ErrorMessage from "@/components/Misc/ErrorMessage";
 import CustomButton from "@/components/Misc/CustomButton";
 
+import appLogo from "@/assets/LogoP.svg";
+
 export default function Login() {
     const [email, setEmail] = useState<string>("");
     const [recoverEmail, setRecoverEmail] = useState<string>("");
@@ -66,7 +68,10 @@ export default function Login() {
         >
             <div className="m-auto infoContainer1 w-full h-2/4 flex-row max-xl:max-w-96 max-xl:max-h-[30rem] xl:w-2/3 xl:p-6 xl:gap-x-6 xl:h-fit xl:items-stretch 2xl:max-w-5xl">
                 <div className="flex flex-col h-full w-full xl:w-1/2">
-                    <div className="flex-1 w-full flex flex-col items-center py-11">
+                    <div className="flex-1 w-full flex flex-col items-center py-11 relative">
+                        <div className="absolute left-0 top-0">
+                            <img src={appLogo} alt="App Logo" className="w-12" />
+                        </div>
                         <h1 className="text-3xl mb-8">Log In</h1>
                         {!recoveryInput ? (
                             <form

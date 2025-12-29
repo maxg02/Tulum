@@ -17,7 +17,7 @@ import type { ReactNode } from "react";
 import { useAppDispatch, useAppSelector } from "@/Hooks/stateHooks";
 import { toggleSidebar, toggleActiveSection } from "@/reducers/utilitiesReducers";
 import { logOut } from "@/features/Auth/reducers";
-import appLogo from "/appLogo.png";
+import appLogo from "@/assets/LogoLetra.svg";
 
 enum routes {
     Dashboard = "",
@@ -94,7 +94,6 @@ export default function Sidebar() {
                 </button>
                 <div className="flex flex-col items-center mb-9 overflow-hidden">
                     <img className="w-28 max-w-none" src={appLogo} alt="App Logo" />
-                    <h2 className="text-4xl">AppName</h2>
                 </div>
 
                 <div className="flex flex-col gap-2 px-3 overflow-hidden">

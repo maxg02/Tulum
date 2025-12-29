@@ -5,6 +5,7 @@ import ErrorMessage from "@/components/Misc/ErrorMessage";
 import { useRegisterUserMutation } from "@/features/Auth/api";
 import { validationError } from "@/types/types.ts";
 import CustomButton from "@/components/Misc/CustomButton";
+import appLogo from "@/assets/LogoP.svg";
 
 export default function Register() {
     const [email, setEmail] = useState<string>("");
@@ -47,7 +48,10 @@ export default function Register() {
         >
             <div className="m-auto infoContainer1 w-full flex-row max-xl:max-w-96 xl:w-2/3 xl:p-6 xl:gap-x-6 2xl:max-w-5xl 2xl:max-h-[40rem]">
                 <div className="flex flex-col h-full w-full xl:w-1/2">
-                    <div className="flex-1 w-full flex flex-col items-center py-11">
+                    <div className="flex-1 w-full flex flex-col items-center py-11 relative">
+                        <div className="absolute left-0 top-0">
+                            <img src={appLogo} alt="App Logo" className="w-12" />
+                        </div>
                         <h1 className="text-3xl mb-8">Sign Up</h1>
                         <form
                             onSubmit={handleRegister}

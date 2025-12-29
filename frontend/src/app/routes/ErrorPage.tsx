@@ -1,6 +1,6 @@
 import { Link, useRouteError, isRouteErrorResponse } from "react-router-dom";
-import notFound from "/404.svg";
-import ErrorSVG from "/Error.svg";
+import notFound from "@/assets/404.svg";
+import ErrorSVG from "@/assets/Error.svg";
 
 function ErrorPage() {
     const error = useRouteError();
