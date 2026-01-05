@@ -78,7 +78,7 @@ export default function VerifyEmail() {
                             The email verification has failed due to this link being already used or
                             expired.
                         </p>
-                        <form onSubmit={handleEmailVerificationResend}>
+                        <form className="w-full" onSubmit={handleEmailVerificationResend}>
                             <div
                                 className={`transition-all duration-1000 flex flex-col w-full gap-y-1 overflow-hidden ${
                                     emailInput ? "max-h-96 mb-5" : "max-h-0 mb-0"
@@ -99,7 +99,7 @@ export default function VerifyEmail() {
                                 <CustomButton
                                     isLoading={isLoadingResend}
                                     isSuccess={isSuccessResend}
-                                    className="formBtn formBtnPrimary w-full mt-6"
+                                    className="formBtn formBtnPrimary w-full mt-5"
                                     type="submit"
                                 >
                                     Resend
