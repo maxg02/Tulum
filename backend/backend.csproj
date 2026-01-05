@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+	  <Content Include="Utilities\EmailTemplates\**\*.html">
+		  <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+	  </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MailKit" Version="4.14.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />

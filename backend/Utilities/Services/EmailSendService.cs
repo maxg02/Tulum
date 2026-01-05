@@ -15,13 +15,15 @@ namespace backend.Utilities.Services
         private readonly IEmailVerificationRepo _emailVerificationRepo;
         private readonly IPasswordResetRepo _passwordResetRepo;
         private readonly string _frontedUrl;
+        private readonly IWebHostEnvironment _env;
 
-        public EmailSendService(IOptions<EmailCreds> emailCreds, IEmailVerificationRepo emailVerificationRepo, IConfiguration config, IPasswordResetRepo passwordResetRepo)
+        public EmailSendService(IOptions<EmailCreds> emailCreds, IEmailVerificationRepo emailVerificationRepo, IConfiguration config, IPasswordResetRepo passwordResetRepo, IWebHostEnvironment env)
         {
             _emailCreds = emailCreds.Value;
             _emailVerificationRepo = emailVerificationRepo;
             _frontedUrl = config["FrontendUrl"]!;
             _passwordResetRepo = passwordResetRepo;
+            _env = env;
         }
 
         private async Task SendEmail(User user, string subject, string body) 
@@ -50,7 +52,7 @@ namespace backend.Utilities.Services
             string token = await _emailVerificationRepo.CreateEmailVerificationTokenAsync(user.Id);
             var verificationLink = $"{_frontedUrl}/verify-email?token={token}";
 
-            var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "Utilities", "EmailTemplates", "EmailVerificationTemplate.html");
+            var templatePath = Path.Combine(_env.ContentRootPath, "Utilities", "EmailTemplates", "EmailVerificationTemplate.html");
             var htmlTemplate = await File.ReadAllTextAsync(templatePath);
 
             string body = htmlTemplate
@@ -71,7 +73,7 @@ namespace backend.Utilities.Services
             string token = await _passwordResetRepo.CreatePasswordResetTokenAsync(user.Id);
             var resetLink = $"{_frontedUrl}/reset-password?token={token}";
 
-            var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "Utilities", "EmailTemplates", "PasswordResetTemplate.html");
+            var templatePath = Path.Combine(_env.ContentRootPath, "Utilities", "EmailTemplates", "PasswordResetTemplate.html");
             var htmlTemplate = await File.ReadAllTextAsync(templatePath);
 
             string body = htmlTemplate
