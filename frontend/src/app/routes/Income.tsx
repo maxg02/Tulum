@@ -64,7 +64,7 @@ export default function Budget() {
                 income: yearIncomes
                     .filter(
                         (income: incomeDto) =>
-                            new Intl.DateTimeFormat("en-US", { month: "short" }).format(
+                            new Intl.DateTimeFormat("en-US", { month: "long" }).format(
                                 new Date(income.date)
                             ) == month
                     )

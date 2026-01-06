@@ -18,7 +18,15 @@ function YearBarChart({ dataBarChart }: { dataBarChart: dataYearBarChart }) {
                     domainLimit: "strict",
                 },
             ]}
-            yAxis={[{ scaleType: "band", dataKey: "month", width: 35 }]}
+            yAxis={[
+                {
+                    scaleType: "band",
+                    dataKey: "month",
+                    width: 35,
+                    valueFormatter: (month: string, context) =>
+                        context.location === "tick" ? month.slice(0, 3) : month,
+                },
+            ]}
             series={[
                 {
                     dataKey: "income",

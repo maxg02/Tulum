@@ -10,7 +10,7 @@ function GoalProgressGauges({ dataLineChart }: { dataLineChart: dataSummaryLineC
                 {
                     dataKey: "month",
                     scaleType: "point",
-                    valueFormatter: (month, context) =>
+                    valueFormatter: (month: string, context) =>
                         context.location === "tick"
                             ? month.slice(0, 3)
                             : `${month} balance: RD$${
