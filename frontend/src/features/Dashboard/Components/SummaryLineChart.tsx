@@ -18,7 +18,7 @@ function GoalProgressGauges({ dataLineChart }: { dataLineChart: dataSummaryLineC
                               }`,
                 },
             ]}
-            margin={{ left: 0, top: 20, bottom: 0, right: 10 }}
+            margin={{ left: 0, top: 20, bottom: 0, right: 15 }}
             yAxis={[
                 {
                     min: 0,
