@@ -159,23 +159,30 @@ export default function Dashboard() {
             .sort((a, b) => b.value - a.value);
     }
 
-    dataLineChart = monthList.map((month) => ({
-        month,
-        inc: yearIncomes
+    dataLineChart = monthList.map((month) => {
+        const monthIncome = yearIncomes
             .filter(
                 (income: incomeDto) =>
-                    new Intl.DateTimeFormat("en-US", { month: "short" }).format(new Date(income.date)) ==
+                    new Intl.DateTimeFormat("en-US", { month: "long" }).format(new Date(income.date)) ==
                     month
             )
-            .reduce((acc: number, next: incomeDto) => acc + next.amount, 0),
-        exp: yearExpenses
+            .reduce((acc: number, next: incomeDto) => acc + next.amount, 0);
+
+        const monthExpenses = yearExpenses
             .filter(
                 (expense: expenseDto) =>
-                    new Intl.DateTimeFormat("en-US", { month: "short" }).format(new Date(expense.date)) ==
+                    new Intl.DateTimeFormat("en-US", { month: "long" }).format(new Date(expense.date)) ==
                     month
             )
-            .reduce((acc: number, next: expenseDto) => acc + next.amount, 0),
-    }));
+            .reduce((acc: number, next: expenseDto) => acc + next.amount, 0);
+
+        return {
+            month,
+            inc: monthIncome,
+            exp: monthExpenses,
+            balance: monthIncome - monthExpenses,
+        };
+    });
 
     const goalsProgressGauges = goalsProgressData.slice(0, 3).map((gp, key) => (
         <div className="flex flex-col items-center basis-[28%] md:basis-1/5 2xl:basis-1/4" key={key}>

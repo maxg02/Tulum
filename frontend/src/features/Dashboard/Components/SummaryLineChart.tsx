@@ -10,6 +10,12 @@ function GoalProgressGauges({ dataLineChart }: { dataLineChart: dataSummaryLineC
                 {
                     dataKey: "month",
                     scaleType: "point",
+                    valueFormatter: (month, context) =>
+                        context.location === "tick"
+                            ? month.slice(0, 3)
+                            : `${month} balance: RD$${
+                                  dataLineChart.find((d) => d.month === month)?.balance
+                              }`,
                 },
             ]}
             margin={{ left: 0, top: 20, bottom: 0, right: 10 }}
@@ -22,6 +28,7 @@ function GoalProgressGauges({ dataLineChart }: { dataLineChart: dataSummaryLineC
                     width: 40,
                 },
             ]}
+            dataset={dataLineChart}
             series={[
                 {
                     dataKey: "inc",
@@ -40,7 +47,6 @@ function GoalProgressGauges({ dataLineChart }: { dataLineChart: dataSummaryLineC
                     labelMarkType: "circle",
                 },
             ]}
-            dataset={dataLineChart}
             grid={{ vertical: true, horizontal: true }}
             slotProps={{
                 legend: {

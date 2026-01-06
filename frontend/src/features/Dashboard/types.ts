@@ -1,1 +1,1 @@
-export type dataSummaryLineChart = { month: string; inc: number; exp: number }[];
+export type dataSummaryLineChart = { month: string; inc: number; exp: number; balance: number }[];
