@@ -88,8 +88,8 @@ export default function Budget() {
     return (
         <>
             <SectionContent>
-                <div className="grid grid-cols-2 auto-rows-auto gap-3 overflow-x-hidden overflow-y-auto md:grid-cols-6 md:gap-6 xl:gap-5 xl:grid-rows-12 xl:flex-1 2xl:gap-8 2xl:max-h-[1000px]">
-                    <div className="flex-1 md:col-span-2 xl:row-span-3 2xl:row-span-2">
+                <div className="grid grid-cols-2 auto-rows-auto gap-3 overflow-x-hidden overflow-y-auto md:grid-cols-6 md:gap-6 xl:gap-5 xl:grid-rows-[auto_1fr] xl:flex-1 2xl:gap-8 2xl:max-h-[1000px]">
+                    <div className="flex-1 md:col-span-2 xl:h-fit">
                         <ValuePill
                             title={new Date(0, currentMonth).toLocaleString("en-US", {
                                 month: "long",
@@ -97,16 +97,16 @@ export default function Budget() {
                             value={totalMonthIncome}
                         />
                     </div>
-                    <div className="flex-1 md:col-span-2 xl:row-span-3 2xl:row-span-2">
+                    <div className="flex-1 md:col-span-2 xl:h-fit">
                         <ValuePill title={currentYear.toString()} value={totalYearIncome} />
                     </div>
-                    <div className="flex-1 col-span-2 xl:row-span-3 2xl:row-span-2">
+                    <div className="flex-1 col-span-2 xl:h-fit">
                         <ValuePill title="Total" value={totalIncome} />
                     </div>
 
                     <hr className="col-span-2 my-4 border-t-2 md:hidden"></hr>
 
-                    <div className="infoContainer1 flex-1 col-span-2 mb-6 md:col-span-6 md:mb-0 xl:col-span-3 xl:row-span-9 2xl:row-span-10">
+                    <div className="infoContainer1 flex-1 col-span-2 mb-6 md:col-span-6 md:mb-0 xl:col-span-3">
                         <DataSection
                             isLoading={incomeIsLoading}
                             title="Income"
@@ -133,7 +133,7 @@ export default function Budget() {
                         </DataSection>
                     </div>
 
-                    <div className="infoContainer2 flex-1 col-span-2 md:col-span-6 xl:col-span-3 xl:row-span-9 2xl:row-span-10">
+                    <div className="infoContainer2 flex-1 col-span-2 md:col-span-6 xl:col-span-3">
                         <DataSection
                             isLoading={incomeIsLoading}
                             title={`Income Summary ${currentYear}`}
