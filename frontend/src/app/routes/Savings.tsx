@@ -163,9 +163,9 @@ export default function Savings() {
     return (
         <>
             <SectionContent>
-                <div className="grid grid-cols-1 gap-8 overflow-x-hidden overflow-y-auto auto-rows-auto xl:max-2xl:gap-5 xl:max-2xl:grid-rows-12 xl:flex-1 xl:max-h-[1000px] xl:grid-cols-11 2xl:grid-rows-11">
-                    <div className="flex gap-3 overflow-hidden xl:col-span-7 xl:row-span-3 2xl:row-span-4 2xl:flex-col 2xl:col-span-4">
-                        <div className="flex-1">
+                <div className="grid grid-cols-1 gap-8 overflow-x-hidden overflow-y-auto auto-rows-auto xl:max-2xl:gap-5 xl:grid-rows-[auto_1fr] xl:flex-1 xl:max-h-[1000px] xl:grid-cols-11">
+                    <div className="flex gap-3 overflow-hidden xl:col-span-7 xl:h-fit 2xl:flex-col 2xl:col-span-4">
+                        <div className="max-2xl:flex-1">
                             <ValuePill
                                 title={new Date(0, currentMonth).toLocaleString("en-US", {
                                     month: "long",
@@ -173,12 +173,12 @@ export default function Savings() {
                                 value={totalMonthSavings}
                             />
                         </div>
-                        <div className="flex-1">
+                        <div className="max-2xl:flex-1">
                             <ValuePill title={currentYear.toString()} value={totalYearSavings} />
                         </div>
                     </div>
                     <hr className="border-t-2 md:hidden"></hr>
-                    <div className="infoContainer1 xl:col-span-7 xl:flex-col xl:row-span-9 xl:max-2xl:order-3 2xl:row-span-11">
+                    <div className="infoContainer1 xl:col-span-7 xl:flex-col xl:max-2xl:order-3 2xl:row-span-2">
                         <DataSection
                             title="Savings Goals"
                             createFunction={() => openCreationModal("savingGoal")}
@@ -197,7 +197,7 @@ export default function Savings() {
                             )}
                         </DataSection>
                     </div>
-                    <div className="infoContainer2 xl:col-span-4 xl:row-span-12 xl:max-2xl:order-2 2xl:row-span-7">
+                    <div className="infoContainer2 xl:col-span-4 xl:row-span-2 xl:max-2xl:order-2 2xl:row-auto">
                         <DataSection
                             title="Goals Contributions"
                             createFunction={() => openCreationModal("goalContribution")}

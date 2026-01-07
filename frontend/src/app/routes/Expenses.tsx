@@ -180,7 +180,7 @@ export default function Expenses() {
     return (
         <>
             <SectionContent>
-                <div className="grid grid-cols-2 auto-rows-auto gap-8 overflow-x-hidden overflow-y-auto md:grid-cols-5 xl:grid-cols-7 xl:max-2xl:gap-5 xl:flex-1 xl:grid-rows-12 2xl:max-h-[1000px]">
+                <div className="grid grid-cols-2 auto-rows-auto gap-8 overflow-x-hidden overflow-y-auto md:grid-cols-5 xl:grid-cols-7 xl:max-2xl:gap-5 xl:flex-1 xl:grid-rows-[auto_1fr] 2xl:max-h-[1000px]">
                     <div className="flex col-span-2 gap-3 md:hidden">
                         <div className="flex-1">
                             <ValuePill
@@ -195,7 +195,7 @@ export default function Expenses() {
                         </div>
                     </div>
                     <hr className="col-span-2 border-t-2 md:hidden"></hr>
-                    <div className="infoContainer1 max-md:hidden md:col-span-3 xl:col-span-3 xl:row-span-6 2xl:row-span-5">
+                    <div className="infoContainer1 max-md:hidden md:col-span-3 xl:col-span-3 xl:max-h-[280px] 2xl:max-h-[400px]">
                         <DataSection
                             title={`${new Date(0, currentMonth).toLocaleString("en-US", {
                                 month: "long",
@@ -207,7 +207,7 @@ export default function Expenses() {
                             </div>
                         </DataSection>
                     </div>
-                    <div className="infoContainer1 col-span-2 md:col-span-5 md:order-3 xl:col-span-4 xl:row-span-6 2xl:row-span-7">
+                    <div className="infoContainer1 col-span-2 md:col-span-5 md:order-3 xl:col-span-4">
                         <DataSection
                             isLoading={expenseCategoryIsLoading || expenseIsLoading}
                             createFunction={() => openCreationModal("expense")}
@@ -229,7 +229,7 @@ export default function Expenses() {
                             </div>
                         </DataSection>
                     </div>
-                    <div className="infoContainer2 col-span-2 md:col-span-5 md:order-4 xl:order-2 xl:col-span-4 xl:row-span-6 2xl:row-span-5">
+                    <div className="infoContainer2 col-span-2 md:col-span-5 md:order-4 xl:order-2 xl:col-span-4">
                         <DataSection
                             title="Budgets"
                             createFunction={() => openCreationModal("budgetPlanning")}
@@ -287,7 +287,7 @@ export default function Expenses() {
                             )}
                         </DataSection>
                     </div>
-                    <div className="infoContainer2 col-span-2 md:col-span-2 md:order-2 xl:col-span-3 xl:order-4 xl:row-span-6 2xl:row-span-7">
+                    <div className="infoContainer2 col-span-2 md:col-span-2 md:order-2 xl:col-span-3 xl:order-4">
                         <DataSection
                             title="Expense Categories"
                             createFunction={() => openCreationModal("expenseCategory")}
