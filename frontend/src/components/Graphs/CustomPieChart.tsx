@@ -74,7 +74,7 @@ function CustomPieChart({ data, total }: { data: pieChartSlice[]; total: number 
                 "& .MuiPieArc-root": { strokeWidth: 0 },
             }}
         >
-            <PieCenterLabel>RD${total}</PieCenterLabel>
+            <PieCenterLabel>RD${total > 1000 ? total / 1000 + "K" : total}</PieCenterLabel>
         </PieChart>
     );
 }

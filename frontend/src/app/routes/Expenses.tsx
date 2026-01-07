@@ -195,7 +195,7 @@ export default function Expenses() {
                         </div>
                     </div>
                     <hr className="col-span-2 border-t-2 md:hidden"></hr>
-                    <div className="infoContainer1 max-md:hidden md:col-span-3 xl:col-span-3 xl:max-h-[280px] 2xl:max-h-[400px]">
+                    <div className="infoContainer1 max-md:hidden md:col-span-3 xl:col-span-3 xl:max-h-[240px] 2xl:max-h-[350px] 2xl:min-h-[270px]">
                         <DataSection
                             title={`${new Date(0, currentMonth).toLocaleString("en-US", {
                                 month: "long",
